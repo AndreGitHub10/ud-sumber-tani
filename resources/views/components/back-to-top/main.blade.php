@@ -1,0 +1,1 @@
+<a href="javaScript:void(0);" class="back-to-top"><i class='bx bxs-up-arrow-alt'></i></a>
