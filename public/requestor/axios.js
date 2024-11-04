@@ -5,6 +5,7 @@ const postRequest = (route, object={}) => {
 	const sendRequest = axios.post(route, object)
 	.then((response) => {return response})
 	.catch(function(error){
+		error.data = error.response.data
 		error.status = error.response.status
 		console.error(error)
 		return error
@@ -17,6 +18,7 @@ const getRequest = (route, object={}) => {
 	const sendRequest = axios.get(route,{params: object})
 	.then((response) => {return response})
 	.catch(function(error){
+		error.data = error.response.data
 		error.status = error.response.status
 		console.error(error)
 		return error

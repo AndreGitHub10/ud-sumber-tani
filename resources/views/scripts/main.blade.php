@@ -8,4 +8,18 @@
 <!--app JS-->
 <script src="{{asset('assets/js/app.js')}}"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script src="{{asset('requestor/axios.min.js')}}"></script>
+<script src="{{asset('requestor/axios.js')}}"></script>
+<script>
+	const fadeOutUp = {
+		popup: `
+			animate__animated
+			animate__fadeOutUp
+			animate__faster
+		`,
+	}
+</script>
+
 @stack('scripts')

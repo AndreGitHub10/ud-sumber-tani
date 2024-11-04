@@ -6,11 +6,15 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<!-- Bootstrap CSS -->
-	<link href="assets/css/bootstrap.min.css" rel="stylesheet">
-	<link href="assets/css/bootstrap-extended.css" rel="stylesheet">
+	<link href="{{asset('assets/css/bootstrap.min.css')}}" rel="stylesheet">
+	<link href="{{asset('assets/css/bootstrap-extended.css')}}" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-	<link href="assets/css/app.css" rel="stylesheet">
-	<link href="assets/css/icons.css" rel="stylesheet">
+	<link href="{{asset('assets/css/app.css')}}" rel="stylesheet">
+	<link href="{{asset('assets/css/icons.css')}}" rel="stylesheet">
+	<link
+		rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+	/>
 	<title>LOGIN | UD SUMBER TANI</title>
 </head>
 
@@ -31,11 +35,11 @@
 									<h5 class="mb-4 mt-2 text-dark">User Login</h5>
 								</div>
 								<hr>
-								<form class="row g-3" id="form-login">
+								<form class="row g-3" id="form-login" class="form-login">
 									<div class="col-12">
 										<label for="username" class="form-label">Enter Username</label>
 										<div class="input-group input-group-lg"> <span class="input-group-text bg-transparent"><i class='bx bxs-user'></i></span>
-											<input type="text" class="form-control border-start-0" id="username" placeholder="Enter Username" />
+											<input type="text" class="form-control border-start-0" id="username" name="username" placeholder="Enter Username" />
 										</div>
 									</div>
 									<div class="col-12">
@@ -43,7 +47,7 @@
 										<div class="input-group input-group-lg" id="show_hide_password"> <span class="input-group-text bg-transparent"><i class='bx bxs-lock-open'></i></span>
 											<input
 												type="password"
-												class="form-control border-start-0 border-end-0" id="password" placeholder="Enter Password"> <a href="javascript:;" class="input-group-text bg-transparent"><i class='bx bx-hide'></i></a>
+												class="form-control border-start-0 border-end-0" id="password" name="password" placeholder="Enter Password"> <a href="javascript:;" class="input-group-text bg-transparent"><i class='bx bx-hide'></i></a>
 										</div>
 									</div>
 									<div class="col-md-6">
@@ -121,10 +125,12 @@
 </div>
 
 <!--plugins-->
-<script src="assets/js/jquery.min.js"></script>
+<script src="{{asset('assets/js/jquery.min.js')}}"></script>
+
 <script src="{{asset('requestor/axios.min.js')}}"></script>
-{{-- <script type="modul" src="{{asset('requestor/axios.js')}}"></script> --}}
 <script src="{{asset('requestor/axios.js')}}"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <!--Password show & hide js -->
 <script>
@@ -145,9 +151,45 @@
 
 	$('.btn-login').click(async(e) => {
 		e.preventDefault()
-		// const data = new FormData($('#form-login')[0])
-		// console.log(data)
-		console.log(await postRequest("{{route('api.auth.login')}}"))
+		const data = new FormData($('#form-login')[0])
+		let response = await postRequest("{{route('auth.generateToken')}}", data)
+
+		if (response.status === 200) {
+			await Swal.fire({
+				icon: 'success',
+				title: response.data.message,
+				showConfirmButton: false,
+				timer: 900,
+				showClass: {
+					popup: `
+						animate__animated
+						animate__fadeInDown
+						animate__faster
+					`,
+				},
+			})
+			return window.location.href = "{{route('dashboard.main')}}"
+		}
+
+		Swal.fire({
+			icon: 'warning',
+			title: 'Oops..',
+			text: response.data.message,
+			showClass: {
+				popup: `
+					animate__animated
+					animate__fadeInDown
+					animate__faster
+				`,
+			},
+			hideClass: {
+				popup: `
+					animate__animated
+					animate__fadeOutUp
+					animate__faster
+				`,
+			},
+		})
 	})
 </script>
 </body>

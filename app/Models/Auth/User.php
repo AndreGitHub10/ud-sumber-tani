@@ -12,4 +12,9 @@ class User extends Authenticatable
 {
 	protected $table = 'users';
 	use HasFactory;
+	
+	protected $hidden = [
+		'password',
+		'remember_token',
+	];
 }

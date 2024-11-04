@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Services\Supplier;
+namespace App\Services\User;
 
 # DTO
-use App\DataTransferObjects\UserDTO;
+use App\DataTransferObjects\User\PostUserDTO;
 
 # Models
 use App\Models\Auth\User;
 
-class SupplierService
+class UserService
 {
-	public function store(UserDTO $userDTO)
+	public function create(PostUserDTO $userDTO): User
 	{
 		$user = new User;
 		$user->name = $userDTO->name;
@@ -19,5 +19,7 @@ class SupplierService
 		$user->email = $userDTO->email;
 		$user->password = $userDTO->password;
 		$user->save();
+
+		return $user;
 	}
 }
