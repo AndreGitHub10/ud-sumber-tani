@@ -149,6 +149,21 @@
 		})
 	})
 
+	const fadeInDown = {
+		popup: `
+			animate__animated
+			animate__fadeInDown
+			animate__faster
+		`,
+	}
+	const fadeOutUp = {
+		popup: `
+			animate__animated
+			animate__fadeOutUp
+			animate__faster
+		`,
+	}
+
 	$('.btn-login').click(async(e) => {
 		e.preventDefault()
 		const data = new FormData($('#form-login')[0])
@@ -160,14 +175,9 @@
 				title: response.data.message,
 				showConfirmButton: false,
 				timer: 900,
-				showClass: {
-					popup: `
-						animate__animated
-						animate__fadeInDown
-						animate__faster
-					`,
-				},
+				hideClass: fadeOutUp,
 			})
+
 			return window.location.href = "{{route('dashboard.main')}}"
 		}
 
@@ -182,13 +192,7 @@
 					animate__faster
 				`,
 			},
-			hideClass: {
-				popup: `
-					animate__animated
-					animate__fadeOutUp
-					animate__faster
-				`,
-			},
+			hideClass: fadeOutUp,
 		})
 	})
 </script>

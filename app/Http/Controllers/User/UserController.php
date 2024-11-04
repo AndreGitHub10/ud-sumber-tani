@@ -4,6 +4,9 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+// use DataTable;
+use DataTables;
+// use Yajra\DataTables\Services\DataTable;
 
 # DTO
 use App\DataTransferObjects\Response\ResponseAxiosDTO;
@@ -42,14 +45,21 @@ class UserController extends Controller
 		return response()->json($dto, $dto->code);
 	}
 
+	public function datatables(Request $request)
+	{
+		return DataTables::of(User::all())
+			->addIndexColumn()
+			->toJson();
+	}
+
 	public function store(PostUserDTO $data)
 	{
-		// $user = $this->userService->create($data);
+		$user = $this->userService->create($data);
 
 		$dto = ResponseAxiosDTO::fromArray([
 			'code' => 201,
 			'message' => 'Data berhasil disimpan',
-			// 'response' => $user,
+			'response' => $user,
 		]);
 
 		return response()->json($dto, $dto->code);

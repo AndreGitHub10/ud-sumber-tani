@@ -11,7 +11,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\User\UserController;
 
 Route::get('/', function () {
-	return view('contents.dashboard.main');
+	return redirect()->route('auth.login');
 });
 
 Route::prefix('auth')
@@ -59,6 +59,7 @@ Route::middleware(Authenticate::class)->group(function () {
 		->group(function () {
 			Route::get('/', [UserController::class, 'main'])->name('main');
 			Route::post('form', [UserController::class, 'form'])->name('form');
+			Route::post('datatables', [UserController::class, 'datatables'])->name('datatables');
 			Route::post('store', [UserController::class, 'store'])->name('store');
 		});
 	});

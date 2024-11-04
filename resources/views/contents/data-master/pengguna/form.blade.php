@@ -10,18 +10,6 @@
 			</ol>
 		</nav>
 	</div>
-	<div class="ms-auto">
-		<div class="btn-group">
-			<button type="button" class="btn btn-primary">Settings</button>
-			<button type="button" class="btn btn-primary split-bg-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">	<span class="visually-hidden">Toggle Dropdown</span>
-			</button>
-			<div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-end">	<a class="dropdown-item" href="javascript:;">Action</a>
-				<a class="dropdown-item" href="javascript:;">Another action</a>
-				<a class="dropdown-item" href="javascript:;">Something else here</a>
-				<div class="dropdown-divider"></div>	<a class="dropdown-item" href="javascript:;">Separated link</a>
-			</div>
-		</div>
-	</div>
 </div>
 <!--end breadcrumb-->
 {{-- <div class="row"> --}}
@@ -251,7 +239,7 @@
 						<div class="row mb-5">
 							<label for="inputPassword" class="col-sm-3 col-form-label">Password</label>
 							<div class="col-sm-9">
-								<input type="text" class="form-control" id="inputPassword" name="password" placeholder="Masukkan Password">
+								<input type="password" class="form-control" id="inputPassword" name="password" placeholder="Masukkan Password">
 							</div>
 						</div>
 						<div class="row">
@@ -318,14 +306,17 @@
 			title: response.data.message,
 			showConfirmButton: false,
 			timer: 900,
-			showClass: {
-				popup: `
-					animate__animated
-					animate__fadeInDown
-					animate__faster
-				`,
-			},
+			showClass: fadeInDown,
+			hideClass: fadeOutUp,
 		})
+		
 		$this.attr('disabled', false)
+
+		$("#other-page").hide('slow', async function () {
+			await $("#main-page").fadeIn()
+			await $("#other-page").empty()
+			datatablePengguna()
+		})
+
 	})
 </script>
