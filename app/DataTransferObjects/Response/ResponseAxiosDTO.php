@@ -9,7 +9,7 @@ final class ResponseAxiosDTO extends DataTransferObject
 	public function __construct(
 		public ?int $code = 200,
 		public string $message = 'Default message',
-		public string|null $response = null
+		public array|Collection|int|string|null $response = null
 	) {
 		// 
 	}

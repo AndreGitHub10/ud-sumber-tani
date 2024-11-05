@@ -60,6 +60,7 @@ Route::middleware(Authenticate::class)->group(function () {
 			Route::get('/', [UserController::class, 'main'])->name('main');
 			Route::post('form', [UserController::class, 'form'])->name('form');
 			Route::post('datatables', [UserController::class, 'datatables'])->name('datatables');
+			Route::post('destroy', [UserController::class, 'destroy'])->name('destroy');
 			Route::post('store', [UserController::class, 'store'])->name('store');
 		});
 	});
