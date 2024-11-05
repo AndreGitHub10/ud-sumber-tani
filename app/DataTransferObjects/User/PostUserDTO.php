@@ -2,10 +2,8 @@
 
 namespace App\DataTransferObjects\User;
 
-use OpenSoutheners\LaravelDto\DataTransferObject;
-
 use Illuminate\Http\Request;
-
+use OpenSoutheners\LaravelDto\DataTransferObject;
 use OpenSoutheners\LaravelDto\Contracts\ValidatedDataTransferObject;
 
 # Form request validation
@@ -19,6 +17,7 @@ final class PostUserDTO extends DataTransferObject implements ValidatedDataTrans
 		public string $username,
 		public string|null $email,
 		public string|null $password,
+		public int|null $id = null,
 	) {
 		// 
 	}
@@ -30,7 +29,8 @@ final class PostUserDTO extends DataTransferObject implements ValidatedDataTrans
 			strtolower($request->input('level')),
 			strtolower($request->input('username')),
 			$request->input('email') ? strtolower($request->input('email')) : null,
-			bcrypt($request->input('password')),
+			$request->input('password') ? bcrypt($request->input('password')) : null,
+            $request->input('id') ?? null,
 		);
 	}
 

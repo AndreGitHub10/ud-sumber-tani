@@ -4,17 +4,18 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-// use DataTable;
 use DataTables;
-// use Yajra\DataTables\Services\DataTable;
 
 # DTO
 use App\DataTransferObjects\Response\ResponseAxiosDTO;
 use App\DataTransferObjects\User\DetailUserDTO;
 use App\DataTransferObjects\User\PostUserDTO;
 
+# Form request
+use App\Http\Requests\User\PostUserRequest;
+
 # Models
-use App\Models\User;
+use App\Models\Auth\User;
 
 # Services
 use App\Services\User\UserService;
@@ -22,6 +23,7 @@ use App\Services\User\UserService;
 class UserController extends Controller
 {
 	private UserService $userService;
+
 	public function __construct(
 		UserService $userService
 	)
@@ -36,7 +38,10 @@ class UserController extends Controller
 
 	public function form(Request $request)
 	{
-		$content = view('contents.data-master.pengguna.form')->render();
+		$data = DetailUserDTO::fromRequest($request)->toArray();
+		$data['user'] = $data['user'] !== null ? (object)$data['user'] : "";
+
+		$content = view('contents.data-master.pengguna.form')->with($data)->render();
 
 		$dto = ResponseAxiosDTO::fromArray([
 			'code' => 200,
@@ -68,7 +73,11 @@ class UserController extends Controller
 
 	public function store(PostUserDTO $data)
 	{
-		$user = $this->userService->create($data);
+		if ($data->id) {
+			$user = $this->userService->update($data);
+		} else {
+			$user = $this->userService->create($data);
+		}
 
 		$dto = ResponseAxiosDTO::fromArray([
 			'code' => 201,
@@ -79,28 +88,18 @@ class UserController extends Controller
 		return response()->json($dto, $dto->code);
 	}
 
-	// public function destroy(DetailUserDTO $data)
-	public function destroy(Request $request)
+	public function destroy(DetailUserDTO $data)
 	{
-
-		// if (!$this->userService->destroy($request)) {
-		// 	return response()->json(ResponseAxiosDTO::fromArray([
-		// 		'code' => 500,
-		// 		'message' => 'Data gagal dihapus!'
-		// 	]), 500);
-		// }
-		// $data = DetailUserDTO::fromArray(['user_id' => $request->user_id]);
-		// $request->merge([
-		// 	'id' => 1
-		// ]);
-		// $data = DetailUserDTO::fromRequest($request)->toArray();
-		// return $data;
-		// $data = $request->all();
+		if (!$this->userService->destroy($data)) {
+			return response()->json(ResponseAxiosDTO::fromArray([
+				'code' => 500,
+				'message' => 'Data gagal dihapus',
+			]), 500);
+		}
 
 		return response()->json(ResponseAxiosDTO::fromArray([
 			'code' => 200,
 			'message' => 'Data berhasil dihapus',
-			'response' => $data,
 		]), 200);
 	}
 }

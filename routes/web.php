@@ -8,6 +8,7 @@ use App\Http\Middleware\Authenticate;
 # Controllers
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\User\SupplierController;
 use App\Http\Controllers\User\UserController;
 
 Route::get('/', function () {
@@ -52,7 +53,11 @@ Route::middleware(Authenticate::class)->group(function () {
 
 		Route::prefix('supplier')->as('supplier.')
 		->group(function () {
-			Route::get('/', [DashboardController::class, 'main'])->name('main');
+			Route::get('/', [SupplierController::class, 'main'])->name('main');
+			Route::post('form', [SupplierController::class, 'form'])->name('form');
+			Route::post('datatables', [SupplierController::class, 'datatables'])->name('datatables');
+			Route::post('destroy', [SupplierController::class, 'destroy'])->name('destroy');
+			Route::post('store', [SupplierController::class, 'store'])->name('store');
 		});
 
 		Route::prefix('pengguna')->as('pengguna.')

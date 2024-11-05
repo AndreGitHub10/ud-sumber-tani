@@ -203,14 +203,15 @@
 					<div class="card-title d-flex align-items-center">
 						<div><i class="bx bxs-user me-1 font-22 text-info"></i>
 						</div>
-						<h5 class="mb-0 text-info">User Registration</h5>
+						<h5 class="mb-0 text-info">User</h5>
 					</div>
 					<hr/>
 					<form id="form-data-user">
 						<div class="row mb-3">
 							<label for="inputName" class="col-sm-3 col-form-label">Nama</label>
 							<div class="col-sm-9">
-								<input type="text" class="form-control" id="inputName" name="name" placeholder="Masukkan Nama">
+								<input type="hidden" class="form-control" id="user-id" name="id" value="{{ $user->id ?? '' }}">
+								<input type="text" class="form-control" id="inputName" name="name" placeholder="Masukkan Nama" value="{{ $user->name ?? '' }}">
 							</div>
 						</div>
 						<div class="row mb-3">
@@ -227,13 +228,13 @@
 						<div class="row mb-3">
 							<label for="inputUsername" class="col-sm-3 col-form-label">Username</label>
 							<div class="col-sm-9">
-								<input class="form-control" id="inputUsername" name="username" placeholder="Masukkan Username">
+								<input class="form-control" id="inputUsername" name="username" placeholder="Masukkan Username" value="{{ $user->username ?? '' }}">
 							</div>
 						</div>
 						<div class="row mb-3">
 							<label for="inputEmail" class="col-sm-3 col-form-label">Email</label>
 							<div class="col-sm-9">
-								<input type="email" class="form-control" id="inputEmail" name="email" placeholder="Masukkan Email">
+								<input type="email" class="form-control" id="inputEmail" name="email" placeholder="Masukkan Email" value="{{ $user->email ?? '' }}">
 							</div>
 						</div>
 						<div class="row mb-5">
@@ -266,6 +267,12 @@
 <!--end row-->
 
 <script>
+	$(document).ready(function () {
+		@if($user)
+			$("#inputLevel").val("{{$user->level}}").trigger('change')
+		@endif
+	})
+
 	$('.single-select').select2({
 		theme: 'bootstrap4',
 		width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
@@ -281,6 +288,7 @@
 	})
 
 	$("#btn-save-form-user").click(async (e) => {
+		e.preventDefault()
 		const $this = $(e.currentTarget)
 		$this.attr('disabled', true)
 

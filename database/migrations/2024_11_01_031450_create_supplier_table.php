@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('nomor_hp')->nullable();
             $table->text('alamat')->nullable();
             $table->text('keterangan')->nullable();
+            $table->date('tanggal')->nullable();
             $table->timestamps();
         });
     }

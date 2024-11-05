@@ -7,16 +7,16 @@ use OpenSoutheners\LaravelDto\DataTransferObject;
 use OpenSoutheners\LaravelDto\Attributes\WithDefaultValue;
 
 # Models
-use App\Models\Auth\User;
+use App\Models\Supplier;
 
-final class DetailUserDTO extends DataTransferObject
+final class DetailSupplierDTO extends DataTransferObject
 {
 	public function __construct(
-		public ?int $id = null,
+		public ?int $id_supplier = null,
 
 		#[BindModel(using: 'id')]
-		#[WithDefaultValue(User::class)]
-		public User|null $user = null,
+		#[WithDefaultValue(Supplier::class)]
+		public Supplier|null $supplier = null,
 	) {
 		// 
 	}

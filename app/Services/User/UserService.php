@@ -11,6 +11,8 @@ use App\DataTransferObjects\User\DetailUserDTO;
 # Models
 use App\Models\Auth\User;
 
+use function Symfony\Component\Console\find;
+
 class UserService
 {
 	public function create(PostUserDTO $userDTO): User
@@ -26,14 +28,23 @@ class UserService
 		return $user;
 	}
 
-	public function destroy(DetailUserDTO $userDTO): User
-	// public function destroy(DetailUserDTO $userDTO): bool
-	// public function destroy(Request $request): User
-	// public function destroy(Request $request): bool
+	public function update(PostUserDTO $userDTO): User
 	{
-		$user = User::find($request->id);
-		// $user = User::find($userDTO->user_id);
+		$user = User::find($userDTO->id);
+		$user->name = $userDTO->name;
+		$user->level = $userDTO->level;
+		$user->email = $userDTO->email;
+		if ($userDTO->password) {
+			$user->password = $userDTO->password;
+		}
+		$user->save();
+
 		return $user;
+	}
+
+	public function destroy(DetailUserDTO $userDTO): bool
+	{
+		$user = User::find($userDTO->id);
 		if ($user && $user->delete()) {
 			return true;
 		}
