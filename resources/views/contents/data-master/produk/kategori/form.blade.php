@@ -27,10 +27,10 @@
 					<hr/>
 					<form id="form-data-supplier">
 						<div class="row mb-3">
-							<label for="inputNama" class="col-sm-3 col-form-label">Nama</label>
+							<label for="inputName" class="col-sm-3 col-form-label">Nama</label>
 							<div class="col-sm-9">
 								<input type="hidden" class="form-control" id="supplier-id" name="id_supplier" value="{{ $supplier->id ?? '' }}">
-								<input type="text" class="form-control" id="inputNama" name="nama" placeholder="Masukkan Nama" value="{{ $supplier->nama ?? '' }}">
+								<input type="text" class="form-control" id="inputName" name="nama" placeholder="Masukkan Nama" value="{{ $supplier->nama ?? '' }}">
 							</div>
 						</div>
 						<div class="row mb-3">

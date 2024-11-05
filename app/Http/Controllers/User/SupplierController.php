@@ -84,7 +84,6 @@ class SupplierController extends Controller
 		return view('contents.data-master.supplier.main');
 	}
 
-	// public function store(PostSupplierDTO $data)
 	public function store(PostSupplierRequest $request)
 	{
 		if (!Generate::kodeSupplier($request)) {

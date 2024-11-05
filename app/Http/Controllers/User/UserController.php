@@ -31,27 +31,6 @@ class UserController extends Controller
 		$this->userService = $userService;
 	}
 
-	public function main(Request $request)
-	{
-		return view('contents.data-master.pengguna.main');
-	}
-
-	public function form(Request $request)
-	{
-		$data = DetailUserDTO::fromRequest($request)->toArray();
-		$data['user'] = $data['user'] !== null ? (object)$data['user'] : "";
-
-		$content = view('contents.data-master.pengguna.form')->with($data)->render();
-
-		$dto = ResponseAxiosDTO::fromArray([
-			'code' => 200,
-			'message' => 'Ok',
-			'response' => $content,
-		]);
-
-		return response()->json($dto, $dto->code);
-	}
-
 	public function datatables(Request $request)
 	{
 		return DataTables::of(User::all())
@@ -71,23 +50,6 @@ class UserController extends Controller
 			->toJson();
 	}
 
-	public function store(PostUserDTO $data)
-	{
-		if ($data->id) {
-			$user = $this->userService->update($data);
-		} else {
-			$user = $this->userService->create($data);
-		}
-
-		$dto = ResponseAxiosDTO::fromArray([
-			'code' => 201,
-			'message' => 'Data berhasil disimpan',
-			'response' => $user,
-		]);
-
-		return response()->json($dto, $dto->code);
-	}
-
 	public function destroy(DetailUserDTO $data)
 	{
 		if (!$this->userService->destroy($data)) {
@@ -101,5 +63,43 @@ class UserController extends Controller
 			'code' => 200,
 			'message' => 'Data berhasil dihapus',
 		]), 200);
+	}
+
+	public function form(Request $request)
+	{
+		$data = DetailUserDTO::fromRequest($request)->toArray();
+		$data['user'] = $data['user'] !== null ? (object)$data['user'] : "";
+
+		$content = view('contents.data-master.pengguna.form')->with($data)->render();
+
+		$dto = ResponseAxiosDTO::fromArray([
+			'code' => 200,
+			'message' => 'Ok',
+			'response' => $content,
+		]);
+
+		return response()->json($dto, $dto->code);
+	}
+
+	public function main(Request $request)
+	{
+		return view('contents.data-master.pengguna.main');
+	}
+
+	public function store(PostUserDTO $data)
+	{
+		if ($data->id) {
+			$user = $this->userService->update($data);
+			$code = 200;
+		} else {
+			$user = $this->userService->create($data);
+			$code = 201;
+		}
+
+		return response()->json(ResponseAxiosDTO::fromArray([
+			'code' => $code,
+			'message' => 'Data berhasil disimpan',
+			'response' => $user,
+		]), $code);
 	}
 }

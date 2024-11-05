@@ -296,7 +296,7 @@
 
 		const response = await postRequest("{{route('dataMaster.pengguna.store')}}", data)
 
-		if (response.status !== 201) {
+		if (jQuery.inArray(response.status, [200, 201]) === -1) {
 			await Swal.fire({
 				icon: 'warning',
 				title: 'Whoops..',

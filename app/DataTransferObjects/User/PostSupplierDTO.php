@@ -31,7 +31,7 @@ final class PostSupplierDTO extends DataTransferObject
 			$request->input('nomor_hp') ?? null,
 			$request->input('alamat') ?? null,
 			$request->input('keterangan') ?? null,
-            $request->input('id_supplier') ?? null,
+			$request->input('id_supplier') ?? null,
 		);
 	}
 
