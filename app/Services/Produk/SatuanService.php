@@ -1,47 +1,39 @@
 <?php
 
-namespace App\Services\User;
+namespace App\Services\Produk;
 
 # DTO
 
-use App\DataTransferObjects\User\DetailSupplierDTO;
-use App\DataTransferObjects\User\PostSupplierDTO;
+use App\DataTransferObjects\Produk\DetailSatuanDTO;
+use App\DataTransferObjects\Produk\PostSatuanDTO;
 
 # Models
-use App\Models\Supplier;
+use App\Models\SatuanProduk;
 
-class SupplierService
+class SatuanService
 {
-	public function create(PostSupplierDTO $supplierDTO): Supplier
+	public function create(PostSatuanDTO $satuanDTO): SatuanProduk
 	{
-		$supplier = new Supplier;
-		$supplier->kode = $supplierDTO->kode;
-		$supplier->nama = $supplierDTO->nama;
-		$supplier->nomor_hp = $supplierDTO->nomor_hp;
-		$supplier->alamat = $supplierDTO->alamat;
-		$supplier->keterangan = $supplierDTO->keterangan;
-		$supplier->tanggal = date('Y-m-d');
-		$supplier->save();
+		$satuan = new SatuanProduk;
+		$satuan->nama = $satuanDTO->nama;
+		$satuan->save();
 
-		return $supplier;
+		return $satuan;
 	}
 
-	public function update(PostSupplierDTO $supplierDTO): Supplier
+	public function update(PostSatuanDTO $satuanDTO): SatuanProduk
 	{
-		$supplier = Supplier::find($supplierDTO->id_supplier);
-		$supplier->nama = $supplierDTO->nama;
-		$supplier->nomor_hp = $supplierDTO->nomor_hp;
-		$supplier->alamat = $supplierDTO->alamat;
-		$supplier->keterangan = $supplierDTO->keterangan;
-		$supplier->save();
+		$satuan = SatuanProduk::find($satuanDTO->id_satuan);
+		$satuan->nama = $satuanDTO->nama;
+		$satuan->save();
 
-		return $supplier;
+		return $satuan;
 	}
 
-	public function destroy(DetailSupplierDTO $supplierDTO): bool
+	public function destroy(DetailSatuanDTO $satuanDTO): bool
 	{
-		$supplier = Supplier::find($supplierDTO->id_supplier);
-		if ($supplier && $supplier->delete()) {
+		$satuan = SatuanProduk::find($satuanDTO->id_satuan);
+		if ($satuan && $satuan->delete()) {
 			return true;
 		}
 		return false;

@@ -79,7 +79,7 @@
 		const data = new FormData($("#form-data-satuan")[0])
 
 		const response = await postRequest("{{route('dataMaster.produk.satuan.store')}}", data)
-
+// return
 		if (jQuery.inArray(response.status, [200, 201]) === -1) {
 			await Swal.fire({
 				icon: 'warning',

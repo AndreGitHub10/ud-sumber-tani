@@ -107,12 +107,13 @@
 				}).then(async (res) => {
 					if(res.value === true){
 						const response = await postRequest("{{route('dataMaster.produk.satuan.destroy')}}", {id_satuan: $this.data('id')})
-						
-						if (response.status !== 200) {
+						code = response.status
+
+						if (code !== 200) {
 							await Swal.fire({
 								icon: 'warning',
 								title: 'Whoops..',
-								text: response.data.message,
+								text: code !== 204 ? response.data.message : 'Data tidak ditemukan, silahkan reload halaman terlebih dahulu!',
 								allowOutsideClick: false,
 								allowEscapeKey: false,
 								hideClass: fadeOutUp,

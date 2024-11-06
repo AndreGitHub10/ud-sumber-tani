@@ -208,14 +208,14 @@
 					<hr/>
 					<form id="form-data-user">
 						<div class="row mb-3">
-							<label for="inputName" class="col-sm-3 col-form-label">Nama</label>
+							<label for="inputName" class="col-sm-3 col-form-label">Nama <span class="text-danger">*)</span></label>
 							<div class="col-sm-9">
-								<input type="hidden" class="form-control" id="user-id" name="id" value="{{ $user->id ?? '' }}">
+								<input type="hidden" class="form-control" id="user-id" name="id_user" value="{{ $user->id ?? '' }}">
 								<input type="text" class="form-control" id="inputName" name="name" placeholder="Masukkan Nama" value="{{ $user->name ?? '' }}">
 							</div>
 						</div>
 						<div class="row mb-3">
-							<label for="inputLevel" class="col-sm-3 col-form-label">Level User</label>
+							<label for="inputLevel" class="col-sm-3 col-form-label">Level User <span class="text-danger">*)</span></label>
 							<div class="col-sm-9">
 								<select class="single-select" id="inputLevel" name="level">
 									<option selected disabled>--PILIH OPSI--</option>
@@ -226,7 +226,7 @@
 							</div>
 						</div>
 						<div class="row mb-3">
-							<label for="inputUsername" class="col-sm-3 col-form-label">Username</label>
+							<label for="inputUsername" class="col-sm-3 col-form-label">Username <span class="text-danger">*)</span></label>
 							<div class="col-sm-9">
 								<input class="form-control" id="inputUsername" name="username" placeholder="Masukkan Username" value="{{ $user->username ?? '' }}">
 							</div>
@@ -238,9 +238,11 @@
 							</div>
 						</div>
 						<div class="row mb-5">
-							<label for="inputPassword" class="col-sm-3 col-form-label">Password</label>
+							<label for="inputPassword" class="col-sm-3 col-form-label">Password {!!$user ? '' : '<span class="text-danger">*)</span>'!!}</label>
 							<div class="col-sm-9">
-								<input type="password" class="form-control" id="inputPassword" name="password" placeholder="Masukkan Password">
+								<div class="input-group input-group-md" id="show_hide_password">
+									<input type="password" class="form-control" id="inputPassword" name="password" placeholder="Masukkan Password" autocomplete="new-password"> <a href="javascript:;" class="input-group-text bg-transparent"><i class='bx bx-hide'></i></a>
+								</div>
 							</div>
 						</div>
 						<div class="row">
@@ -271,6 +273,19 @@
 		@if($user)
 			$("#inputLevel").val("{{$user->level}}").trigger('change')
 		@endif
+
+		$("#show_hide_password a").on('click', function (event) {
+			event.preventDefault()
+			if ($('#show_hide_password input').attr("type") == "text") {
+				$('#show_hide_password input').attr('type', 'password')
+				$('#show_hide_password i').addClass("bx-hide")
+				$('#show_hide_password i').removeClass("bx-show")
+			} else if ($('#show_hide_password input').attr("type") == "password") {
+				$('#show_hide_password input').attr('type', 'text')
+				$('#show_hide_password i').removeClass("bx-hide")
+				$('#show_hide_password i').addClass("bx-show")
+			}
+		})
 	})
 
 	$('.single-select').select2({

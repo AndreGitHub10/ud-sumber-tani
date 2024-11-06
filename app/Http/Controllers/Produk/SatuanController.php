@@ -7,21 +7,29 @@ use Illuminate\Http\Request;
 use DataTables;
 # DTO
 use App\DataTransferObjects\Produk\DetailSatuanDTO;
+use App\DataTransferObjects\Produk\PostSatuanDTO;
 use App\DataTransferObjects\Response\ResponseAxiosDTO;
 # Form request
 use App\Http\Requests\Produk\PostSatuanRequest;
 # Models
-use App\Models\Satuan;
+use App\Models\SatuanProduk;
+# Services
+use App\Services\Produk\SatuanService;
 
 class SatuanController extends Controller
 {
-	public function __construct()
+	private SatuanService $satuanService;
+
+	public function __construct(
+		SatuanService $satuanService
+	)
 	{
+		$this->satuanService = $satuanService;
 	}
 
 	public function datatables(Request $request)
 	{
-		return DataTables::of(Satuan::all())
+		return DataTables::of(SatuanProduk::all())
 			->addIndexColumn()
 			->addColumn('action', function($item) {
 				return "
@@ -38,8 +46,28 @@ class SatuanController extends Controller
 			->toJson();
 	}
 
-	public function destroy(Request $request)
+	public function destroy(DetailSatuanDTO $data)
 	{
+		// return $data;
+		// return self::$satuanService->destroy($data);
+		// return $this->satuanService->destroy($data);
+		// if (!$this->satuanService->destroy($data)) {
+		// 	return response()->json(ResponseAxiosDTO::fromArray([
+		// 		'code' => 500,
+		// 		'message' => 'Data gagal dihapus',
+		// 	]), 500);
+		// }
+		if ($data->res_code === 200 && !$this->satuanService->destroy($data)) {
+			return response()->json(ResponseAxiosDTO::fromArray([
+				'code' => 500,
+				'message' => 'Data gagal dihapus',
+			]), 500);
+		}
+
+		return response()->json(ResponseAxiosDTO::fromArray([
+			'code' => $data->res_code,
+			'message' => $data->res_message,
+		]), $data->res_code);
 	}
 
 	public function form(Request $request)
@@ -63,7 +91,18 @@ class SatuanController extends Controller
 		return view('contents.data-master.produk.satuan.main');
 	}
 
-	public function store(PostSatuanRequest $request)
+	public function store(PostSatuanDTO $data)
 	{
+		if (!$data->id_satuan) {
+			$satuan = $this->satuanService->create($data);
+		} else {
+			$satuan = $this->satuanService->update($data);
+		}	
+
+		return response()->json(ResponseAxiosDTO::fromArray([
+			'code' => $data->res_code,
+			'message' => $data->res_message,
+			'response' => $satuan,
+		]), $data->res_code);
 	}
 }

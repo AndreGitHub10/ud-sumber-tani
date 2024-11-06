@@ -1,47 +1,47 @@
 <?php
 
-namespace App\Services\User;
+namespace App\Services\Produk;
 
 # DTO
 
-use App\DataTransferObjects\User\DetailSupplierDTO;
-use App\DataTransferObjects\User\PostSupplierDTO;
+use App\DataTransferObjects\Produk\DetailKategoriDTO;
+use App\DataTransferObjects\Produk\PostKategoriDTO;
 
 # Models
-use App\Models\Supplier;
+use App\Models\KategoriProduk;
 
-class SupplierService
+class KategoriService
 {
-	public function create(PostSupplierDTO $supplierDTO): Supplier
+	public function create(PostKategoriDTO $postKategoriDTO): KategoriProduk
 	{
-		$supplier = new Supplier;
-		$supplier->kode = $supplierDTO->kode;
-		$supplier->nama = $supplierDTO->nama;
-		$supplier->nomor_hp = $supplierDTO->nomor_hp;
-		$supplier->alamat = $supplierDTO->alamat;
-		$supplier->keterangan = $supplierDTO->keterangan;
-		$supplier->tanggal = date('Y-m-d');
-		$supplier->save();
+		$kategori = new KategoriProduk;
+		$kategori->kode = $postKategoriDTO->kode;
+		$kategori->nama = $postKategoriDTO->nama;
+		$kategori->nomor_hp = $postKategoriDTO->nomor_hp;
+		$kategori->alamat = $postKategoriDTO->alamat;
+		$kategori->keterangan = $postKategoriDTO->keterangan;
+		$kategori->tanggal = date('Y-m-d');
+		$kategori->save();
 
-		return $supplier;
+		return $kategori;
 	}
 
-	public function update(PostSupplierDTO $supplierDTO): Supplier
+	public function update(PostKategoriDTO $postKategoriDTO): KategoriProduk
 	{
-		$supplier = Supplier::find($supplierDTO->id_supplier);
-		$supplier->nama = $supplierDTO->nama;
-		$supplier->nomor_hp = $supplierDTO->nomor_hp;
-		$supplier->alamat = $supplierDTO->alamat;
-		$supplier->keterangan = $supplierDTO->keterangan;
-		$supplier->save();
+		$kategori = KategoriProduk::find($postKategoriDTO->id_kategori);
+		$kategori->nama = $postKategoriDTO->nama;
+		$kategori->nomor_hp = $postKategoriDTO->nomor_hp;
+		$kategori->alamat = $postKategoriDTO->alamat;
+		$kategori->keterangan = $postKategoriDTO->keterangan;
+		$kategori->save();
 
-		return $supplier;
+		return $kategori;
 	}
 
-	public function destroy(DetailSupplierDTO $supplierDTO): bool
+	public function destroy(DetailKategoriDTO $postKategoriDTO): bool
 	{
-		$supplier = Supplier::find($supplierDTO->id_supplier);
-		if ($supplier && $supplier->delete()) {
+		$kategori = KategoriProduk::find($postKategoriDTO->id_kategori);
+		if ($kategori && $kategori->delete()) {
 			return true;
 		}
 		return false;

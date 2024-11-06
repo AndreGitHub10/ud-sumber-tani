@@ -59,18 +59,26 @@
 	<script src="{{asset('assets/plugins/datatable/js/dataTables.bootstrap5.min.js')}}"></script>
 
 	<script src="{{asset('assets/plugins/select2/js/select2.min.js')}}"></script>
+	{{-- <script type="modul" src="{{asset('components/components.js')}}">
+		$(".btn-delete-user").click((e)=>{
+		})
+	</script> --}}
 
 	<script>
-		$(document).ready(function() {
-			datatablePengguna()
+		$(async () => {
+			// initModul() in "scripts.main"
+			module = await initModul()
+			console.log(module)
 
+			datatablePengguna()
 		})
+
 		function initButton(){
 			$(".btn-edit-user").click(async (e) => {
 				let $this = $(e.currentTarget)
 				$this.attr('disabled', true)
 
-				let response = await postRequest("{{route('dataMaster.pengguna.form')}}", {user: $this.data('id')})
+				let response = await postRequest("{{route('dataMaster.pengguna.form')}}", {id_user: $this.data('id')})
 				if (response.status !== 200) {
 					$this.attr('disabled', false)
 					Swal.fire({
@@ -91,49 +99,74 @@
 			})
 
 			$(".btn-delete-user").click(async (e) => {
+				// module.swal.success({text: 'response.data.message'})
+				// return
 				let $this = $(e.currentTarget)
 				$this.attr('disabled', true)
-				Swal.fire({
-					title: 'Apakah anda yakin?',
-					text: 'Data yang sudah dihapus tidak dapat dikembalikan!',
-					icon: 'warning',
-					showClass: fadeInDown,
-					showCancelButton: true,
-					confirmButtonColor: '#F64E60',
-					// cancelButtonColor: '#F3F6F9',
-					confirmButtonText: 'Ya, hapus',
-					cancelButtonText: 'Batal',
-					allowOutsideClick: false,
-					allowEscapeKey: false
-				}).then(async (res) => {
-					if(res.value === true){
-						const response = await postRequest("{{route('dataMaster.pengguna.destroy')}}", {id: $this.data('id')})
-						
-						if (response.status !== 200) {
-							await Swal.fire({
-								icon: 'warning',
-								title: 'Whoops..',
-								text: response.data.message,
-								allowOutsideClick: false,
-								allowEscapeKey: false,
-								hideClass: fadeOutUp,
+
+				module.swal.confirm().then(async (e) => {
+					if (e.value) {
+						const response = await postRequest("{{route('dataMaster.pengguna.destroy')}}", {id_user: $this.data('id')})
+						code = response.status
+
+						if (code !== 200) {
+							await module.swal.warning({
+								text: code !== 204 ? response.data.message : 'Data tidak ditemukan, silahkan reload halaman terlebih dahulu!'
 							})
 							$this.attr('disabled', false)
 							return
 						}
 
-						await Swal.fire({
-							icon: 'success',
-							title: response.data.message,
-							showConfirmButton: false,
-							timer: 900,
-							hideClass: fadeOutUp,
-						})
+						await module.swal.success({text: response.data.message})
 
 						datatablePengguna()
 					}
+
 					$this.attr('disabled', false)
 				})
+
+				// Swal.fire({
+				// 	title: 'Apakah anda yakin?',
+				// 	text: 'Data yang sudah dihapus tidak dapat dikembalikan!',
+				// 	icon: 'warning',
+				// 	showClass: fadeInDown,
+				// 	showCancelButton: true,
+				// 	confirmButtonColor: '#F64E60',
+				// 	// cancelButtonColor: '#F3F6F9',
+				// 	confirmButtonText: 'Ya, hapus',
+				// 	cancelButtonText: 'Batal',
+				// 	allowOutsideClick: false,
+				// 	allowEscapeKey: false
+				// }).then(async (res) => {
+				// 	if(res.value === true){
+				// 		const response = await postRequest("{{route('dataMaster.pengguna.destroy')}}", {id_user: $this.data('id')})
+				// 		code = response.status
+
+				// 		if (code !== 200) {
+				// 			await Swal.fire({
+				// 				icon: 'warning',
+				// 				title: 'Whoops..',
+				// 				text: code !== 204 ? response.data.message : 'Data tidak ditemukan, silahkan reload halaman terlebih dahulu!',
+				// 				allowOutsideClick: false,
+				// 				allowEscapeKey: false,
+				// 				hideClass: fadeOutUp,
+				// 			})
+				// 			$this.attr('disabled', false)
+				// 			return
+				// 		}
+
+				// 		await Swal.fire({
+				// 			icon: 'success',
+				// 			title: response.data.message,
+				// 			showConfirmButton: false,
+				// 			timer: 900,
+				// 			hideClass: fadeOutUp,
+				// 		})
+
+				// 		datatablePengguna()
+				// 	}
+				// 	$this.attr('disabled', false)
+				// })
 			})
 		}
 

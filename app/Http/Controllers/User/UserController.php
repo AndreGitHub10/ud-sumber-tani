@@ -52,7 +52,7 @@ class UserController extends Controller
 
 	public function destroy(DetailUserDTO $data)
 	{
-		if (!$this->userService->destroy($data)) {
+		if ($data->res_code === 200 && !$this->userService->destroy($data)) {
 			return response()->json(ResponseAxiosDTO::fromArray([
 				'code' => 500,
 				'message' => 'Data gagal dihapus',
@@ -60,9 +60,9 @@ class UserController extends Controller
 		}
 
 		return response()->json(ResponseAxiosDTO::fromArray([
-			'code' => 200,
-			'message' => 'Data berhasil dihapus',
-		]), 200);
+			'code' => $data->res_code,
+			'message' => $data->res_message,
+		]), $data->res_code);
 	}
 
 	public function form(Request $request)
@@ -88,18 +88,16 @@ class UserController extends Controller
 
 	public function store(PostUserDTO $data)
 	{
-		if ($data->id) {
+		if ($data->id_user) {
 			$user = $this->userService->update($data);
-			$code = 200;
 		} else {
 			$user = $this->userService->create($data);
-			$code = 201;
 		}
 
 		return response()->json(ResponseAxiosDTO::fromArray([
-			'code' => $code,
-			'message' => 'Data berhasil disimpan',
+			'code' => $data->res_code,
+			'message' => $data->res_message,
 			'response' => $user,
-		]), $code);
+		]), $data->res_code);
 	}
 }

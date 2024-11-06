@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Services\User;
+namespace App\Services\Produk;
 
 # DTO
 
-use App\DataTransferObjects\User\DetailSupplierDTO;
-use App\DataTransferObjects\User\PostSupplierDTO;
+use App\DataTransferObjects\Produk\DetailDataDTO;
+use App\DataTransferObjects\Produk\PostDataDTO;
 
 # Models
-use App\Models\Supplier;
+use App\Models\DataProduk;
 
 class DataService
 {
-	public function create(PostSupplierDTO $supplierDTO): Supplier
+	public function create(PostDataDTO $supplierDTO): DataProduk
 	{
-		$supplier = new Supplier;
+		$supplier = new DataProduk;
 		$supplier->kode = $supplierDTO->kode;
 		$supplier->nama = $supplierDTO->nama;
 		$supplier->nomor_hp = $supplierDTO->nomor_hp;
@@ -26,9 +26,9 @@ class DataService
 		return $supplier;
 	}
 
-	public function update(PostSupplierDTO $supplierDTO): Supplier
+	public function update(PostDataDTO $supplierDTO): DataProduk
 	{
-		$supplier = Supplier::find($supplierDTO->id_supplier);
+		$supplier = DataProduk::find($supplierDTO->id_supplier);
 		$supplier->nama = $supplierDTO->nama;
 		$supplier->nomor_hp = $supplierDTO->nomor_hp;
 		$supplier->alamat = $supplierDTO->alamat;
@@ -38,9 +38,9 @@ class DataService
 		return $supplier;
 	}
 
-	public function destroy(DetailSupplierDTO $supplierDTO): bool
+	public function destroy(DetailDataDTO $supplierDTO): bool
 	{
-		$supplier = Supplier::find($supplierDTO->id_supplier);
+		$supplier = DataProduk::find($supplierDTO->id_supplier);
 		if ($supplier && $supplier->delete()) {
 			return true;
 		}
