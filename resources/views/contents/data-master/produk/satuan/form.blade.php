@@ -79,27 +79,21 @@
 		const data = new FormData($("#form-data-satuan")[0])
 
 		const response = await postRequest("{{route('dataMaster.produk.satuan.store')}}", data)
-// return
+
 		if (jQuery.inArray(response.status, [200, 201]) === -1) {
-			await Swal.fire({
-				icon: 'warning',
-				title: 'Whoops..',
+			await module.swal.warning({
 				text: response.data.message,
-				allowOutsideClick: false,
-				allowEscapeKey: false,
-				hideClass: fadeOutUp,
+				hideClass: module.var_swal.fadeOutUp,
 			})
-			$this.attr('disabled', false)
-			return
+
+			return $this.attr('disabled', false)
 		}
 
-		await Swal.fire({
-			icon: 'success',
+		await module.swal.success({
 			title: response.data.message,
-			showConfirmButton: false,
-			timer: 900,
-			showClass: fadeInDown,
-			hideClass: fadeOutUp,
+			text: '',
+			showClass: module.var_swal.fadeInDown,
+			hideClass: module.var_swal.fadeOutUp,
 		})
 		
 		$this.attr('disabled', false)

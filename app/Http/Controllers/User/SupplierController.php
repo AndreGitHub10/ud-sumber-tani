@@ -86,26 +86,25 @@ class SupplierController extends Controller
 
 	public function store(PostSupplierRequest $request)
 	{
+		if (!Generate::kodeSupplier($request)) {
+			return response()->json(ResponseAxiosDTO::fromArray([
+				'code' => 500,
+				'message' => 'Generate kode gagal, silahkan coba lagi!',
+			]), 500);
+		}
+		$request->merge(['kode' => $request->res_kode_supplier]);
+
+		$data = PostSupplierDTO::fromRequest($request);
 		if ($request->id_supplier) {
-			$supplier = $this->supplierService->update(PostSupplierDTO::fromRequest($request));
-			$code = 200;
+			$supplier = $this->supplierService->update($data);
 		} else {
-			if (!Generate::kodeSupplier($request)) {
-				return response()->json(ResponseAxiosDTO::fromArray([
-					'code' => 500,
-					'message' => 'Generate kode gagal, silahkan coba lagi!',
-				]), 500);
-			}
-	
-			$request->merge(['kode' => $request->res_kode_supplier]);
-			$supplier = $this->supplierService->create(PostSupplierDTO::fromRequest($request));
-			$code = 201;
+			$supplier = $this->supplierService->create($data);
 		}
 
 		return response()->json(ResponseAxiosDTO::fromArray([
-			'code' => $code,
-			'message' => 'Data berhasil disimpan',
+			'code' => $data->res_code,
+			'message' => $data->res_message,
 			'response' => $supplier,
-		]), $code);
+		]), $data->res_code);
 	}
 }

@@ -5,18 +5,14 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use DataTables;
-
 # DTO
 use App\DataTransferObjects\Response\ResponseAxiosDTO;
 use App\DataTransferObjects\User\DetailUserDTO;
 use App\DataTransferObjects\User\PostUserDTO;
-
 # Form request
 use App\Http\Requests\User\PostUserRequest;
-
 # Models
 use App\Models\Auth\User;
-
 # Services
 use App\Services\User\UserService;
 

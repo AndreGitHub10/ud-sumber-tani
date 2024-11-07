@@ -14,6 +14,7 @@
 <script src="{{asset('requestor/axios.js')}}"></script>
 
 <script>
+	// Declar module variable
 	let module
 	async function initModul(){
 		const master = await import('/components/master.js')

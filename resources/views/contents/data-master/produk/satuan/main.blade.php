@@ -60,27 +60,29 @@
 	<script src="{{asset('assets/plugins/select2/js/select2.min.js')}}"></script>
 
 	<script>
-		$(document).ready(function() {
+		$(async () => {
+			// initModul() in "scripts.main.blade.php"
+			module = await initModul()
+			console.log(module)
+
 			datatableSatuan()
 
 		})
+
 		function initButton(){
 			$(".btn-edit-satuan").click(async (e) => {
 				let $this = $(e.currentTarget)
 				$this.attr('disabled', true)
 
-				let response = await postRequest("{{route('dataMaster.produk.satuan.form')}}", {satuan: $this.data('id')})
+				let response = await postRequest("{{route('dataMaster.produk.satuan.form')}}", {id_satuan: $this.data('id')})
+
 				if (response.status !== 200) {
-					$this.attr('disabled', false)
-					Swal.fire({
-						icon: 'warning',
-						title: 'Whoops..',
+					await module.swal.warning({
 						text: response.data.message,
-						allowOutsideClick: false,
-						allowEscapeKey: false,
-						hideClass: fadeOutUp,
+						hideClass: module.var_animasi.fadeOutUp,
 					})
-					return
+
+					return $this.attr('disabled', false)
 				}
 
 				$("#main-page").hide('slow', function () {
@@ -92,42 +94,23 @@
 			$(".btn-delete-satuan").click(async (e) => {
 				let $this = $(e.currentTarget)
 				$this.attr('disabled', true)
-				Swal.fire({
-					title: 'Apakah anda yakin?',
-					text: 'Data yang sudah dihapus tidak dapat dikembalikan!',
-					icon: 'warning',
-					showClass: fadeInDown,
-					showCancelButton: true,
-					confirmButtonColor: '#F64E60',
-					// cancelButtonColor: '#F3F6F9',
-					confirmButtonText: 'Ya, hapus',
-					cancelButtonText: 'Batal',
-					allowOutsideClick: false,
-					allowEscapeKey: false
-				}).then(async (res) => {
-					if(res.value === true){
+
+				module.swal.confirm().then(async (e) => {
+					if(e.value === true){
 						const response = await postRequest("{{route('dataMaster.produk.satuan.destroy')}}", {id_satuan: $this.data('id')})
 						code = response.status
 
 						if (code !== 200) {
-							await Swal.fire({
-								icon: 'warning',
-								title: 'Whoops..',
-								text: code !== 204 ? response.data.message : 'Data tidak ditemukan, silahkan reload halaman terlebih dahulu!',
-								allowOutsideClick: false,
-								allowEscapeKey: false,
-								hideClass: fadeOutUp,
+							await module.swal.warning({
+								text: code !== 204 ? response.data.message : 'Data tidak ditemukan, silahkan reload halaman terlebih dahulu!'
 							})
-							$this.attr('disabled', false)
-							return
+
+							return $this.attr('disabled', false)
 						}
 
-						await Swal.fire({
-							icon: 'success',
-							title: response.data.message,
-							showConfirmButton: false,
-							timer: 900,
-							hideClass: fadeOutUp,
+						await module.swal.success({
+							text: response.data.message,
+							hideClass: module.var_swal.fadeOutUp,
 						})
 
 						datatableSatuan()
@@ -141,17 +124,14 @@
 			const $this = $(e.currentTarget)
 			$this.attr('disabled', true)
 			let response = await postRequest("{{route('dataMaster.produk.satuan.form')}}")
+
 			if (response.status !== 200) {
-				$this.attr('disabled', false)
-				Swal.fire({
-					icon: 'warning',
-					title: 'Whoops..',
+				await module.swal.warning({
 					text: response.data.message,
-					allowOutsideClick: false,
-					allowEscapeKey: false,
-					hideClass: fadeOutUp,
+					hideClass: module.var_swal.fadeOutUp,
 				})
-				return
+
+				return $this.attr('disabled', false)
 			}
 
 			$("#main-page").hide('slow', function () {

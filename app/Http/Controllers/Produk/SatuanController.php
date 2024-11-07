@@ -72,7 +72,7 @@ class SatuanController extends Controller
 
 	public function form(Request $request)
 	{
-		$data = DetailSatuanDTO::fromRequest($request)->toArray();
+		return$data = DetailSatuanDTO::fromRequest($request)->toArray();
 		$data['satuan'] = $data['satuan'] !== null ? (object)$data['satuan'] : "";
 
 		$content = view('contents.data-master.produk.satuan.form')->with($data)->render();
