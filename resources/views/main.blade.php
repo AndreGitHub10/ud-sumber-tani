@@ -1,10 +1,11 @@
 <!doctype html>
-<html lang="en" class="color-sidebar sidebarcolor3">
+<html lang="en" class="color-sidebar sidebarcolor2">
 
 <head>
 	{{-- Required meta tags --}}
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="csrf-token" content="{{ csrf_token() }}">
 
 	<title>UD Sumber Tani</title>
 
