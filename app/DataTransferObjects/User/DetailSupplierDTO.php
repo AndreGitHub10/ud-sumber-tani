@@ -12,12 +12,28 @@ use App\Models\Supplier;
 final class DetailSupplierDTO extends DataTransferObject
 {
 	public function __construct(
+		#[WithDefaultValue(200)]
+		public int $res_code,
+
+		#[WithDefaultValue('Ok')]
+		public string $res_message,
+
+		#[WithDefaultValue(false)]
+		public bool $is_destroy,
+
 		public ?int $id_supplier = null,
 
 		#[BindModel(using: 'id')]
 		#[WithDefaultValue(Supplier::class)]
 		public Supplier|null $supplier = null,
 	) {
-		// 
+		if ($is_destroy) {
+			$this->res_message = 'Data berhasil dihapus';
+		}
+
+		if ($id_supplier && !$supplier) {
+			$this->res_code = 204;
+			$this->res_message = 'Data tidak ditemukan';
+		}
 	}
 }

@@ -50,17 +50,12 @@ class SupplierController extends Controller
 
 	public function destroy(DetailSupplierDTO $data)
 	{
-		if (!$this->supplierService->destroy($data)) {
-			return response()->json(ResponseAxiosDTO::fromArray([
-				'code' => 500,
-				'message' => 'Data gagal dihapus',
-			]), 500);
-		}
+		$this->supplierService->destroy($data);
 
 		return response()->json(ResponseAxiosDTO::fromArray([
-			'code' => 200,
-			'message' => 'Data berhasil dihapus',
-		]), 200);
+			'code' => $data->res_code,
+			'message' => $data->res_message,
+		]), $data->res_code);
 	}
 
 	public function form(Request $request)
@@ -70,13 +65,11 @@ class SupplierController extends Controller
 
 		$content = view('contents.data-master.supplier.form')->with($data)->render();
 
-		$dto = ResponseAxiosDTO::fromArray([
-			'code' => 200,
-			'message' => 'Ok',
+		return response()->json(ResponseAxiosDTO::fromArray([
+			'code' => $data['res_code'],
+			'message' => $data['res_message'],
 			'response' => $content,
-		]);
-
-		return response()->json($dto, $dto->code);
+		]), $data['res_code']);
 	}
 
 	public function main(Request $request)

@@ -32,10 +32,16 @@ class SatuanService
 
 	public function destroy(DetailSatuanDTO $satuanDTO): bool
 	{
-		$satuan = SatuanProduk::find($satuanDTO->id_satuan);
-		if ($satuan && $satuan->delete()) {
+		if ($satuanDTO->res_code === 204) {
+			return false;
+		}
+
+		if ($satuanDTO->satuan->delete()) {
 			return true;
 		}
+
+		$satuanDTO->res_code = 500;
+		$satuanDTO->res_message = 'Data gagal dihapus';
 		return false;
 	}
 }

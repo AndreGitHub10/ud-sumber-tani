@@ -74,7 +74,7 @@
 				let $this = $(e.currentTarget)
 				$this.attr('disabled', true)
 
-				let response = await postRequest("{{route('dataMaster.produk.satuan.form')}}", {id_satuan: $this.data('id')})
+				let response = await postRequest("{{route('dataMaster.produk.satuan.form')}}", {id_satuan: $this.data('id'), satuan: $this.data('id')})
 
 				if (response.status !== 200) {
 					await module.swal.warning({
@@ -93,11 +93,12 @@
 
 			$(".btn-delete-satuan").click(async (e) => {
 				let $this = $(e.currentTarget)
+				const id = $this.data('id')
 				$this.attr('disabled', true)
 
 				module.swal.confirm().then(async (e) => {
 					if(e.value === true){
-						const response = await postRequest("{{route('dataMaster.produk.satuan.destroy')}}", {id_satuan: $this.data('id')})
+						const response = await postRequest("{{route('dataMaster.produk.satuan.destroy')}}", {id_satuan: id, satuan: id, is_destroy: true})
 						code = response.status
 
 						if (code !== 200) {
