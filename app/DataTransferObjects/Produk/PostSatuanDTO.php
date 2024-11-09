@@ -3,8 +3,6 @@
 namespace App\DataTransferObjects\Produk;
 
 use OpenSoutheners\LaravelDto\DataTransferObject;
-
-use Illuminate\Http\Request;
 use OpenSoutheners\LaravelDto\Contracts\ValidatedDataTransferObject;
 use OpenSoutheners\LaravelDto\Attributes\WithDefaultValue;
 # Form request
@@ -31,7 +29,7 @@ final class PostSatuanDTO extends DataTransferObject implements ValidatedDataTra
 			$this->res_message = 'Data berhasil diperbarui';
 		}
 
-        $this->nama = strtolower($this->nama);
+		$this->nama = strtolower($this->nama);
 	}
 	// public function __construct(
 	// 	#[WithDefaultValue(201)]

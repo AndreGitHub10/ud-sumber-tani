@@ -2,7 +2,6 @@
 
 namespace App\DataTransferObjects\Produk;
 
-use Illuminate\Http\Request;
 use OpenSoutheners\LaravelDto\DataTransferObject;
 use OpenSoutheners\LaravelDto\Attributes\WithDefaultValue;
 # Models

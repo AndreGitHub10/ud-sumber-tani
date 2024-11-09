@@ -9,8 +9,6 @@ use DataTables;
 use App\DataTransferObjects\Produk\DetailSatuanDTO;
 use App\DataTransferObjects\Produk\PostSatuanDTO;
 use App\DataTransferObjects\Response\ResponseAxiosDTO;
-# Form request
-use App\Http\Requests\Produk\PostSatuanRequest;
 # Models
 use App\Models\SatuanProduk;
 # Services
@@ -58,16 +56,15 @@ class SatuanController extends Controller
 
 	public function form(Request $request)
 	{
-		$data = DetailSatuanDTO::fromRequest($request)->toArray();
-		$data['satuan'] = $data['satuan'] !== null ? (object)$data['satuan'] : "";
+		$data = DetailSatuanDTO::fromRequest($request);
 
-		$content = view('contents.data-master.produk.satuan.form')->with($data)->render();
+		$content = view('contents.data-master.produk.satuan.form', ['satuan' => $data->satuan])->render();
 
 		return response()->json(ResponseAxiosDTO::fromArray([
-			'code' => $data['res_code'],
-			'message' => $data['res_message'],
+			'code' => $data->res_code,
+			'message' => $data->res_message,
 			'response' => $content,
-		]), $data['res_code']);
+		]), $data->res_code);
 	}
 	
 	public function main(Request $request)
@@ -82,7 +79,7 @@ class SatuanController extends Controller
 				$satuan = $this->satuanService->create($data);
 			} else {
 				$satuan = $this->satuanService->update($data);
-			}	
+			}
 	
 			return response()->json(ResponseAxiosDTO::fromArray([
 				'code' => $data->res_code,

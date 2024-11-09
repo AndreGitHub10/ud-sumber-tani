@@ -25,7 +25,11 @@ class PostKategoriRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'nama' => 'required'
+			'nama' => 'required',
+
+			# value "nullable" berfungsi untuk menjaga key supaya bisa ditangkap/diakses di __construct DTO
+			'id_kategori' => 'nullable',
+			'model_kategori' => 'nullable',
 		];
 	}
 
