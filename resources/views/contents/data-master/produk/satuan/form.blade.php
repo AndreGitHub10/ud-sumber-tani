@@ -30,7 +30,7 @@
 						<div class="row mb-5">
 							<label for="inputName" class="col-sm-3 col-form-label">Nama Satuan</label>
 							<div class="col-sm-9">
-								<input type="hidden" class="form-control" id="satuan-id" name="id_satuan" value="{{ $satuan->id ?? '' }}">
+								<input type="hidden" class="form-control" id="id-satuan" name="id_satuan" value="{{ $satuan->id ?? '' }}">
 								<input type="hidden" class="form-control" id="model-satuan" name="model_satuan" value="{{ $satuan->id ?? '' }}">
 								<input type="text" class="form-control" id="inputName" name="nama" placeholder="Masukkan Nama Satuan" value="{{ $satuan->nama ?? '' }}">
 							</div>

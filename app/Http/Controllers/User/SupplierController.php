@@ -60,16 +60,15 @@ class SupplierController extends Controller
 
 	public function form(Request $request)
 	{
-		$data = DetailSupplierDTO::fromRequest($request)->toArray();
-		$data['supplier'] = $data['supplier'] !== null ? (object)$data['supplier'] : "";
+		$data = DetailSupplierDTO::fromRequest($request);
 
-		$content = view('contents.data-master.supplier.form')->with($data)->render();
+		$content = view('contents.data-master.supplier.form', ['modelSupplier' => $data->model_supplier])->render();
 
 		return response()->json(ResponseAxiosDTO::fromArray([
-			'code' => $data['res_code'],
-			'message' => $data['res_message'],
+			'code' => $data->res_code,
+			'message' => $data->res_message,
 			'response' => $content,
-		]), $data['res_code']);
+		]), $data->res_code);
 	}
 
 	public function main(Request $request)

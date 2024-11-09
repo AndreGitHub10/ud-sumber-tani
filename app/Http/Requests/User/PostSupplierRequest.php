@@ -25,7 +25,10 @@ class PostSupplierRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'nama' => ['required', 'string', 'min:3']
+			'nama' => ['required', 'string', 'min:3'],
+
+			# value "nullable" berfungsi untuk menjaga key supaya bisa ditangkap/diakses di __construct DTO
+			'model_supplier' => 'nullable',
 		];
 	}
 

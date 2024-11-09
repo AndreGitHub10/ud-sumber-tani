@@ -1,7 +1,6 @@
 @extends('main')
 
 @push('styles')
-	{{-- <link href="{{asset('assets/plugins/highcharts/css/highcharts.css')}}" rel="stylesheet" /> --}}
 	<link href="{{asset('assets/plugins/datatable/css/dataTables.bootstrap5.min.css')}}" rel="stylesheet" />
 	
 	<link href="{{asset('assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet" />
@@ -18,7 +17,8 @@
 					<ol class="breadcrumb mb-0 p-0">
 						<li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a>
 						</li>
-						<li class="breadcrumb-item active" aria-current="page">Supplier</li>
+						<li class="breadcrumb-item active" aria-current="page">Produk</li>
+						<li class="breadcrumb-item active" aria-current="page">Data</li>
 					</ol>
 				</nav>
 			</div>
@@ -28,20 +28,21 @@
 		<div class="card">
 			<div class="card-header">
 				<div class="col-12">
-					<button type="button" class="btn btn-primary px-3" id="add-new-supplier">
-						<i class="fadeIn animated bx bx-plus"></i>Tambah Supplier Baru
+					<button type="button" class="btn btn-primary px-3" id="add-new-data">
+						<i class="fadeIn animated bx bx-plus"></i>Tambah Data Baru
 					</button>
 				</div>
 			</div>
 			<div class="card-body">
 				<div class="table-responsive">
-					<table id="datatable-supplier" class="table table-striped table-bordered" style="width:100%">
+					<table id="datatable-data" class="table table-striped table-bordered" style="width:100%">
 						<thead>
 							<tr>
 								<th>No</th>
 								<th>Kode</th>
 								<th>Nama</th>
-								<th>Alamat</th>
+								<th>Satuan</th>
+								<th>Kategori</th>
 								<th>Action</th>
 							</tr>
 						</thead>
@@ -66,24 +67,24 @@
 			module = await initModul()
 			console.log(module)
 
-			datatableSupplier()
+			datatableDataProduk()
 
 		})
 
 		function initButton(){
-			$(".btn-edit-supplier").click(async (e) => {
+			$(".btn-edit-data").click(async (e) => {
 				let $this = $(e.currentTarget)
-				const id = $this.data('id')
+                const id = this.data('id')
 				$this.attr('disabled', true)
 
-				let response = await postRequest("{{route('dataMaster.supplier.form')}}", {id_supplier: id, model_supplier: id})
+				let response = await postRequest("{{route('dataMaster.produk.data.form')}}", {id_data_produk: id, data_produk: id})
 
 				if (response.status !== 200) {
 					await module.swal.warning({
 						text: response.data.message,
 						hideClass: module.var_animasi.fadeOutUp,
 					})
-	
+
 					return $this.attr('disabled', false)
 				}
 
@@ -93,14 +94,14 @@
 				})
 			})
 
-			$(".btn-delete-supplier").click(async (e) => {
+			$(".btn-delete-data").click(async (e) => {
 				let $this = $(e.currentTarget)
 				const id = $this.data('id')
 				$this.attr('disabled', true)
 
 				module.swal.confirm().then(async (e) => {
 					if(e.value === true){
-						const response = await postRequest("{{route('dataMaster.supplier.destroy')}}", {id_supplier: id, model_supplier: id, is_destroy: true})
+						const response = await postRequest("{{route('dataMaster.produk.data.destroy')}}", {id_data_produk: id, data_produk: id, is_destroy: true})
 						code = response.status
 
 						if (code !== 200) {
@@ -116,17 +117,17 @@
 							hideClass: module.var_swal.fadeOutUp,
 						})
 
-						datatableSupplier()
+						datatableDataProduk()
 					}
 					$this.attr('disabled', false)
 				})
 			})
 		}
 
-		$("#add-new-supplier").click(async (e) => {
+		$("#add-new-data").click(async (e) => {
 			const $this = $(e.currentTarget)
 			$this.attr('disabled', true)
-			let response = await postRequest("{{route('dataMaster.supplier.form')}}")
+			let response = await postRequest("{{route('dataMaster.produk.data.form')}}")
 
 			if (response.status !== 200) {
 				await module.swal.warning({
@@ -143,8 +144,8 @@
 			})
 		})
 
-		async function datatableSupplier(){
-			await $('#datatable-supplier').dataTable({
+		async function datatableDataProduk(){
+			await $('#datatable-data').dataTable({
 				scrollX: true,
 				bPaginate: true,
 				bFilter: true,
@@ -156,14 +157,15 @@
 					targets: 0
 				}],
 				ajax: {
-					url:"{{route('dataMaster.supplier.datatables')}}",
+					url:"{{route('dataMaster.produk.data.datatables')}}",
 					type: 'post',
 				},
 				columns: [
 					{data: 'DT_RowIndex', name: 'DT_RowIndex'},
-					{data: 'kode', name: 'kode'},
-					{data: 'nama', name: 'nama'},
-					{data: 'alamat', name: 'alamat'},
+					{data: 'kode_produk', name: 'kode_produk'},
+					{data: 'kode_produk', name: 'kode_produk'},
+					{data: 'kode_produk', name: 'kode_produk'},
+					{data: 'kode_produk', name: 'kode_produk'},
 					{data: 'action', name: 'action'}
 				],
 				initComplete: function (settings, json) {

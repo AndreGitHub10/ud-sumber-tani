@@ -8,6 +8,7 @@ use App\Http\Middleware\Authenticate;
 # Controllers
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Produk\DataController;
 use App\Http\Controllers\Produk\KategoriController;
 use App\Http\Controllers\Produk\SatuanController;
 use App\Http\Controllers\User\SupplierController;
@@ -37,46 +38,50 @@ Route::middleware(Authenticate::class)->group(function () {
 	->group(function () {
 		Route::prefix('produk')->as('produk.')
 		->group(function () {
-			Route::prefix('data')->as('data.')
+			Route::controller(DataController::class)->prefix('data')->as('data.')
 			->group(function () {
-				Route::get('/', [DashboardController::class, 'main'])->name('main');
+				Route::get('/', 'main')->name('main');
+				Route::post('form', 'form')->name('form');
+				Route::post('datatables', 'datatables')->name('datatables');
+				Route::post('destroy', 'destroy')->name('destroy');
+				Route::post('store', 'store')->name('store');
 			});
 
-			Route::prefix('kategori')->as('kategori.')
+			Route::controller(KategoriController::class)->prefix('kategori')->as('kategori.')
 			->group(function () {
-				Route::get('/', [KategoriController::class, 'main'])->name('main');
-				Route::post('form', [KategoriController::class, 'form'])->name('form');
-				Route::post('datatables', [KategoriController::class, 'datatables'])->name('datatables');
-				Route::post('destroy', [KategoriController::class, 'destroy'])->name('destroy');
-				Route::post('store', [KategoriController::class, 'store'])->name('store');
+				Route::get('/', 'main')->name('main');
+				Route::post('form', 'form')->name('form');
+				Route::post('datatables', 'datatables')->name('datatables');
+				Route::post('destroy', 'destroy')->name('destroy');
+				Route::post('store', 'store')->name('store');
 			});
 
-			Route::prefix('satuan')->as('satuan.')
+			Route::controller(SatuanController::class)->prefix('satuan')->as('satuan.')
 			->group(function () {
-				Route::get('/', [SatuanController::class, 'main'])->name('main');
-				Route::post('form', [SatuanController::class, 'form'])->name('form');
-				Route::post('datatables', [SatuanController::class, 'datatables'])->name('datatables');
-				Route::post('destroy', [SatuanController::class, 'destroy'])->name('destroy');
-				Route::post('store', [SatuanController::class, 'store'])->name('store');
+				Route::get('/', 'main')->name('main');
+				Route::post('form', 'form')->name('form');
+				Route::post('datatables', 'datatables')->name('datatables');
+				Route::post('destroy', 'destroy')->name('destroy');
+				Route::post('store', 'store')->name('store');
 			});
 		});
 
-		Route::prefix('supplier')->as('supplier.')
+		Route::controller(SupplierController::class)->prefix('supplier')->as('supplier.')
 		->group(function () {
-			Route::get('/', [SupplierController::class, 'main'])->name('main');
-			Route::post('form', [SupplierController::class, 'form'])->name('form');
-			Route::post('datatables', [SupplierController::class, 'datatables'])->name('datatables');
-			Route::post('destroy', [SupplierController::class, 'destroy'])->name('destroy');
-			Route::post('store', [SupplierController::class, 'store'])->name('store');
+			Route::get('/', 'main')->name('main');
+			Route::post('form', 'form')->name('form');
+			Route::post('datatables', 'datatables')->name('datatables');
+			Route::post('destroy', 'destroy')->name('destroy');
+			Route::post('store', 'store')->name('store');
 		});
 
-		Route::prefix('pengguna')->as('pengguna.')
+		Route::controller(UserController::class)->prefix('pengguna')->as('pengguna.')
 		->group(function () {
-			Route::get('/', [UserController::class, 'main'])->name('main');
-			Route::post('form', [UserController::class, 'form'])->name('form');
-			Route::post('datatables', [UserController::class, 'datatables'])->name('datatables');
-			Route::post('destroy', [UserController::class, 'destroy'])->name('destroy');
-			Route::post('store', [UserController::class, 'store'])->name('store');
+			Route::get('/', 'main')->name('main');
+			Route::post('form', 'form')->name('form');
+			Route::post('datatables', 'datatables')->name('datatables');
+			Route::post('destroy', 'destroy')->name('destroy');
+			Route::post('store', 'store')->name('store');
 		});
 	});
 

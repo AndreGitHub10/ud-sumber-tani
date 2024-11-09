@@ -222,7 +222,6 @@
 									<option value="admin">Admin</option>
 									<option value="kasir">Kasir</option>
 								</select>
-								{{-- <input type="text" class="form-control" id="inputLevel" placeholder="Phone No"> --}}
 							</div>
 						</div>
 						<div class="row mb-3">

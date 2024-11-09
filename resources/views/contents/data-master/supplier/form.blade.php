@@ -29,26 +29,26 @@
 						<div class="row mb-3">
 							<label for="inputNama" class="col-sm-3 col-form-label">Nama</label>
 							<div class="col-sm-9">
-								<input type="hidden" class="form-control" id="supplier-id" name="id_supplier" value="{{ $supplier->id ?? '' }}">
-								<input type="text" class="form-control" id="inputNama" name="nama" placeholder="Masukkan Nama" value="{{ $supplier->nama ?? '' }}">
+								<input type="hidden" class="form-control" id="id-supplier" name="id_supplier" value="{{ $modelSupplier->id ?? '' }}">
+								<input type="text" class="form-control" id="inputNama" name="nama" placeholder="Masukkan Nama" value="{{ $modelSupplier->nama ?? '' }}">
 							</div>
 						</div>
 						<div class="row mb-3">
 							<label for="inputNomorHp" class="col-sm-3 col-form-label">Nomor Hp</label>
 							<div class="col-sm-9">
-								<input type="number" class="form-control" id="inputNomorHp" name="nomor_hp" placeholder="Masukkan Nomor Hp" value="{{ $supplier->nomor_hp ?? '' }}">
+								<input type="number" class="form-control" id="inputNomorHp" name="nomor_hp" placeholder="Masukkan Nomor Hp" value="{{ $modelSupplier->nomor_hp ?? '' }}">
 							</div>
 						</div>
 						<div class="row mb-3">
 							<label for="inputAlamat" class="col-sm-3 col-form-label">Alamat</label>
 							<div class="col-sm-9">
-								<textarea class="form-control" id="inputAlamat" name="alamat" placeholder="Alamat..." rows="3">{{ $supplier->alamat ?? '' }}</textarea>
+								<textarea class="form-control" id="inputAlamat" name="alamat" placeholder="Alamat..." rows="3">{{ $modelSupplier->alamat ?? '' }}</textarea>
 							</div>
 						</div>
 						<div class="row mb-5">
 							<label for="inputKeterangan" class="col-sm-3 col-form-label">Keterangan</label>
 							<div class="col-sm-9">
-								<textarea class="form-control" id="inputKeterangan" name="keterangan" placeholder="Keterangan..." rows="3">{{ $supplier->keterangan ?? '' }}</textarea>
+								<textarea class="form-control" id="inputKeterangan" name="keterangan" placeholder="Keterangan..." rows="3">{{ $modelSupplier->keterangan ?? '' }}</textarea>
 							</div>
 						</div>
 						<div class="row">
