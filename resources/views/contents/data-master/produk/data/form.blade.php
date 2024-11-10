@@ -36,13 +36,17 @@
 							</div>
 						</div>
 						<div class="row mb-3">
-							<label for="inputKategoriProdukId" class="col-sm-3 col-form-label">Kategori</label>
+							<label for="inputKategori" class="col-sm-3 col-form-label">Kategori</label>
 							<div class="col-sm-9">
-								{{-- <select class="single-select" id="inputKategoriProdukId" name="kategori_produk_id"> --}}
-								<select class="single-select" id="inputKategoriProdukId" name="kategori_id">
+								<select class="single-select" id="inputKategori" name="kategori">
 									<option selected disabled>--PILIH OPSI--</option>
 									@foreach ($kategori ?? [] as $item)
-									<option value="{{$item->id}}">{{$item->nama}}</option>
+									<option
+										value="{{$item->id}}"
+										{{$dataProduk && $dataProduk->kategori_id === $item->id ? 'selected' : ''}}
+									>
+										{{$item->nama}}
+									</option>
 									@endforeach
 								</select>
 							</div>
@@ -93,12 +97,12 @@
 	$("#btn-save-form-data-produk").click(async (e) => {
 		e.preventDefault()
 		const $this = $(e.currentTarget)
-		// $this.attr('disabled', true)
+		$this.attr('disabled', true)
 
 		const data = new FormData($("#form-data-produk")[0])
 
 		const response = await postRequest("{{route('dataMaster.produk.data.store')}}", data)
-return
+
 		if (jQuery.inArray(response.status, [200, 201]) === -1) {
 			await module.swal.warning({
 				text: response.data.message,

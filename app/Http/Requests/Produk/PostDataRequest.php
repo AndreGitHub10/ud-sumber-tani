@@ -29,8 +29,10 @@ class PostDataRequest extends FormRequest
 			
 			# value "nullable" berfungsi untuk menjaga key supaya bisa ditangkap/diakses di __construct DTO
 			'id_data_produk' => 'nullable',
-			// 'kategori_produk_id' => ['nullable', 'integer'],
-			'kategori_id' => 'nullable',
+			'kategori' => ['nullable'],
+			'test' => ['nullable'],
+			'file_path' => ['nullable'],
+			'kode_produk' => ['nullable'],
 			'model_data_produk' => 'nullable',
 		];
 	}
@@ -43,7 +45,6 @@ class PostDataRequest extends FormRequest
 			'foto_directory.file' => 'Foto harus berupa file',
 			'foto_directory.mimes' => 'Format Foto: jpeg, jpg, png',
 			'foto_directory.max' => 'Ukuran Foto max: 2MB',
-			'kategori_id.nullable' => 'Ukuran Foto max: 2MB',
 		];
 	}
 

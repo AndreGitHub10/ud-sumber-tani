@@ -76,7 +76,7 @@
                 const id = $this.data('id')
 				$this.attr('disabled', true)
 
-				let response = await postRequest("{{route('dataMaster.produk.data.form')}}", {id_data_produk: id, data_produk: id})
+				let response = await postRequest("{{route('dataMaster.produk.data.form')}}", {id_data_produk: id, model_data_produk: id})
 
 				if (response.status !== 200) {
 					await module.swal.warning({
@@ -100,7 +100,7 @@
 
 				module.swal.confirm().then(async (e) => {
 					if(e.value === true){
-						const response = await postRequest("{{route('dataMaster.produk.data.destroy')}}", {id_data_produk: id, data_produk: id, is_destroy: true})
+						const response = await postRequest("{{route('dataMaster.produk.data.destroy')}}", {id_data_produk: id, model_data_produk: id, is_destroy: true})
 						code = response.status
 
 						if (code !== 200) {
