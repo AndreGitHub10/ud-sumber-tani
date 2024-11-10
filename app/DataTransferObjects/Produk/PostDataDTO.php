@@ -25,7 +25,7 @@ final class PostDataDTO extends DataTransferObject
 		public string $nama_produk,
 		public int|null $kategori,
 		public int|null $id_data_produk,
-		public DataProduk $model_data_produk,
+		public DataProduk|null $model_data_produk,
 	) {
 		date_default_timezone_set('Asia/Jakarta');
 		if ($id_data_produk) {
@@ -81,7 +81,7 @@ final class PostDataDTO extends DataTransferObject
 			$request->nama_produk ?? null,
 			$request->kategori ?? null,
 			$request->id_data_produk ?? null,
-            $isNew ? DataProduk::class : DataProduk::find($request->id_data_produk)
+			$isNew ? null : DataProduk::find($request->id_data_produk)
 		);
 	}
 }
