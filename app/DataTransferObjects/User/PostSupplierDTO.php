@@ -13,25 +13,32 @@ final class PostSupplierDTO extends DataTransferObject
 // final class PostSupplierDTO extends DataTransferObject implements ValidatedDataTransferObject
 {
 	public function __construct(
-		public string $kode,
-		public string $nama,
+		public int $res_code,
+		public string $res_message,
+        public string $nama,
+		public string|null $kode,
 		public string|null $nomor_hp,
 		public string|null $alamat,
 		public string|null $keterangan,
-		public int|null $id_supplier = null,
+		public int|null $id_supplier,
 	) {
 		// 
 	}
 
 	public static function fromRequest(Request $request): PostSupplierDTO
 	{
+		# $id_supplier ada, berarti data lama
+		$isNew = $request->id_supplier ? false : true;
+
 		return new self(
-			$request->input('kode'),
-			$request->input('nama'),
-			$request->input('nomor_hp') ?? null,
-			$request->input('alamat') ?? null,
-			$request->input('keterangan') ?? null,
-            $request->input('id_supplier') ?? null,
+			$isNew ? 201 : 200,
+			$isNew ? 'Data berhasil disimpan' : 'Data berhasil diperbarui',
+            $request->nama,
+			$request->kode ?? null,
+			$request->nomor_hp ?? null,
+			$request->alamat ?? null,
+			$request->keterangan ?? null,
+			$request->id_supplier ?? null,
 		);
 	}
 

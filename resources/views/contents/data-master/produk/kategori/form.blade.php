@@ -6,7 +6,8 @@
 			<ol class="breadcrumb mb-0 p-0">
 				<li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a>
 				</li>
-				<li class="breadcrumb-item active" aria-current="page">Form Supplier</li>
+                <li class="breadcrumb-item active" aria-current="page">Produk</li>
+				<li class="breadcrumb-item active" aria-current="page">Form Kategori</li>
 			</ol>
 		</nav>
 	</div>
@@ -15,40 +16,23 @@
 
 <!--end row-->
 <div class="row">
-	<div class="col-xl-9 mx-auto">
+	<div class="col-xl-10 mx-auto">
 		<div class="card border-top border-0 border-4 border-info">
 			<div class="card-body">
 				<div class="border p-4 rounded">
 					<div class="card-title d-flex align-items-center">
-						<div><i class="bx bxs-user me-1 font-22 text-info"></i>
+						<div><i class="bx bx-unite me-1 font-22 text-info"></i>
 						</div>
-						<h5 class="mb-0 text-info">Supplier</h5>
+						<h5 class="mb-0 text-info">Kategori</h5>
 					</div>
 					<hr/>
-					<form id="form-data-supplier">
-						<div class="row mb-3">
-							<label for="inputNama" class="col-sm-3 col-form-label">Nama</label>
-							<div class="col-sm-9">
-								<input type="hidden" class="form-control" id="id-supplier" name="id_supplier" value="{{ $modelSupplier->id ?? '' }}">
-								<input type="text" class="form-control" id="inputNama" name="nama" placeholder="Masukkan Nama" value="{{ $modelSupplier->nama ?? '' }}">
-							</div>
-						</div>
-						<div class="row mb-3">
-							<label for="inputNomorHp" class="col-sm-3 col-form-label">Nomor Hp</label>
-							<div class="col-sm-9">
-								<input type="number" class="form-control" id="inputNomorHp" name="nomor_hp" placeholder="Masukkan Nomor Hp" value="{{ $modelSupplier->nomor_hp ?? '' }}">
-							</div>
-						</div>
-						<div class="row mb-3">
-							<label for="inputAlamat" class="col-sm-3 col-form-label">Alamat</label>
-							<div class="col-sm-9">
-								<textarea class="form-control" id="inputAlamat" name="alamat" placeholder="Alamat..." rows="3">{{ $modelSupplier->alamat ?? '' }}</textarea>
-							</div>
-						</div>
+					<form id="form-data-kategori">
 						<div class="row mb-5">
-							<label for="inputKeterangan" class="col-sm-3 col-form-label">Keterangan</label>
+							<label for="inputName" class="col-sm-3 col-form-label">Nama Kategori</label>
 							<div class="col-sm-9">
-								<textarea class="form-control" id="inputKeterangan" name="keterangan" placeholder="Keterangan..." rows="3">{{ $modelSupplier->keterangan ?? '' }}</textarea>
+								<input type="hidden" class="form-control" id="kategori-id" name="id_kategori" value="{{ $kategori->id ?? '' }}">
+								<input type="hidden" class="form-control" id="model-kategori" name="model_kategori" value="{{ $kategori->id ?? '' }}">
+								<input type="text" class="form-control" id="inputName" name="nama" placeholder="Masukkan Nama Kategori" value="{{ $kategori->nama ?? '' }}">
 							</div>
 						</div>
 						<div class="row">
@@ -59,10 +43,10 @@
 									justify-content: space-between;
 								"
 							>
-								<button type="button" class="btn btn-secondary px-3" id="btn-back-form-supplier">
+								<button type="button" class="btn btn-sm btn-secondary px-3" id="btn-back-form-kategori">
 									<i class="fadeIn animated bx bx-left-arrow"></i> Kembali
 								</button>
-								<button class="btn btn-info px-5" id="btn-save-form-supplier">Simpan</button>
+								<button class="btn btn-sm btn-info px-4" id="btn-save-form-kategori">Simpan</button>
 							</div>
 						</div>
 					</form>
@@ -81,21 +65,21 @@
 		allowClear: Boolean($(this).data('allow-clear')),
 	});
 	
-	$("#btn-back-form-supplier").click((e) => {
+	$("#btn-back-form-kategori").click((e) => {
 		$("#other-page").hide('slow', function () {
 			$("#main-page").fadeIn()
 			$("#other-page").empty()
 		})
 	})
 
-	$("#btn-save-form-supplier").click(async (e) => {
+	$("#btn-save-form-kategori").click(async (e) => {
 		e.preventDefault()
 		const $this = $(e.currentTarget)
 		$this.attr('disabled', true)
 
-		const data = new FormData($("#form-data-supplier")[0])
+		const data = new FormData($("#form-data-kategori")[0])
 
-		const response = await postRequest("{{route('dataMaster.supplier.store')}}", data)
+		const response = await postRequest("{{route('dataMaster.produk.kategori.store')}}", data)
 
 		if (jQuery.inArray(response.status, [200, 201]) === -1) {
 			await module.swal.warning({
@@ -112,13 +96,13 @@
 			showClass: module.var_swal.fadeInDown,
 			hideClass: module.var_swal.fadeOutUp,
 		})
-		
+
 		$this.attr('disabled', false)
 
 		$("#other-page").hide('slow', async function () {
 			await $("#main-page").fadeIn()
 			await $("#other-page").empty()
-			datatableSupplier()
+			datatableKategori()
 		})
 
 	})

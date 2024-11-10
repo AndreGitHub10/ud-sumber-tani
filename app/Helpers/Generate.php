@@ -4,6 +4,7 @@ namespace App\Helpers;
 use DB;
 # Models
 use App\Models\Supplier;
+use App\Models\DataProduk;
 
 class Generate{
 	public function __construct()
@@ -38,6 +39,36 @@ class Generate{
 			return $request->merge([
 				'res_kode_supplier' => $nextKode
 			]);
+		} catch (\Throwable $e) {
+			return false;
+		}
+	}
+
+	public static function kodeProduk()
+	{
+		$timestamps = strtotime('now');
+		$prefix = date('ym').'PDK';
+		$length = strlen($prefix);
+		$digitQuery = $length + 1;
+		$digit = 3;
+		$num = 1;
+
+		try {
+			$getKode = DataProduk::whereYear('created_at', date('Y', $timestamps))
+				->whereMonth('created_at', date('m', $timestamps))
+				->lockForUpdate()
+				->orderBy(DB::raw("CONVERT(SUBSTRING(kode_produk, $digitQuery), SIGNED INTEGER)"), 'DESC')
+				->first();
+			if ($getKode) {
+				$nextKode = $getKode->kode_produk;
+				$digit = strlen($nextKode) - $length;
+				$num = ((int) substr($nextKode, -$digit)) + 1;
+			}
+	
+			$angkaKode = sprintf("%0$digit"."d", $num);
+			$nextKode = "$prefix$angkaKode";
+
+            return $nextKode;
 		} catch (\Throwable $e) {
 			return false;
 		}

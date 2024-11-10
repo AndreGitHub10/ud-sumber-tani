@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Requests\User;
+namespace App\Http\Requests\Produk;
 
 use Illuminate\Foundation\Http\FormRequest;
 
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
 
-class PostUserRequest extends FormRequest
+class PostSatuanRequest extends FormRequest
 {
 	/**
 	 * Determine if the user is authorized to make this request.
@@ -25,28 +25,18 @@ class PostUserRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'name' => ['required', 'string', 'min:3'],
-			'level' => ['required', 'string', 'in:admin,kasir'],
-			'username' => ['required', 'min:3'],
-			'password' => ['required_without:id_user'],
+			'nama' => 'required',
+
+			# value "nullable" berfungsi untuk menjaga key supaya bisa ditangkap/diakses di __construct DTO
+			'id_satuan' => 'nullable',
+			'model_satuan' => 'nullable',
 		];
 	}
 
 	public function messages(): array
 	{
 		return [
-			'name.required' => 'Nama Wajib diisi',
-			'name.string' => 'Harus berupa text',
-			'name.min' => 'Nama min. 3 karakter',
-
-			'level.required' => 'Level Wajib diisi',
-			'level.string' => 'Harus berupa text',
-			'level.in' => 'Level tidak valid',
-
-			'username.required' => 'Username Wajib diisi',
-			'username.min' => 'Username min. 3 karakter',
-
-			'password.required_without' => 'Password Wajib diisi',
+			'nama.required' => 'Nama Satuan Wajib diisi',
 		];
 	}
 	

@@ -12,20 +12,13 @@
 
 <script src="{{asset('requestor/axios.min.js')}}"></script>
 <script src="{{asset('requestor/axios.js')}}"></script>
+
 <script>
-	const fadeInDown = {
-		popup: `
-			animate__animated
-			animate__fadeInDown
-			animate__faster
-		`
-	}
-	const fadeOutUp = {
-		popup: `
-			animate__animated
-			animate__fadeOutUp
-			animate__faster
-		`
+	// Declar module variable
+	let module
+	async function initModul(){
+		const master = await import('/components/master.js')
+		return master
 	}
 
 	$.ajaxSetup({

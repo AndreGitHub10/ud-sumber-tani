@@ -6,7 +6,8 @@
 			<ol class="breadcrumb mb-0 p-0">
 				<li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a>
 				</li>
-				<li class="breadcrumb-item active" aria-current="page">Form Supplier</li>
+				<li class="breadcrumb-item active" aria-current="page">Produk</li>
+				<li class="breadcrumb-item active" aria-current="page">Form Data</li>
 			</ol>
 		</nav>
 	</div>
@@ -15,40 +16,45 @@
 
 <!--end row-->
 <div class="row">
-	<div class="col-xl-9 mx-auto">
+	<div class="col-xl-10 mx-auto">
 		<div class="card border-top border-0 border-4 border-info">
 			<div class="card-body">
 				<div class="border p-4 rounded">
 					<div class="card-title d-flex align-items-center">
-						<div><i class="bx bxs-user me-1 font-22 text-info"></i>
+						<div><i class="bx bx-data me-1 font-22 text-info"></i>
 						</div>
-						<h5 class="mb-0 text-info">Supplier</h5>
+						<h5 class="mb-0 text-info">Data</h5>
 					</div>
 					<hr/>
-					<form id="form-data-supplier">
+					<form id="form-data-produk">
 						<div class="row mb-3">
-							<label for="inputNama" class="col-sm-3 col-form-label">Nama</label>
+							<label for="inputName" class="col-sm-3 col-form-label">Nama Produk <span class="text-danger">*)</span></label>
 							<div class="col-sm-9">
-								<input type="hidden" class="form-control" id="id-supplier" name="id_supplier" value="{{ $modelSupplier->id ?? '' }}">
-								<input type="text" class="form-control" id="inputNama" name="nama" placeholder="Masukkan Nama" value="{{ $modelSupplier->nama ?? '' }}">
+								<input type="hidden" class="form-control" id="id-data-produk" name="id_data_produk" value="{{ $dataProduk->id ?? '' }}">
+								<input type="hidden" class="form-control" id="model-data-produk" name="model_data_produk" value="{{ $dataProduk->id ?? '' }}">
+								<input type="text" class="form-control" id="inputName" name="nama_produk" placeholder="Masukkan Nama Produk" value="{{ $dataProduk->nama_produk ?? '' }}">
 							</div>
 						</div>
 						<div class="row mb-3">
-							<label for="inputNomorHp" class="col-sm-3 col-form-label">Nomor Hp</label>
+							<label for="inputKategori" class="col-sm-3 col-form-label">Kategori</label>
 							<div class="col-sm-9">
-								<input type="number" class="form-control" id="inputNomorHp" name="nomor_hp" placeholder="Masukkan Nomor Hp" value="{{ $modelSupplier->nomor_hp ?? '' }}">
-							</div>
-						</div>
-						<div class="row mb-3">
-							<label for="inputAlamat" class="col-sm-3 col-form-label">Alamat</label>
-							<div class="col-sm-9">
-								<textarea class="form-control" id="inputAlamat" name="alamat" placeholder="Alamat..." rows="3">{{ $modelSupplier->alamat ?? '' }}</textarea>
+								<select class="single-select" id="inputKategori" name="kategori">
+									<option selected disabled>--PILIH OPSI--</option>
+									@foreach ($kategori ?? [] as $item)
+									<option
+										value="{{$item->id}}"
+										{{$dataProduk && $dataProduk->kategori_id === $item->id ? 'selected' : ''}}
+									>
+										{{$item->nama}}
+									</option>
+									@endforeach
+								</select>
 							</div>
 						</div>
 						<div class="row mb-5">
-							<label for="inputKeterangan" class="col-sm-3 col-form-label">Keterangan</label>
+							<label for="input-foto" class="col-sm-3 col-form-label">Foto</label>
 							<div class="col-sm-9">
-								<textarea class="form-control" id="inputKeterangan" name="keterangan" placeholder="Keterangan..." rows="3">{{ $modelSupplier->keterangan ?? '' }}</textarea>
+								<input type="file" class="form-control" id="input-foto" name="foto_directory">
 							</div>
 						</div>
 						<div class="row">
@@ -59,10 +65,10 @@
 									justify-content: space-between;
 								"
 							>
-								<button type="button" class="btn btn-secondary px-3" id="btn-back-form-supplier">
+								<button type="button" class="btn btn-sm btn-secondary px-3" id="btn-back-form-data-produk">
 									<i class="fadeIn animated bx bx-left-arrow"></i> Kembali
 								</button>
-								<button class="btn btn-info px-5" id="btn-save-form-supplier">Simpan</button>
+								<button class="btn btn-sm btn-info px-4" id="btn-save-form-data-produk">Simpan</button>
 							</div>
 						</div>
 					</form>
@@ -81,21 +87,21 @@
 		allowClear: Boolean($(this).data('allow-clear')),
 	});
 	
-	$("#btn-back-form-supplier").click((e) => {
+	$("#btn-back-form-data-produk").click((e) => {
 		$("#other-page").hide('slow', function () {
 			$("#main-page").fadeIn()
 			$("#other-page").empty()
 		})
 	})
 
-	$("#btn-save-form-supplier").click(async (e) => {
+	$("#btn-save-form-data-produk").click(async (e) => {
 		e.preventDefault()
 		const $this = $(e.currentTarget)
 		$this.attr('disabled', true)
 
-		const data = new FormData($("#form-data-supplier")[0])
+		const data = new FormData($("#form-data-produk")[0])
 
-		const response = await postRequest("{{route('dataMaster.supplier.store')}}", data)
+		const response = await postRequest("{{route('dataMaster.produk.data.store')}}", data)
 
 		if (jQuery.inArray(response.status, [200, 201]) === -1) {
 			await module.swal.warning({
@@ -118,7 +124,7 @@
 		$("#other-page").hide('slow', async function () {
 			await $("#main-page").fadeIn()
 			await $("#other-page").empty()
-			datatableSupplier()
+			datatableDataProduk()
 		})
 
 	})
