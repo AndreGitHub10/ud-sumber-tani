@@ -14,10 +14,9 @@ return new class extends Migration
 		Schema::create('data_produk', function (Blueprint $table) {
 			$table->id();
 			$table->string('kode_produk');
-			$table->integer('satuan_id');
-			$table->integer('kategori_id');
+			$table->integer('kategori_id')->nullable();
 			$table->string('nama_produk');
-			$table->text('foto_directory');
+			$table->text('foto_directory')->nullable();
 			$table->timestamps();
 		});
 	}

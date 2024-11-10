@@ -41,7 +41,6 @@
 								<th>No</th>
 								<th>Kode</th>
 								<th>Nama</th>
-								<th>Satuan</th>
 								<th>Kategori</th>
 								<th>Action</th>
 							</tr>
@@ -72,9 +71,9 @@
 		})
 
 		function initButton(){
-			$(".btn-edit-data").click(async (e) => {
+			$(".btn-edit-data-produk").click(async (e) => {
 				let $this = $(e.currentTarget)
-                const id = this.data('id')
+                const id = $this.data('id')
 				$this.attr('disabled', true)
 
 				let response = await postRequest("{{route('dataMaster.produk.data.form')}}", {id_data_produk: id, data_produk: id})
@@ -94,7 +93,7 @@
 				})
 			})
 
-			$(".btn-delete-data").click(async (e) => {
+			$(".btn-delete-data-produk").click(async (e) => {
 				let $this = $(e.currentTarget)
 				const id = $this.data('id')
 				$this.attr('disabled', true)
@@ -163,9 +162,8 @@
 				columns: [
 					{data: 'DT_RowIndex', name: 'DT_RowIndex'},
 					{data: 'kode_produk', name: 'kode_produk'},
-					{data: 'kode_produk', name: 'kode_produk'},
-					{data: 'kode_produk', name: 'kode_produk'},
-					{data: 'kode_produk', name: 'kode_produk'},
+					{data: 'nama_produk', name: 'nama_produk'},
+					{data: 'kategori.nama', name: 'kategori.nama'},
 					{data: 'action', name: 'action'}
 				],
 				initComplete: function (settings, json) {
