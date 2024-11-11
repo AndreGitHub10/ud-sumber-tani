@@ -17,7 +17,7 @@
 	// Declar module variable
 	let module
 	async function initModul(){
-		const master = await import('/components/master.js')
+		const master = await import("{{url('/components/master.js')}}")
 		return master
 	}
 
