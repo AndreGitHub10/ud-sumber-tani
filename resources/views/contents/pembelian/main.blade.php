@@ -6,6 +6,12 @@
 	
 	<link href="{{asset('assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet" />
 	<link href="{{asset('assets/plugins/select2/css/select2-bootstrap4.css')}}" rel="stylesheet" />
+    <style>
+		.show-alert{
+			border: 1px solid red !important;
+			border-radius: 5px;
+		}
+    </style>
 @endpush
 
 @section('content')

@@ -230,11 +230,13 @@
 								<input type="date" class="form-control" id="inputFirstName">
 							</div>
 						</div>
+
 						<hr class="mb-4"/>
-						<div class="row g-3 mb-4">
+
+						<div class="row g-3 mb-4 container-input-produk">
 							<div class="col-md-6">
 								<label for="input-produk" class="form-label">Nama Produk</label>
-								<select class="single-select" id="input-produk" name="level">
+								<select class="single-select validation" id="input-produk" name="level">
 									<option selected disabled>--PILIH OPSI--</option>
 									@foreach ($produk ?? [] as $item)
 									<option value="{{$item->id}}">{{$item->kode_produk}} - {{strtoupper($item->nama_produk)}}</option>
@@ -243,8 +245,8 @@
 							</div>
 							<div class="col-md-6">
 								<label for="input-satuan" class="form-label">Satuan</label>
-								<select class="single-select" id="input-satuan" name="satuan_id">
-									<option selected disabled>--PILIH OPSI--</option>
+								<select class="single-select validation" id="input-satuan" name="satuan_id">
+									<option selected disabled value="">--PILIH OPSI--</option>
 									@foreach ($satuan ?? [] as $item)
 									<option value="{{$item->id}}">{{strtoupper($item->nama)}}</option>
 									@endforeach
@@ -252,19 +254,19 @@
 							</div>
 							<div class="col-md-6">
 								<label for="input-jumlah" class="form-label">Jumlah</label>
-								<input type="text" class="form-control" id="input-jumlah" placeholder="Masukkkan Jumlah Produk" name="jumlah">
+								<input type="text" class="form-control validation" id="input-jumlah" placeholder="Masukkkan Jumlah Produk" name="jumlah">
 							</div>
 							<div class="col-md-6">
 								<label for="input-tanggal-kedaluwarsa" class="form-label">Tanggal Kedaluwarsa</label>
-								<input type="date" class="form-control" id="input-tanggal-kedaluwarsa" name="tanggal_kedaluwarsa">
+								<input type="date" class="form-control validation" id="input-tanggal-kedaluwarsa" name="tanggal_kedaluwarsa">
 							</div>
 							<div class="col-md-6">
-								<label for="input-harga-beli" class="form-label">Harga Beli</label>
-								<input type="text" class="form-control" id="input-harga-beli" placeholder="Masukkan Harga Beli" name="harga_beli">
+								<label for="input-harga-beli" class="form-label">Harga Beli Per-Item</label>
+								<input type="text" class="form-control validation" id="input-harga-beli" placeholder="Masukkan Harga Beli" name="harga_beli">
 							</div>
 							<div class="col-md-6">
 								<label for="input-harga-jual" class="form-label">Harga Jual</label>
-								<input type="text" class="form-control" id="input-harga-jual" placeholder="Masukkan Harga Jual" name="harga_jual">
+								<input type="text" class="form-control validation" id="input-harga-jual" placeholder="Masukkan Harga Jual" name="harga_jual">
 							</div>
 
 						{{-- <div class="row mb-3">
@@ -334,19 +336,28 @@
 							<thead>
 								<tr>
 									<th scope="col">Nama Produk</th>
+									<th scope="col">Harga Per-Item</th>
 									<th scope="col">Jumlah</th>
-									<th scope="col">Last</th>
-									<th scope="col">Handle</th>
-									<th scope="col">Aksi</th>
+									<th scope="col">Total Harga</th>
+									<th scope="col" class="text-center">Aksi</th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr>
-									<td>1</td>
-									<td>Mark</td>
-									<td>Otto</td>
-									<td>@mdo</td>
-									<td>@mdo</td>
+									<td>2411PDK001 - PUPUK KOMPOS (PCS)</td>
+									<td>Rp. 10.000</td>
+									<td class='text-center'>10</td>
+									<td>Rp. 100.000</td>
+									<td>
+										<div class='text-center'>
+											<button type='button' class='btn btn-sm btn-danger px-2 btn-remove-pembelian' data-id='$item->id' title="Hapus">
+												<i class='fadeIn animated bx bx-trash'></i>
+											</button>
+											<button type='button' class='btn btn-sm btn-warning px-2 btn-modify-pembelian' data-id='$item->id' title="Edit">
+												<i class='fadeIn animated bx bx-pencil'></i>
+											</button>
+										</div>
+									</td>
 								</tr>
 							</tbody>
 						</table>
@@ -459,6 +470,61 @@
 <!--end row-->
 
 <script>
+	// function ubahFormat(v) {
+	// 	// loopPajak();
+	// 	// hitungHargaJual();
+	// 	$(v).val(formatRupiah(v.value, "Rp. "));
+	// }
+
+	$(".container-input-produk input").on('keyup', (e) => {
+		const $this = $(e.currentTarget)
+		if ($this.val()) {
+			$this.removeClass('show-alert')
+		}
+	}).on('change', (e) => {
+		const $this = $(e.currentTarget)
+		if ($this.val()) {
+			$this.removeClass('show-alert')
+		}
+	})
+
+	$("#btn-append-pembelian").click(async (e) => {
+		e.preventDefault()
+		let {message, text} = ""
+
+		// await $(".container-input-produk input").each(function (idx) {
+		await $(".container-input-produk .validation").each(function (idx) {
+			// console.log($(this)[0].id)
+
+			// console.log($(this).length)
+			// console.log($(this).val() == null)
+			// console.log($(this).val())
+			// console.log($(this).val() === (null || ""))
+			// if ($(this).val() == "") {
+			console.log(!$(this).val())
+			if (!$(this).val()) {
+				$(this).addClass('show-alert')
+				text = $(this)[0].id.replace(/-/g, ' ').replace(/input /g, '')
+			}
+		})
+
+		// await $(".container-input-produk select").each(function (idx) {
+		// 	if (!$(this).val()) {
+		// 		$(this).addClass('show-alert')
+		// 		text = $(this)[0].id.replace(/-/g, ' ').replace(/input /g, '')
+		// 	}
+		// })
+	})
+
+	$("#input-harga-beli").setRules('0-9').on('keyup', (e)=>{
+		$this = $(e.currentTarget)
+		$this.val(module.formatter.formatRupiah($this.val(), 'Rp. '))
+	})
+	$("#input-harga-jual").setRules('0-9').on('keyup', (e)=>{
+		$this = $(e.currentTarget)
+		$this.val(module.formatter.formatRupiah($this.val(), 'Rp. '))
+	})
+
 	$('.single-select').select2({
 		theme: 'bootstrap4',
 		width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
