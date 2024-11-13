@@ -6,12 +6,12 @@
 	
 	<link href="{{asset('assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet" />
 	<link href="{{asset('assets/plugins/select2/css/select2-bootstrap4.css')}}" rel="stylesheet" />
-    <style>
+	<style>
 		.show-alert{
 			border: 1px solid red !important;
 			border-radius: 5px;
 		}
-    </style>
+	</style>
 @endpush
 
 @section('content')
@@ -24,7 +24,6 @@
 					<ol class="breadcrumb mb-0 p-0">
 						<li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a>
 						</li>
-						{{-- <li class="breadcrumb-item active" aria-current="page">Pengguna</li> --}}
 					</ol>
 				</nav>
 			</div>
@@ -41,7 +40,7 @@
 			</div>
 			<div class="card-body">
 				<div class="table-responsive">
-					<table id="datatable-pengguna" class="table table-striped table-bordered" style="width:100%">
+					<table id="datatable-pembelian" class="table table-striped table-bordered" style="width:100%">
 						<thead>
 							<tr>
 								<th>No</th>
@@ -73,15 +72,16 @@
 			module = await initModul()
 			console.log(module)
 
-			datatablePengguna()
+			datatablePembelian()
 		})
 
 		function initButton(){
 			$(".btn-edit-pembelian").click(async (e) => {
 				let $this = $(e.currentTarget)
+				return module.swal.warning({text: 'Masih tahap pengembangan!'})
 				$this.attr('disabled', true)
 
-				let response = await postRequest("{{route('dataMaster.pengguna.form')}}", {id_user: $this.data('id')})
+				let response = await postRequest("{{route('pembelian.form')}}", {id_user: $this.data('id')})
 				
 				if (response.status !== 200) {
 					await module.swal.warning({
@@ -100,11 +100,12 @@
 
 			$(".btn-delete-pembelian").click(async (e) => {
 				let $this = $(e.currentTarget)
+				return module.swal.warning({text: 'Masih tahap pengembangan!'})
 				$this.attr('disabled', true)
 
 				module.swal.confirm().then(async (e) => {
 					if (e.value) {
-						const response = await postRequest("{{route('dataMaster.pengguna.destroy')}}", {id_user: $this.data('id')})
+						const response = await postRequest("{{route('pembelian.destroy')}}", {id_user: $this.data('id')})
 						code = response.status
 
 						if (code !== 200) {
@@ -120,7 +121,7 @@
 							hideClass: module.var_swal.fadeOutUp,
 						})
 
-						datatablePengguna()
+						datatablePembelian()
 					}
 					$this.attr('disabled', false)
 				})
@@ -147,8 +148,8 @@
 			})
 		})
 
-		async function datatablePengguna(){
-			await $('#datatable-pengguna').dataTable({
+		async function datatablePembelian(){
+			await $('#datatable-pembelian').dataTable({
 				scrollX: true,
 				bPaginate: true,
 				bFilter: true,
@@ -160,15 +161,17 @@
 					targets: 0
 				}],
 				ajax: {
-					url:"{{route('dataMaster.pengguna.datatables')}}",
+					url:"{{route('pembelian.datatables')}}",
 					type: 'post',
 				},
 				columns: [
 					{data: 'DT_RowIndex', name: 'DT_RowIndex'},
-					{data: 'name', name: 'name'},
-					{data: 'level', name: 'level'},
-					{data: 'username', name: 'username'},
-					{data: 'username', name: 'username'},
+					{data: 'nomor_invoice', name: 'nomor_invoice'},
+					{data: 'total_harga', name: 'total_harga', render: function(data, type, row) {
+						return module.formatter.formatRupiah(data, 'Rp. ')
+					}},
+					{data: 'tanggal', name: 'tanggal'},
+					{data: 'supplier.nama', name: 'supplier.nama'},
 					{data: 'action', name: 'action'}
 				],
 				initComplete: function (settings, json) {
