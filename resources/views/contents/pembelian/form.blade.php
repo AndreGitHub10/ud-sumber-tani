@@ -235,9 +235,9 @@
 
 						<div class="row g-3 mb-4 container-input-produk">
 							<div class="col-md-6">
-								<label for="input-produk" class="form-label">Nama Produk</label>
-								<select class="single-select validation" id="input-produk" name="level">
-									<option selected disabled>--PILIH OPSI--</option>
+								<label for="input-nama-produk" class="form-label">Nama Produk</label>
+								<select class="single-select validation" id="input-nama-produk" name="level">
+									<option selected readonly value="">--PILIH OPSI--</option>
 									@foreach ($produk ?? [] as $item)
 									<option value="{{$item->id}}">{{$item->kode_produk}} - {{strtoupper($item->nama_produk)}}</option>
 									@endforeach
@@ -246,7 +246,7 @@
 							<div class="col-md-6">
 								<label for="input-satuan" class="form-label">Satuan</label>
 								<select class="single-select validation" id="input-satuan" name="satuan_id">
-									<option selected disabled value="">--PILIH OPSI--</option>
+									<option selected readonly value="">--PILIH OPSI--</option>
 									@foreach ($satuan ?? [] as $item)
 									<option value="{{$item->id}}">{{strtoupper($item->nama)}}</option>
 									@endforeach
@@ -342,24 +342,7 @@
 									<th scope="col" class="text-center">Aksi</th>
 								</tr>
 							</thead>
-							<tbody>
-								<tr>
-									<td>2411PDK001 - PUPUK KOMPOS (PCS)</td>
-									<td>Rp. 10.000</td>
-									<td class='text-center'>10</td>
-									<td>Rp. 100.000</td>
-									<td>
-										<div class='text-center'>
-											<button type='button' class='btn btn-sm btn-danger px-2 btn-remove-pembelian' data-id='$item->id' title="Hapus">
-												<i class='fadeIn animated bx bx-trash'></i>
-											</button>
-											<button type='button' class='btn btn-sm btn-warning px-2 btn-modify-pembelian' data-id='$item->id' title="Edit">
-												<i class='fadeIn animated bx bx-pencil'></i>
-											</button>
-										</div>
-									</td>
-								</tr>
-							</tbody>
+							<tbody id="container-produk"></tbody>
 						</table>
 					</div>
 				</div>
@@ -476,7 +459,7 @@
 	// 	$(v).val(formatRupiah(v.value, "Rp. "));
 	// }
 
-	$(".container-input-produk input").on('keyup', (e) => {
+	$(".container-input-produk input, .container-input-produk .validation").on('keyup', (e) => {
 		const $this = $(e.currentTarget)
 		if ($this.val()) {
 			$this.removeClass('show-alert')
@@ -485,6 +468,7 @@
 		const $this = $(e.currentTarget)
 		if ($this.val()) {
 			$this.removeClass('show-alert')
+			$this.siblings(".select2-container").removeClass('show-alert')
 		}
 	})
 
@@ -492,30 +476,47 @@
 		e.preventDefault()
 		let {message, text} = ""
 
-		// await $(".container-input-produk input").each(function (idx) {
+		// Validasi sebelum append produk
 		await $(".container-input-produk .validation").each(function (idx) {
-			// console.log($(this)[0].id)
-
-			// console.log($(this).length)
-			// console.log($(this).val() == null)
-			// console.log($(this).val())
-			// console.log($(this).val() === (null || ""))
-			// if ($(this).val() == "") {
-			console.log(!$(this).val())
 			if (!$(this).val()) {
 				$(this).addClass('show-alert')
-				text = $(this)[0].id.replace(/-/g, ' ').replace(/input /g, '')
+				$(this).siblings(".select2-container").addClass('show-alert')
+				if (!text) {
+					text = $(this)[0].id.replace(/-/g, ' ').replace(/input /g, '')
+					text = `${text[0].toUpperCase()}${text.slice(1)} wajib diisi!`
+				};
 			}
 		})
 
-		// await $(".container-input-produk select").each(function (idx) {
-		// 	if (!$(this).val()) {
-		// 		$(this).addClass('show-alert')
-		// 		text = $(this)[0].id.replace(/-/g, ' ').replace(/input /g, '')
-		// 	}
-		// })
+		if (text) {
+			return module.swal.warning({text: text})
+		} else {
+			console.log('tidak ada pesan')
+		}
+		
+		// let namaProduk = $("#input-nama-produk").val()
+		// let namaProduk = $("#nama-produk")
+		// let html = `
+		// 	<tr>
+		// 		<td>2411PDK001 - PUPUK KOMPOS (PCS)</td>
+		// 		<td>Rp. 10.000</td>
+		// 		<td class='text-center'>10</td>
+		// 		<td>Rp. 100.000</td>
+		// 		<td>
+		// 			<div class='text-center'>
+		// 				<button type='button' class='btn btn-sm btn-danger px-2 btn-remove-pembelian' data-id='$item->id' title="Hapus">
+		// 					<i class='fadeIn animated bx bx-trash'></i>
+		// 				</button>
+		// 				<button type='button' class='btn btn-sm btn-warning px-2 btn-modify-pembelian' data-id='$item->id' title="Edit">
+		// 					<i class='fadeIn animated bx bx-pencil'></i>
+		// 				</button>
+		// 			</div>
+		// 		</td>
+		// 	</tr>
+		// `
 	})
 
+	$("#input-jumlah").setRules('0-9')
 	$("#input-harga-beli").setRules('0-9').on('keyup', (e)=>{
 		$this = $(e.currentTarget)
 		$this.val(module.formatter.formatRupiah($this.val(), 'Rp. '))
@@ -531,7 +532,7 @@
 		placeholder: $(this).data('placeholder'),
 		allowClear: Boolean($(this).data('allow-clear')),
 	});
-	
+
 	$("#btn-back-form-pembelian").click((e) => {
 		$("#other-page").hide('slow', function () {
 			$("#main-page").fadeIn()
