@@ -1,6 +1,9 @@
+import parse from "./parse.js"
+
 const func_formatter = {
 	formatRupiah(angka, prefix){
-		let number_string = angka.toString().replace(/[^,\d]/g, "")
+		// let number_string = angka.toString().replace(/[^,\d]/g, "")
+		let number_string = parse.onlyNumber(angka)
 
 		let split = number_string.split(",")
 		let sisa = split[0].length % 3

@@ -74,8 +74,10 @@ class PembelianController extends Controller
 		return view('contents.pembelian.main');
 	}
 
-	public function store(PostKategoriDTO $data)
+	// public function store(PostKategoriDTO $data)
+	public function store(Request $data)
 	{
+        return $data->all();
 		try {
 			if (!$data->id_kategori) {
 				$kategori = $this->kategoriService->create($data);

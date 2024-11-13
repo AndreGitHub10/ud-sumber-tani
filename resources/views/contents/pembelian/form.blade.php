@@ -206,7 +206,7 @@
 						<h5 class="mb-0 text-secondary">Pembelian</h5>
 					</div>
 					<hr class="mb-4"/>
-					<form id="form-pembelian">
+					{{-- <form id="form-pembelian"> --}}
 						<div class="row mb-4">
 							<label for="input-nomor-invoice" class="col-sm-3 col-form-label">Nomor Invoice <span class="text-danger">*)</span></label>
 							<div class="col-sm-9">
@@ -230,44 +230,45 @@
 								<input type="date" class="form-control" id="inputFirstName">
 							</div>
 						</div>
+					{{-- </form> --}}
 
-						<hr class="mb-4"/>
+					<hr class="mb-4"/>
 
-						<div class="row g-3 mb-4 container-input-produk">
-							<div class="col-md-6">
-								<label for="input-nama-produk" class="form-label">Nama Produk</label>
-								<select class="single-select validation" id="input-nama-produk" name="level">
-									<option selected readonly value="">--PILIH OPSI--</option>
-									@foreach ($produk ?? [] as $item)
-									<option value="{{$item->id}}">{{$item->kode_produk}} - {{strtoupper($item->nama_produk)}}</option>
-									@endforeach
-								</select>
-							</div>
-							<div class="col-md-6">
-								<label for="input-satuan" class="form-label">Satuan</label>
-								<select class="single-select validation" id="input-satuan" name="satuan_id">
-									<option selected readonly value="">--PILIH OPSI--</option>
-									@foreach ($satuan ?? [] as $item)
-									<option value="{{$item->id}}">{{strtoupper($item->nama)}}</option>
-									@endforeach
-								</select>
-							</div>
-							<div class="col-md-6">
-								<label for="input-jumlah" class="form-label">Jumlah</label>
-								<input type="text" class="form-control validation" id="input-jumlah" placeholder="Masukkkan Jumlah Produk" name="jumlah">
-							</div>
-							<div class="col-md-6">
-								<label for="input-tanggal-kedaluwarsa" class="form-label">Tanggal Kedaluwarsa</label>
-								<input type="date" class="form-control validation" id="input-tanggal-kedaluwarsa" name="tanggal_kedaluwarsa">
-							</div>
-							<div class="col-md-6">
-								<label for="input-harga-beli" class="form-label">Harga Beli Per-Item</label>
-								<input type="text" class="form-control validation" id="input-harga-beli" placeholder="Masukkan Harga Beli" name="harga_beli">
-							</div>
-							<div class="col-md-6">
-								<label for="input-harga-jual" class="form-label">Harga Jual</label>
-								<input type="text" class="form-control validation" id="input-harga-jual" placeholder="Masukkan Harga Jual" name="harga_jual">
-							</div>
+					<div class="row g-3 mb-4 container-input-produk">
+						<div class="col-md-6">
+							<label for="input-nama-produk" class="form-label">Nama Produk</label>
+							<select class="single-select validation" id="input-nama-produk" name="level">
+								<option selected readonly value="">--PILIH OPSI--</option>
+								@foreach ($produk ?? [] as $item)
+								<option value="{{$item->id}}">{{$item->kode_produk}} - {{strtoupper($item->nama_produk)}}</option>
+								@endforeach
+							</select>
+						</div>
+						<div class="col-md-6">
+							<label for="input-satuan" class="form-label">Satuan</label>
+							<select class="single-select validation" id="input-satuan" name="satuan_id">
+								<option selected readonly value="">--PILIH OPSI--</option>
+								@foreach ($satuan ?? [] as $item)
+								<option value="{{$item->id}}">{{strtoupper($item->nama)}}</option>
+								@endforeach
+							</select>
+						</div>
+						<div class="col-md-6">
+							<label for="input-jumlah" class="form-label">Jumlah</label>
+							<input type="text" class="form-control validation" id="input-jumlah" placeholder="Masukkkan Jumlah Produk" name="jumlah">
+						</div>
+						<div class="col-md-6">
+							<label for="input-tanggal-kedaluwarsa" class="form-label">Tanggal Kedaluwarsa</label>
+							<input type="date" class="form-control" id="input-tanggal-kedaluwarsa" name="tanggal_kedaluwarsa">
+						</div>
+						<div class="col-md-6">
+							<label for="input-harga-beli" class="form-label">Harga Beli Per-Item</label>
+							<input type="text" class="form-control validation" id="input-harga-beli" placeholder="Masukkan Harga Beli" name="harga_beli">
+						</div>
+						<div class="col-md-6">
+							<label for="input-harga-jual" class="form-label">Harga Jual</label>
+							<input type="text" class="form-control validation" id="input-harga-jual" placeholder="Masukkan Harga Jual" name="harga_jual">
+						</div>
 
 						{{-- <div class="row mb-3">
 							<label for="inputName" class="col-sm-3 col-form-label">Nama <span class="text-danger">*)</span></label>
@@ -306,20 +307,19 @@
 								</div>
 							</div>
 						</div> --}}
+					</div>
+					
+					<div class="row">
+						<div
+							class="col-12"
+							style="display: grid; justify-content: end;"
+						>
+							{{-- <button type="button" class="btn btn-secondary px-3" id="btn-back-form-pembelian">
+								<i class="fadeIn animated bx bx-left-arrow"></i> Kembali
+							</button> --}}
+							<button class="btn btn-sm btn-info px-2" id="btn-append-pembelian">Tambahkan Data</button>
 						</div>
-						
-						<div class="row">
-							<div
-								class="col-12"
-								style="display: grid; justify-content: end;"
-							>
-								{{-- <button type="button" class="btn btn-secondary px-3" id="btn-back-form-pembelian">
-									<i class="fadeIn animated bx bx-left-arrow"></i> Kembali
-								</button> --}}
-								<button class="btn btn-sm btn-info px-2" id="btn-append-pembelian">Tambahkan Data</button>
-							</div>
-						</div>
-					</form>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -332,18 +332,20 @@
 			<div class="card-body px-5">
 				<div class="row mb-4">
 					<div class="col-md-12">
-						<table class="table mb-0 table-striped">
-							<thead>
-								<tr>
-									<th scope="col">Nama Produk</th>
-									<th scope="col">Harga Per-Item</th>
-									<th scope="col">Jumlah</th>
-									<th scope="col">Total Harga</th>
-									<th scope="col" class="text-center">Aksi</th>
-								</tr>
-							</thead>
-							<tbody id="container-produk"></tbody>
-						</table>
+						<form id="form-pembelian">
+							<table class="table mb-0 table-striped">
+								<thead>
+									<tr>
+										<th scope="col">Nama Produk</th>
+										<th scope="col">Harga Per-Item</th>
+										<th scope="col">Jumlah</th>
+										<th scope="col">Total Harga</th>
+										<th scope="col" class="text-center">Aksi</th>
+									</tr>
+								</thead>
+								<tbody id="container-produk"></tbody>
+							</table>
+						</form>
 					</div>
 				</div>
 
@@ -477,43 +479,68 @@
 		let {message, text} = ""
 
 		// Validasi sebelum append produk
-		await $(".container-input-produk .validation").each(function (idx) {
-			if (!$(this).val()) {
-				$(this).addClass('show-alert')
-				$(this).siblings(".select2-container").addClass('show-alert')
-				if (!text) {
-					text = $(this)[0].id.replace(/-/g, ' ').replace(/input /g, '')
-					text = `${text[0].toUpperCase()}${text.slice(1)} wajib diisi!`
-				};
-			}
-		})
-
-		if (text) {
-			return module.swal.warning({text: text})
-		} else {
-			console.log('tidak ada pesan')
+		let validation = module.validator.form($(".container-input-produk .validation"))
+		if (validation) {
+			return module.swal.warning({text: validation})
 		}
-		
-		// let namaProduk = $("#input-nama-produk").val()
-		// let namaProduk = $("#nama-produk")
-		// let html = `
-		// 	<tr>
-		// 		<td>2411PDK001 - PUPUK KOMPOS (PCS)</td>
-		// 		<td>Rp. 10.000</td>
-		// 		<td class='text-center'>10</td>
-		// 		<td>Rp. 100.000</td>
-		// 		<td>
-		// 			<div class='text-center'>
-		// 				<button type='button' class='btn btn-sm btn-danger px-2 btn-remove-pembelian' data-id='$item->id' title="Hapus">
-		// 					<i class='fadeIn animated bx bx-trash'></i>
-		// 				</button>
-		// 				<button type='button' class='btn btn-sm btn-warning px-2 btn-modify-pembelian' data-id='$item->id' title="Edit">
-		// 					<i class='fadeIn animated bx bx-pencil'></i>
-		// 				</button>
-		// 			</div>
-		// 		</td>
-		// 	</tr>
-		// `
+
+		const randomId = module.generate.randomId()
+
+		let produkText = $("#select2-input-nama-produk-container").attr('title')
+		let produkValue = $("#input-nama-produk").val()
+		let satuanText = $("#select2-input-satuan-container").attr('title')
+		let satuanValue = $("#input-satuan").val()
+
+		let jumlah = $("#input-jumlah").val()
+
+		let hargaBeli = $("#input-harga-beli").val()
+		let fixHargaBeli = module.parse.onlyNumber(hargaBeli)
+
+		const totalHarga = fixHargaBeli * jumlah
+
+		let hargaJual = $("#input-harga-jual").val()
+		let fixHargaJual = module.parse.onlyNumber(hargaJual)
+
+		let html = `
+			<tr id="rows-${randomId}">
+
+				<input type="hidden" name="array_produk[]" value="${produkValue}">
+				<input type="hidden" name="array_satuan[]" value="${satuanValue}">
+				<input type="hidden" name="array_harga_beli[]" value="${fixHargaBeli}">
+				<input type="hidden" name="array_total_harga[]" value="${totalHarga}">
+				<input type="hidden" name="array_harga_jual[]" value="${fixHargaJual}">
+
+				<td>${produkText} (${satuanText})</td>
+				<td>${hargaBeli}</td>
+				<td class='text-center'>${jumlah}</td>
+				<td>${module.formatter.formatRupiah(totalHarga, 'Rp. ')}</td>
+				<td>
+					<div class='text-center'>
+						<button type='button' class='btn btn-sm btn-danger px-2 btn-remove-pembelian' data-id="${randomId}" title="Hapus">
+							<i class='fadeIn animated bx bx-trash'></i>
+						</button>
+						<button type='button' class='btn btn-sm btn-warning px-2 btn-modify-pembelian' data-id="${randomId}" title="Edit">
+							<i class='fadeIn animated bx bx-pencil'></i>
+						</button>
+					</div>
+				</td>
+			</tr>
+		`
+		$("#container-produk").append(html)
+
+		$(".btn-remove-pembelian").click((e) => {
+			e.preventDefault()
+			const $this = $(e.currentTarget)
+			const target = $this.data('id')
+
+			module.swal.confirm().then((then) => {
+				if (then.value) {
+					$("#rows-" + target).hide('slow', async function(){
+						await $(this).remove()
+					})
+				}
+			})
+		})
 	})
 
 	$("#input-jumlah").setRules('0-9')
@@ -531,7 +558,7 @@
 		width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
 		placeholder: $(this).data('placeholder'),
 		allowClear: Boolean($(this).data('allow-clear')),
-	});
+	})
 
 	$("#btn-back-form-pembelian").click((e) => {
 		$("#other-page").hide('slow', function () {
@@ -543,11 +570,12 @@
 	$("#btn-save-form-pembelian").click(async (e) => {
 		e.preventDefault()
 		const $this = $(e.currentTarget)
-		$this.attr('disabled', true)
+		// $this.attr('disabled', true)
 
 		const data = new FormData($("#form-pembelian")[0])
 
 		const response = await postRequest("{{route('pembelian.store')}}", data)
+		return console.log(response)
 
 		if (jQuery.inArray(response.status, [200, 201]) === -1) {
 			await module.swal.warning({
@@ -572,6 +600,5 @@
 			await $("#other-page").empty()
 			datatablePengguna()
 		})
-
 	})
 </script>
