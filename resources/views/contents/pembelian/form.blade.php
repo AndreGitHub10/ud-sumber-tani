@@ -310,7 +310,7 @@
 									</tr>
 								</thead>
 								<tbody id="container-produk">
-									<tr id="rows-1">
+									{{-- <tr id="rows-1">
 										<input type="hidden" name="array_produk[]" class="array-produk" value="2411PDK001">
 										<input type="hidden" name="array_satuan[]" class="array-satuan" value="1">
 										<input type="hidden" name="array_jumlah[]" class="array-jumlah" value="5">
@@ -357,16 +357,16 @@
 												</button>
 											</div>
 										</td>
-									</tr>
+									</tr> --}}
 								</tbody>
 								<tfoot id="">
 									<tr>
 										<th colspan="3">
-											<input type="hidden" name="total_semua_harga" id="total-semua-harga" value="172000">
+											<input type="hidden" name="total_semua_harga" id="total-semua-harga" value="">
 											Total Semua Harga : 
 										</th>
-										{{-- <th colspan="2" id="container-total-semua-harga">Rp.</th> --}}
-										<th colspan="2" id="container-total-semua-harga">Rp. 172.000</th>
+										<th colspan="2" id="container-total-semua-harga">Rp.</th>
+										{{-- <th colspan="2" id="container-total-semua-harga">Rp. 172.000</th> --}}
 									</tr>
 								</tfoot>
 							</table>
