@@ -91,7 +91,6 @@ class PembelianController extends Controller
 	// public function store(PostKategoriDTO $data)
 	public function store(Request $request)
 	{
-		// return $request->all();
 		DB::beginTransaction();
 		try {
 			$postPembelian = PostPembelianDTO::fromRequest($request);
@@ -102,7 +101,7 @@ class PembelianController extends Controller
 			$hargaBeli = $postPembelian->array_harga_beli;
 			$totalHarga = $postPembelian->array_total_harga;
 			$hargaJual = $postPembelian->array_harga_jual;
-			// return $postPembelian;
+
 			if (!$request->id_pembelian) {
 				$pembelian = $this->pembelianService->create($postPembelian);
 				foreach($postPembelian->array_produk as $key => $val){

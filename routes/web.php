@@ -104,6 +104,7 @@ Route::middleware(Authenticate::class)->group(function () {
 	Route::controller(KasirController::class)->prefix('penjualan-kasir')->as('penjualanKasir.')
 	->group(function () {
 		Route::get('/', 'main')->name('main');
+		Route::post('store', 'store')->name('store');
 	});
 
 	Route::prefix('laporan')->as('laporan.')
