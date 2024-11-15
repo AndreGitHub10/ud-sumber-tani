@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class DataProduk extends Model
 {
@@ -19,8 +20,8 @@ class DataProduk extends Model
 		return $this->belongsTo(KategoriProduk::class, 'kategori_id', 'id');
 	}
 
-	public function minmax_produk(): HasOne
+	public function pembelian_detail(): HasMany
 	{
-		return $this->hasMany(MinMaxProduk::class, 'produk_id', 'id');
+		return $this->hasMany(KategoriProduk::class, 'kode_produk', 'kode_produk');
 	}
 }

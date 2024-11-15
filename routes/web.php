@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Laporan\KartuStokController;
 use App\Http\Controllers\PembelianController;
+use App\Http\Controllers\Penjualan\KasirController;
 use App\Http\Controllers\Produk\DataController;
 use App\Http\Controllers\Produk\KategoriController;
 use App\Http\Controllers\Produk\SatuanController;
@@ -95,15 +96,16 @@ Route::middleware(Authenticate::class)->group(function () {
 	Route::controller(PembelianController::class)->prefix('pembelian')->as('pembelian.')
 	->group(function () {
 		Route::get('/', 'main')->name('main');
-        Route::post('form', 'form')->name('form');
-        Route::post('datatables', 'datatables')->name('datatables');
-        Route::post('destroy', 'destroy')->name('destroy');
-        Route::post('store', 'store')->name('store');
+		Route::post('form', 'form')->name('form');
+		Route::post('datatables', 'datatables')->name('datatables');
+		Route::post('destroy', 'destroy')->name('destroy');
+		Route::post('store', 'store')->name('store');
 	});
 
-	Route::prefix('penjualan-kasir')->as('penjualanKasir.')
+	Route::controller(KasirController::class)->prefix('penjualan-kasir')->as('penjualanKasir.')
 	->group(function () {
-		Route::get('/', [DashboardController::class, 'main'])->name('main');
+		Route::get('/', 'main')->name('main');
+		Route::post('store', 'store')->name('store');
 	});
 
 	Route::prefix('laporan')->as('laporan.')
