@@ -24,4 +24,9 @@ class DataProduk extends Model
 	{
 		return $this->hasMany(KategoriProduk::class, 'kode_produk', 'kode_produk');
 	}
+	
+	public function minmax_produk(): HasOne
+	{
+		return $this->hasMany(MinMaxProduk::class, 'produk_id', 'id');
+	}
 }
