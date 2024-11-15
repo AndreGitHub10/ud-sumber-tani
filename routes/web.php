@@ -8,6 +8,7 @@ use App\Http\Middleware\Authenticate;
 # Controllers
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Laporan\KartuStokController;
 use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\Produk\DataController;
 use App\Http\Controllers\Produk\KategoriController;
@@ -114,7 +115,8 @@ Route::middleware(Authenticate::class)->group(function () {
 
 		Route::prefix('kartu-stok')->as('kartuStok.')
 		->group(function () {
-			Route::get('/', [DashboardController::class, 'main'])->name('main');
+			Route::get('/', [KartuStokController::class, 'main'])->name('main');
+			Route::post('datatables', [KartuStokController::class, 'datatables'])->name('datatables');
 		});
 
 		Route::prefix('laba')->as('laba.')
