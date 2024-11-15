@@ -21,6 +21,8 @@ class DatabaseSeeder extends Seeder
 		$this->call(SatuanSeeder::class);
 		$this->call(KategoriSeeder::class);
 		$this->call(DataSeeder::class);
+		$this->call(PembelianSeeder::class);
+		$this->call(PembelianDetailSeeder::class);
 
 		// User::factory(10)->create();
 		// User::factory()->create([

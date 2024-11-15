@@ -7,6 +7,9 @@ use OpenSoutheners\LaravelDto\Attributes\WithDefaultValue;
 
 final class PostPenjualanDetailDTO extends DataTransferObject
 {
+	/**
+	 * Please check the DTO guide before you start. https://docs.opensoutheners.com/laravel-dto
+	 */
 	public function __construct(
 		#[WithDefaultValue(201)]
 		public int $res_code,
@@ -17,7 +20,7 @@ final class PostPenjualanDetailDTO extends DataTransferObject
 		#[WithDefaultValue(null)]
 		public int|null $id_pembelian_detail = null,
 		#[WithDefaultValue(null)]
-		public int|null $diskon = null,
+		public int|string|null $diskon = null,
 		#[WithDefaultValue(null)]
 		public int|null $jumlah = null,
 		#[WithDefaultValue(null)]
@@ -27,6 +30,8 @@ final class PostPenjualanDetailDTO extends DataTransferObject
 		#[WithDefaultValue(null)]
 		public int|null $total_harga_jual_diskon = null,
 	) {
-		// 
+		if ($this->diskon) {
+            $this->diskon = (int)preg_replace("/\D+/", "", $this->diskon);
+        }
 	}
 }

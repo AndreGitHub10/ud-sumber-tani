@@ -88,6 +88,22 @@
 					</div>
 					<div class="card-body">
 						<form id="form-penjualan-final">
+							<div class="row mb-2">
+								<div class="col-6">
+									<label for="input-tanggal-penjualan" class="form-label">Tanggal Penjualan</label>
+									<input type="date" class="form-control form-control-sm validation reset" id="input-tanggal-penjualan" name="tanggal_penjualan" value="{{date("Y-m-d")}}" readonly>
+								</div>
+							</div>
+							<div class="row mb-5">
+								<div class="col-6">
+									<label for="input-jumlah-pembayaran" class="form-label">Jumlah Pembayaran</label>
+									<input type="text" class="form-control form-control-sm validation reset" id="input-jumlah-pembayaran" placeholder="Masukkkan Jumlah Pembayaran" name="pembayaran" readonly>
+								</div>
+								<div class="col-6">
+									<label for="input-kembalian" class="form-label">Kembalian</label>
+									<input type="text" class="form-control form-control-sm validation reset" id="input-kembalian" name="kembalian" value="Rp. 0" readonly>
+								</div>
+							</div>
 							<div class="row mb-4">
 								<div class="col-12">
 									<table class="table mb-0 table-striped">
@@ -118,14 +134,15 @@
 							</div>
 						</form>
 						<div class="row">
-							<div
-								class="col-sm-12"
-								style="
-									display: flex;
-									justify-content: end;
-								"
-							>
-								<button type="button" class="btn btn-sm btn-success px-5" id="btn-save-penjualan">Simpan</button>
+							<div class="col-7"></div>
+							<div class="col-5 text-end">
+								<div id="container-btn-sesi-penjualan-awal">
+									<button type="button" class="btn btn-sm btn-success px-3" id="btn-bayar-list-penjualan">Bayar</button>
+								</div>
+								<div id="container-btn-sesi-penjualan-akhir" style="display: none;">
+									<button type="button" class="btn btn-sm btn-warning px-3" id="btn-ubah-list-penjualan">Ubah Transaksi</button>
+									<button type="button" class="btn btn-sm btn-success px-3" id="btn-save-list-penjualan">Simpan</button>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -159,6 +176,9 @@
 			$(".array-total-harga-per-produk-diskon").each(function(idx) {
 				sumTotalHargaDiskon += parseFloat(this.value)
 			})
+
+			// console.log("Murni "+sumTotalHargaMurni)
+			// console.log("Diskon "+sumTotalHargaDiskon)
 
 			$("#total-semua-harga-murni").val(sumTotalHargaMurni)
 			$("#total-semua-harga-diskon").val(sumTotalHargaDiskon)
@@ -206,7 +226,7 @@
 				return `<span>${el.text}</span>`
 			},
 			// render html as-is without escaping it
-			escapeMarkup: function(markup) { return markup; }
+			escapeMarkup: function(markup) { return markup }
 		})
 
 		$("#input-produk").change(async function(e) {
@@ -270,7 +290,7 @@
 					<td id="container-produk">${produkText}</td>
 					<td id="container-harga-jual" class="nowrap">${module.formatter.formatRupiah(hargaJual, 'Rp. ')}</td>
 					<td>
-						<input type="number" min=1 class="form-control text-center array-diskon" name="array_diskon[]" data-unique-id="${randomId}">
+						<input type="text" class="form-control text-center array-diskon readonly" name="array_diskon[]" data-unique-id="${randomId}">
 					</td>
 					<td id="container-jumlah" class='text-center'>
 						<div class="input-group" style="margin-bottom: 4px; width: 87%; margin-left: auto; margin-right: auto;">
@@ -319,26 +339,44 @@
 			$("#input-produk").select2('open')
 		})
 
-		$(document).on('change keyup', '.array-diskon', function(e) {
+		$("#input-jumlah-pembayaran").setRules('0-9').on('keyup', function(e) {
+			$(this).val(module.formatter.formatRupiah($(this).val(), "Rp. "))
+
+			const pembayaran = module.parse.onlyNumber($(this).val())
+			const totalSemuaHarga = $("#total-semua-harga-diskon").val()
+			let hasil = pembayaran - totalSemuaHarga
+
+			if (hasil >= 0) {
+				$("#input-kembalian").val(module.formatter.formatRupiah(pembayaran - totalSemuaHarga, "Rp. "))
+			} else {
+				$("#input-kembalian").val("Rp. 0")
+			}
+		})
+
+		$(document).on('change keyup', '.array-diskon', async function(e) {
+			$(this).setRules('0-9')
 			const uniqueId = $(this).data('unique-id')
-			let diskon = parseInt($(this).val())
+			await $(this).val(module.formatter.formatRupiah($(this).val(), "Rp. "))
+			let diskon = parseInt(module.parse.onlyNumber($(this).val()))
 
 			let jumlah = parseInt($(`#rows-${uniqueId} .array-jumlah`).val())
 			let hargaJual = parseInt($(`#rows-${uniqueId} .array-harga-jual`).val())
-			$(`#rows-${uniqueId} .array-total-harga-per-produk-murni`).val(hargaJual * jumlah)
+			let totalHargaJual = hargaJual * jumlah
 
-			if (diskon > 100) {
-				return $(this).val(100)
+			$(`#rows-${uniqueId} .array-total-harga-per-produk-murni`).val(totalHargaJual)
+
+			if (diskon > totalHargaJual) {
+				$(this).val(module.formatter.formatRupiah(totalHargaJual, "Rp. "))
+				diskon = parseInt(module.parse.onlyNumber($(this).val()))
 			}
 
-			if (diskon) {
-				hargaJual = hargaJual - hargaJual * (diskon / 100)			
-			}
+			totalHargaJual = totalHargaJual - diskon
 
-			let totalHargaJualPerProduk = hargaJual * jumlah
+			// let totalHargaJualPerProduk = hargaJual * jumlah
+			let totalHargaJualPerProdukDiskon = totalHargaJual
 
-			$(`#rows-${uniqueId} .array-total-harga-per-produk-diskon`).val(totalHargaJualPerProduk)
-			$(`#rows-${uniqueId} #container-total-harga-per-produk`).text(module.formatter.formatRupiah(totalHargaJualPerProduk, 'Rp. '))
+			$(`#rows-${uniqueId} .array-total-harga-per-produk-diskon`).val(totalHargaJualPerProdukDiskon)
+			$(`#rows-${uniqueId} #container-total-harga-per-produk`).text(module.formatter.formatRupiah(totalHargaJualPerProdukDiskon, 'Rp. '))
 
 			totalSemuaHarga()
 		})
@@ -367,12 +405,18 @@
 
 			$(`#rows-${uniqueId} .array-total-harga-per-produk-murni`).val(hargaJual * jumlah)
 
-			let diskon = parseInt($(`#rows-${uniqueId} .array-diskon`).val())
+			let totalHargaJualPerProduk = hargaJual * jumlah
+			let diskon = module.parse.onlyNumber($(`#rows-${uniqueId} .array-diskon`).val())
+
 			if (diskon) {
-				hargaJual = hargaJual - hargaJual * (diskon / 100)
+				if (totalHargaJualPerProduk < diskon) {
+					diskon = totalHargaJualPerProduk
+					$(`#rows-${uniqueId} .array-diskon`).val(module.formatter.formatRupiah(diskon, "Rp. "))
+				}
+
+				totalHargaJualPerProduk -= diskon
 			}
 
-			let totalHargaJualPerProduk = hargaJual * jumlah
 			$(`#rows-${uniqueId} .array-total-harga-per-produk-diskon`).val(totalHargaJualPerProduk)
 			$(`#rows-${uniqueId} #container-total-harga-per-produk`).text(module.formatter.formatRupiah(totalHargaJualPerProduk, 'Rp. '))
 
@@ -399,13 +443,63 @@
 				}
 			})
 		})
-		$("#btn-save-penjualan").click(async function(e) {
+
+		$("#btn-bayar-list-penjualan").click(function(e) {
+			e.preventDefault()
+			if ($("#container-list-penjualan tr").length <= 0) {
+				return module.swal.warning({text: "Tidak ada data untuk dibayar"})
+			}
+
+			jQuery.each([
+				'#input-produk',
+				'#input-jumlah',
+				'#btn-append-penjualan',
+				'.rows-list-penjualan .btn',
+			], function(index, item) {
+				$(item).attr('disabled', true)
+			})
+
+			$("#input-tanggal-penjualan").attr('readonly', false)
+			$("#input-jumlah-pembayaran").attr('readonly', false)
+			$(".rows-list-penjualan .readonly").attr('readonly', true)
+
+			$("#container-btn-sesi-penjualan-awal").hide('slow', function() {
+				$("#container-btn-sesi-penjualan-akhir").show('slow')
+			})
+		})
+		$("#btn-ubah-list-penjualan").click(function(e) {
+			e.preventDefault()
+
+			jQuery.each([
+				'#input-produk',
+				'#input-jumlah',
+				'#btn-append-penjualan',
+				'.rows-list-penjualan .btn',
+			], function(index, item) {
+				$(item).attr('disabled', false)
+			})
+
+			$("#input-tanggal-penjualan").attr('readonly', true)
+			$("#input-jumlah-pembayaran").attr('readonly', true)
+			$(".rows-list-penjualan .readonly").attr('readonly', false)
+
+			$("#container-btn-sesi-penjualan-akhir").hide('slow', function() {
+				$("#container-btn-sesi-penjualan-awal").show('slow')
+			})
+		})
+
+		$("#btn-save-list-penjualan").click(async function(e) {
 			e.preventDefault()
 			$(this).attr('disabled', true)
+			if ($("#container-list-penjualan tr").length <= 0) {
+				await module.swal.warning({text: "Tidak ada data untuk disimpan"})
+				return $(this).attr('disabled', false)
+			}
 
 			const data = new FormData($("#form-penjualan-final")[0])
 
 			const response = await postRequest("{{route('penjualanKasir.store')}}", data)
+			// return console.log(response)
 
 			if (jQuery.inArray(response.status, [200, 201]) === -1) {
 				await module.swal.warning({
