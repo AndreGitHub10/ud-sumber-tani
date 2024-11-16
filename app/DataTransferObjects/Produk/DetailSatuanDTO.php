@@ -1,14 +1,13 @@
 <?php
 
-namespace App\DataTransferObjects\User;
+namespace App\DataTransferObjects\Produk;
 
 use OpenSoutheners\LaravelDto\DataTransferObject;
 use OpenSoutheners\LaravelDto\Attributes\WithDefaultValue;
-
 # Models
-use App\Models\Supplier;
+use App\Models\SatuanProduk;
 
-final class DetailSupplierDTO extends DataTransferObject
+final class DetailSatuanDTO extends DataTransferObject
 {
 	public function __construct(
 		#[WithDefaultValue(200)]
@@ -20,17 +19,17 @@ final class DetailSupplierDTO extends DataTransferObject
 		#[WithDefaultValue(false)]
 		public bool $is_destroy,
 
-		public int|null $id_supplier = null,
+		public int|null $id_satuan = null,
 
 		#[BindModel(using: 'id')]
-		#[WithDefaultValue(Supplier::class)]
-		public Supplier|null $model_supplier = null,
+		#[WithDefaultValue(SatuanProduk::class)]
+		public SatuanProduk|null $satuan = null,
 	) {
 		if ($is_destroy) {
 			$this->res_message = 'Data berhasil dihapus';
 		}
 
-		if ($id_supplier && !$model_supplier) {
+		if ($id_satuan && !$satuan) {
 			$this->res_code = 204;
 			$this->res_message = 'Data tidak ditemukan';
 		}

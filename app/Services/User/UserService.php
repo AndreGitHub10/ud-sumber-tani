@@ -30,9 +30,10 @@ class UserService
 
 	public function update(PostUserDTO $userDTO): User
 	{
-		$user = User::find($userDTO->id);
+		$user = User::find($userDTO->id_user);
 		$user->name = $userDTO->name;
 		$user->level = $userDTO->level;
+		$user->username = $userDTO->username;
 		$user->email = $userDTO->email;
 		if ($userDTO->password) {
 			$user->password = $userDTO->password;
@@ -44,7 +45,7 @@ class UserService
 
 	public function destroy(DetailUserDTO $userDTO): bool
 	{
-		$user = User::find($userDTO->id);
+		$user = User::find($userDTO->id_user);
 		if ($user && $user->delete()) {
 			return true;
 		}

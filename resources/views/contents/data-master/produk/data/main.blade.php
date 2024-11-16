@@ -1,7 +1,6 @@
 @extends('main')
 
 @push('styles')
-	{{-- <link href="{{asset('assets/plugins/highcharts/css/highcharts.css')}}" rel="stylesheet" /> --}}
 	<link href="{{asset('assets/plugins/datatable/css/dataTables.bootstrap5.min.css')}}" rel="stylesheet" />
 	
 	<link href="{{asset('assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet" />
@@ -18,7 +17,8 @@
 					<ol class="breadcrumb mb-0 p-0">
 						<li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a>
 						</li>
-						<li class="breadcrumb-item active" aria-current="page">Pengguna</li>
+						<li class="breadcrumb-item active" aria-current="page">Produk</li>
+						<li class="breadcrumb-item active" aria-current="page">Data</li>
 					</ol>
 				</nav>
 			</div>
@@ -28,20 +28,20 @@
 		<div class="card">
 			<div class="card-header">
 				<div class="col-12">
-					<button type="button" class="btn btn-primary px-3" id="add-new-user">
-						<i class="fadeIn animated bx bx-plus"></i>Tambah User Baru
+					<button type="button" class="btn btn-primary px-3" id="add-new-data">
+						<i class="fadeIn animated bx bx-plus"></i>Tambah Data Baru
 					</button>
 				</div>
 			</div>
 			<div class="card-body">
 				<div class="table-responsive">
-					<table id="datatable-pengguna" class="table table-striped table-bordered" style="width:100%">
+					<table id="datatable-data" class="table table-striped table-bordered" style="width:100%">
 						<thead>
 							<tr>
 								<th>No</th>
-								<th>Name</th>
-								<th>Level</th>
-								<th>Username</th>
+								<th>Kode</th>
+								<th>Nama</th>
+								<th>Kategori</th>
 								<th>Action</th>
 							</tr>
 						</thead>
@@ -66,16 +66,18 @@
 			module = await initModul()
 			console.log(module)
 
-			datatablePengguna()
+			datatableDataProduk()
+
 		})
 
 		function initButton(){
-			$(".btn-edit-user").click(async (e) => {
+			$(".btn-edit-data-produk").click(async (e) => {
 				let $this = $(e.currentTarget)
+                const id = $this.data('id')
 				$this.attr('disabled', true)
 
-				let response = await postRequest("{{route('dataMaster.pengguna.form')}}", {id_user: $this.data('id')})
-				
+				let response = await postRequest("{{route('dataMaster.produk.data.form')}}", {id_data_produk: id, model_data_produk: id})
+
 				if (response.status !== 200) {
 					await module.swal.warning({
 						text: response.data.message,
@@ -91,13 +93,14 @@
 				})
 			})
 
-			$(".btn-delete-user").click(async (e) => {
+			$(".btn-delete-data-produk").click(async (e) => {
 				let $this = $(e.currentTarget)
+				const id = $this.data('id')
 				$this.attr('disabled', true)
 
 				module.swal.confirm().then(async (e) => {
-					if (e.value) {
-						const response = await postRequest("{{route('dataMaster.pengguna.destroy')}}", {id_user: $this.data('id')})
+					if(e.value === true){
+						const response = await postRequest("{{route('dataMaster.produk.data.destroy')}}", {id_data_produk: id, model_data_produk: id, is_destroy: true})
 						code = response.status
 
 						if (code !== 200) {
@@ -113,17 +116,17 @@
 							hideClass: module.var_swal.fadeOutUp,
 						})
 
-						datatablePengguna()
+						datatableDataProduk()
 					}
 					$this.attr('disabled', false)
 				})
 			})
 		}
 
-		$("#add-new-user").click(async (e) => {
+		$("#add-new-data").click(async (e) => {
 			const $this = $(e.currentTarget)
 			$this.attr('disabled', true)
-			let response = await postRequest("{{route('dataMaster.pengguna.form')}}")
+			let response = await postRequest("{{route('dataMaster.produk.data.form')}}")
 
 			if (response.status !== 200) {
 				await module.swal.warning({
@@ -140,8 +143,8 @@
 			})
 		})
 
-		async function datatablePengguna(){
-			await $('#datatable-pengguna').dataTable({
+		async function datatableDataProduk(){
+			await $('#datatable-data').dataTable({
 				scrollX: true,
 				bPaginate: true,
 				bFilter: true,
@@ -153,14 +156,14 @@
 					targets: 0
 				}],
 				ajax: {
-					url:"{{route('dataMaster.pengguna.datatables')}}",
+					url:"{{route('dataMaster.produk.data.datatables')}}",
 					type: 'post',
 				},
 				columns: [
 					{data: 'DT_RowIndex', name: 'DT_RowIndex'},
-					{data: 'name', name: 'name'},
-					{data: 'level', name: 'level'},
-					{data: 'username', name: 'username'},
+					{data: 'kode_produk', name: 'kode_produk'},
+					{data: 'nama_produk', name: 'nama_produk'},
+					{data: 'kategori.nama', name: 'kategori.nama'},
 					{data: 'action', name: 'action'}
 				],
 				initComplete: function (settings, json) {

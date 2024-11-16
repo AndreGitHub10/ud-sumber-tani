@@ -50,33 +50,25 @@ class SupplierController extends Controller
 
 	public function destroy(DetailSupplierDTO $data)
 	{
-		if (!$this->supplierService->destroy($data)) {
-			return response()->json(ResponseAxiosDTO::fromArray([
-				'code' => 500,
-				'message' => 'Data gagal dihapus',
-			]), 500);
-		}
+		$this->supplierService->destroy($data);
 
 		return response()->json(ResponseAxiosDTO::fromArray([
-			'code' => 200,
-			'message' => 'Data berhasil dihapus',
-		]), 200);
+			'code' => $data->res_code,
+			'message' => $data->res_message,
+		]), $data->res_code);
 	}
 
 	public function form(Request $request)
 	{
-		$data = DetailSupplierDTO::fromRequest($request)->toArray();
-		$data['supplier'] = $data['supplier'] !== null ? (object)$data['supplier'] : "";
+		$data = DetailSupplierDTO::fromRequest($request);
 
-		$content = view('contents.data-master.supplier.form')->with($data)->render();
+		$content = view('contents.data-master.supplier.form', ['modelSupplier' => $data->model_supplier])->render();
 
-		$dto = ResponseAxiosDTO::fromArray([
-			'code' => 200,
-			'message' => 'Ok',
+		return response()->json(ResponseAxiosDTO::fromArray([
+			'code' => $data->res_code,
+			'message' => $data->res_message,
 			'response' => $content,
-		]);
-
-		return response()->json($dto, $dto->code);
+		]), $data->res_code);
 	}
 
 	public function main(Request $request)
@@ -84,7 +76,6 @@ class SupplierController extends Controller
 		return view('contents.data-master.supplier.main');
 	}
 
-	// public function store(PostSupplierDTO $data)
 	public function store(PostSupplierRequest $request)
 	{
 		if (!Generate::kodeSupplier($request)) {
@@ -93,22 +84,19 @@ class SupplierController extends Controller
 				'message' => 'Generate kode gagal, silahkan coba lagi!',
 			]), 500);
 		}
-
 		$request->merge(['kode' => $request->res_kode_supplier]);
 
 		$data = PostSupplierDTO::fromRequest($request);
 		if ($request->id_supplier) {
 			$supplier = $this->supplierService->update($data);
-			$code = 200;
 		} else {
 			$supplier = $this->supplierService->create($data);
-			$code = 201;
 		}
 
 		return response()->json(ResponseAxiosDTO::fromArray([
-			'code' => $code,
-			'message' => 'Data berhasil disimpan',
+			'code' => $data->res_code,
+			'message' => $data->res_message,
 			'response' => $supplier,
-		]), $code);
+		]), $data->res_code);
 	}
 }
