@@ -22,5 +22,6 @@ yarn-error.log
 /.zed
 
 # My customize
+.htaccess
 docker-compose.yaml
 Dockerfile

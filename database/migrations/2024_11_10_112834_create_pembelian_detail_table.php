@@ -19,9 +19,9 @@ return new class extends Migration
 			$table->integer('stok_awal')->nullable();
 			$table->integer('stok_real');
 			$table->date('tanggal_kedaluwarsa')->nullable();
-			$table->decimal('harga_beli', total: 10, places: 2);
-			$table->decimal('total_harga_beli', total: 10, places: 2);
-			$table->decimal('harga_jual', total: 10, places: 2);
+			$table->decimal('harga_beli', total: 10, places: 0);
+			$table->decimal('total_harga_beli', total: 10, places: 0);
+			$table->decimal('harga_jual', total: 10, places: 0);
 			$table->timestamps();
 		});
 	}

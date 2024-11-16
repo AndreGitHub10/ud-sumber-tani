@@ -13,9 +13,9 @@ return new class extends Migration
 	{
 		Schema::create('pembelian', function (Blueprint $table) {
 			$table->id();
-			$table->string('kode_supplier');
+			$table->string('supplier_id');
 			$table->string('nomor_invoice');
-			$table->decimal('total_harga', total: 10, places: 2);
+			$table->decimal('total_harga', total: 10, places: 0);
 			$table->date('tanggal')->comment("Tanggal pembelian sesuai invoice");
 			$table->timestamps();
 		});

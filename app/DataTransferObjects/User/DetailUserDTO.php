@@ -3,14 +3,18 @@
 namespace App\DataTransferObjects\User;
 
 use Illuminate\Http\Request;
-use OpenSoutheners\LaravelDto\DataTransferObject;
+use OpenSoutheners\LaravelDto\Attributes\BindModel;
 use OpenSoutheners\LaravelDto\Attributes\WithDefaultValue;
+use OpenSoutheners\LaravelDto\DataTransferObject;
 
 # Models
 use App\Models\Auth\User;
 
 final class DetailUserDTO extends DataTransferObject
 {
+	/**
+	 * Please check the DTO guide before you start. https://docs.opensoutheners.com/laravel-dto
+	 */
 	public function __construct(
 		public int $res_code,
 		public string $res_message,

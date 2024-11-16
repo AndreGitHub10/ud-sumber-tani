@@ -2,14 +2,18 @@
 
 namespace App\DataTransferObjects\User;
 
-use OpenSoutheners\LaravelDto\DataTransferObject;
+use OpenSoutheners\LaravelDto\Attributes\BindModel;
 use OpenSoutheners\LaravelDto\Attributes\WithDefaultValue;
+use OpenSoutheners\LaravelDto\DataTransferObject;
 
 # Models
 use App\Models\Supplier;
 
 final class DetailSupplierDTO extends DataTransferObject
 {
+	/**
+	 * Please check the DTO guide before you start. https://docs.opensoutheners.com/laravel-dto
+	 */
 	public function __construct(
 		#[WithDefaultValue(200)]
 		public int $res_code,

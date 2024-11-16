@@ -9,8 +9,8 @@ class KategoriProduk extends Model
 {
 	protected $table = 'kategori_produk';
 
-    public function data_produk(): HasMany
-    {
-        return $this->hasMany(DataProduk::class, 'kategori_id', 'id');
-    }
+	public function data_produk(): HasMany
+	{
+		return $this->hasMany(DataProduk::class, 'kategori_id', 'id');
+	}
 }

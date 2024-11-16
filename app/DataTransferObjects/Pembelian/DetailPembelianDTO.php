@@ -1,14 +1,14 @@
 <?php
 
-namespace App\DataTransferObjects\Produk;
+namespace App\DataTransferObjects\Pembelian;
 
 use OpenSoutheners\LaravelDto\Attributes\BindModel;
 use OpenSoutheners\LaravelDto\Attributes\WithDefaultValue;
 use OpenSoutheners\LaravelDto\DataTransferObject;
 # Models
-use App\Models\SatuanProduk;
+use App\Models\Pembelian;
 
-final class DetailSatuanDTO extends DataTransferObject
+final class DetailPembelianDTO extends DataTransferObject
 {
 	/**
 	 * Please check the DTO guide before you start. https://docs.opensoutheners.com/laravel-dto
@@ -23,19 +23,12 @@ final class DetailSatuanDTO extends DataTransferObject
 		#[WithDefaultValue(false)]
 		public bool $is_destroy,
 
-		public int|null $id_satuan = null,
+		public int|null $id_pembelian = null,
 
 		#[BindModel(using: 'id')]
-		#[WithDefaultValue(SatuanProduk::class)]
-		public SatuanProduk|null $satuan = null,
+		#[WithDefaultValue(Pembelian::class)]
+		public Pembelian|null $model_pembelian = null,
 	) {
-		if ($is_destroy) {
-			$this->res_message = 'Data berhasil dihapus';
-		}
-
-		if ($id_satuan && !$satuan) {
-			$this->res_code = 204;
-			$this->res_message = 'Data tidak ditemukan';
-		}
+		// 
 	}
 }

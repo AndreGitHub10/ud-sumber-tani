@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="color-sidebar sidebarcolor3">
+<html lang="en" class="color-sidebar sidebarcolor2">
 
 <head>
 	{{-- Required meta tags --}}
