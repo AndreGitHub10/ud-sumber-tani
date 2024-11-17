@@ -12,7 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement("CREATE VIEW v_kartu_stok AS
+        DB::statement("CREATE OR REPLACE VIEW v_kartu_stok AS
             SELECT 
                 dp.kode_produk,
                 SUM(COALESCE(pd.stok_real,0)) - SUM(COALESCE(sub_pd2.jumlah,0)) stok,

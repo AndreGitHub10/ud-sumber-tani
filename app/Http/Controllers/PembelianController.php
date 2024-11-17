@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use DataTables, DB;
 # DTO
+use App\DataTransferObjects\Pembelian\DetailPembelianDetailDTO;
 use App\DataTransferObjects\Pembelian\DetailPembelianDTO;
 use App\DataTransferObjects\Pembelian\PostPembelianDetailDTO;
 use App\DataTransferObjects\Pembelian\PostPembelianDTO;
@@ -38,12 +39,19 @@ class PembelianController extends Controller
 		return DataTables::of(Pembelian::with('supplier')->get())
 			->addIndexColumn()
 			->addColumn('action', function($item) {
+				// return "
+				// 	<div class='text-center'>
+				// 		<button type='button' class='btn btn-sm btn-danger px-2 btn-delete-pembelian' data-id='$item->id'>
+				// 			<i class='fadeIn animated bx bx-trash'></i>
+				// 		</button>
+				// 		<button type='button' class='btn btn-sm btn-warning px-2 btn-edit-pembelian' data-id='$item->id'>
+				// 			<i class='fadeIn animated bx bx-pencil'></i>
+				// 		</button>
+				// 	</div>
+				// ";
 				return "
 					<div class='text-center'>
-						<button type='button' class='btn btn-sm btn-danger px-2 btn-delete-pembelian' data-id='$item->id'>
-							<i class='fadeIn animated bx bx-trash'></i>
-						</button>
-						<button type='button' class='btn btn-sm btn-warning px-2 btn-edit-pembelian' data-id='$item->id'>
+						<button type='button' class='btn btn-sm btn-warning px-2 btn-edit-pembelian' data-id='$item->id' title='Edit Pembelian'>
 							<i class='fadeIn animated bx bx-pencil'></i>
 						</button>
 					</div>
@@ -52,7 +60,7 @@ class PembelianController extends Controller
 			->toJson();
 	}
 
-	public function destroy(DetailKategoriDTO $data)
+	public function destroy(DetailPembelianDTO $data)
 	{
 		$this->satuanService->destroy($data);
 
@@ -90,9 +98,9 @@ class PembelianController extends Controller
 	// public function store(PostKategoriDTO $data)
 	public function store(Request $request)
 	{
-		// DB::beginTransaction();
+		DB::beginTransaction();
 		try {
-			return $postPembelian = PostPembelianDTO::fromRequest($request);
+			$postPembelian = PostPembelianDTO::fromRequest($request);
 			$produk = $postPembelian->array_produk;
 			$satuan = $postPembelian->array_satuan;
 			$jumlah = $postPembelian->array_jumlah;
@@ -100,8 +108,9 @@ class PembelianController extends Controller
 			$hargaBeli = $postPembelian->array_harga_beli;
 			$totalHarga = $postPembelian->array_total_harga;
 			$hargaJual = $postPembelian->array_harga_jual;
+			$idPembelianDetail = $postPembelian->array_id_pembelian_detail;
 
-			if (!$request->id_pembelian) {
+			if (!$postPembelian->id_pembelian) {
 				$pembelian = $this->pembelianService->create($postPembelian);
 				foreach($postPembelian->array_produk as $key => $val){
 					$postPembelianDetail = PostPembelianDetailDTO::fromArray([
@@ -117,20 +126,49 @@ class PembelianController extends Controller
 					$this->pembelianDetailService->create($postPembelianDetail);
 				}
 			} else {
-				// $kategori = $this->pembelianService->update($data);
+				$pembelian = $this->pembelianService->update($postPembelian);
+
+				$this->pembelianDetailService->destroyMultiple(
+					DetailPembelianDetailDTO::fromArray([
+						'id_pembelian' => $pembelian->id,
+						'array_id_pembelian_detail' => $idPembelianDetail,
+					])
+				);
+
+				foreach($postPembelian->array_produk as $key => $val){
+					$postPembelianDetail = PostPembelianDetailDTO::fromArray([
+						'id_pembelian' => $pembelian->id,
+						'kode_produk' => $produk[$key],
+						'id_satuan' => $satuan[$key],
+						'jumlah' => $jumlah[$key],
+						'tanggal_kedaluwarsa' => $tanggalKedaluwarsa[$key] ?? null,
+						'harga_beli' => $hargaBeli[$key],
+						'total_harga_beli' => $totalHarga[$key],
+						'harga_jual' => $hargaJual[$key],
+						'id_pembelian_detail' => $idPembelianDetail[$key] ?? null,
+						'model_pembelian_detail' => $idPembelianDetail[$key] ?? null,
+					]);
+
+					// \Log::debug(json_encode($postPembelianDetail, JSON_PRETTY_PRINT));
+					if (!$postPembelianDetail->id_pembelian_detail) {
+						$this->pembelianDetailService->create($postPembelianDetail);
+					} else {
+						$this->pembelianDetailService->update($postPembelianDetail);
+					}
+				}
 			}
 
 			DB::commit();
-			// return response()->json(ResponseAxiosDTO::fromArray([
-			// 	'code' => $data->res_code,
-			// 	'message' => $data->res_message,
-			// 	'response' => $kategori,
-			// ]), $data->res_code);
+
 			return response()->json(ResponseAxiosDTO::fromArray([
-				'code' => 201,
-				'message' => 'Data berhasil dibuat',
-				// 'response' => $kategori,
-			]), 201);
+				'code' => $postPembelian->res_code,
+				'message' => $postPembelian->res_message,
+			]), $postPembelian->res_code);
+			// return response()->json(ResponseAxiosDTO::fromArray([
+			// 	'code' => 201,
+			// 	'message' => 'Data berhasil dibuat',
+			// 	// 'response' => $kategori,
+			// ]), 201);
 		} catch (\Throwable $e) {
 			DB::rollback();
 			\Log::error($e->getMessage());

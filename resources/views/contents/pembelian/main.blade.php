@@ -11,6 +11,12 @@
 			border: 1px solid red !important;
 			border-radius: 5px;
 		}
+		.tool-tip {
+			display: inline-block;
+		}
+		.tool-tip [disabled] {
+			pointer-events: none;
+		}
 	</style>
 @endpush
 

@@ -2,8 +2,11 @@
 
 namespace App\DataTransferObjects\Pembelian;
 
+use OpenSoutheners\LaravelDto\Attributes\BindModel;
 use OpenSoutheners\LaravelDto\Attributes\WithDefaultValue;
 use OpenSoutheners\LaravelDto\DataTransferObject;
+# Models
+use App\Models\PembelianDetail;
 
 final class PostPembelianDetailDTO extends DataTransferObject
 {
@@ -43,12 +46,24 @@ final class PostPembelianDetailDTO extends DataTransferObject
 
 		#[WithDefaultValue(null)]
 		public int|null $id_pembelian_detail = null,
+
+		#[BindModel(using: 'id')]
+		#[WithDefaultValue(PembelianDetail::class)]
+		public PembelianDetail|null $model_pembelian_detail = null,
+
+		#[WithDefaultValue(null)]
+		public int|null $stok_awal = null,
+
+		#[WithDefaultValue(null)]
+		public int|null $stok_real = null,
 	) {
 		if ($id_pembelian) {
 			$this->res_code = 200;
 			$this->res_message = 'Data berhasil diperbarui';
 		}
-
-		// $this->nama = strtolower($this->nama);
+		if ($model_pembelian_detail) {
+			$this->stok_awal = $model_pembelian_detail->stok_awal;
+			$this->stok_real = $model_pembelian_detail->stok_real;
+		}
 	}
 }

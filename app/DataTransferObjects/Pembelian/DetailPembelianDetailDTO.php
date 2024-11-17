@@ -16,16 +16,28 @@ final class DetailPembelianDetailDTO extends DataTransferObject
 	public function __construct(
 		#[WithDefaultValue(200)]
 		public int $res_code,
+
 		#[WithDefaultValue('Ok')]
 		public string $res_message,
+
+		#[WithDefaultValue([])]
+		public array $array_id_pembelian_detail,
+
 		#[WithDefaultValue(false)]
 		public bool $is_destroy,
+
+		#[WithDefaultValue(null)]
+		public int|null $id_pembelian = null,
+
 		#[WithDefaultValue(null)]
 		public int|null $id_pembelian_detail = null,
+
 		#[WithDefaultValue(null)]
 		public int|null $jumlah_qty_penjualan = null,
+
 		#[WithDefaultValue(null)]
 		public int|null $stok_real_terbaru = null,
+
 		#[BindModel(using: 'id', with: ['data_produk'])]
 		#[WithDefaultValue(PembelianDetail::class)]
 		public PembelianDetail|null $model_pembelian_detail = null,

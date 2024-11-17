@@ -81,6 +81,7 @@ class KasirController extends Controller
 				foreach($produk as $key => $val){
 					$this->pembelianDetailService->updateStokReal(
 						DetailPembelianDetailDTO::fromArray([
+							'id_pembelian_detail' => $produk[$key],
 							'jumlah_qty_penjualan' => $jumlah[$key],
 							'model_pembelian_detail' => $produk[$key],
 						])
