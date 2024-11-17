@@ -22,6 +22,16 @@ class DataProduk extends Model
 
 	public function pembelian_detail(): HasMany
 	{
-		return $this->hasMany(KategoriProduk::class, 'kode_produk', 'kode_produk');
+		return $this->hasMany(PembelianDetail::class, 'kode_produk', 'kode_produk');
+	}
+
+	public function minmax_produk(): HasMany
+	{
+		return $this->hasMany(MinMaxProduk::class, 'kode_produk', 'kode_produk');
+	}
+
+	public function v_kartu_stok() : HasMany
+	{
+		return $this->hasMany(VKartuStok::class, 'kode_produk', 'kode_produk');
 	}
 }
