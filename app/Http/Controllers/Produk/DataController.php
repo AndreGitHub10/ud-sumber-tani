@@ -44,6 +44,9 @@ class DataController extends Controller
 						<button type='button' class='btn btn-sm btn-warning px-2 btn-edit-data-produk' data-id='$item->id'>
 							<i class='fadeIn animated bx bx-pencil'></i>
 						</button>
+						<button type='button' class='btn btn-sm btn-secondary px-2 btn-print-barcode' data-id='$item->kode_produk'>
+							<i class='fadeIn animated bx bx-barcode'></i>
+						</button>
 					</div>
 				";
 			})
@@ -111,5 +114,12 @@ class DataController extends Controller
 			'message' => $data->res_message,
 			'response' => $supplier,
 		]), $data->res_code);
+	}
+
+	public function barcode($barcode='') {
+		$array = [
+			'barcode' => $barcode
+		];
+		return view('contents.data-master.produk.data.barcode',$array);
 	}
 }

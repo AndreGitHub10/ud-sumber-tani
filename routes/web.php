@@ -51,6 +51,7 @@ Route::middleware(Authenticate::class)->group(function () {
 				Route::post('datatables', 'datatables')->name('datatables');
 				Route::post('destroy', 'destroy')->name('destroy');
 				Route::post('store', 'store')->name('store');
+				Route::get('barcode/{barcode?}', 'barcode')->name('barcode');
 			});
 
 			Route::controller(KategoriController::class)->prefix('kategori')->as('kategori.')
@@ -109,6 +110,7 @@ Route::middleware(Authenticate::class)->group(function () {
 	->group(function () {
 		Route::get('/', 'main')->name('main');
 		Route::post('store', 'store')->name('store');
+		Route::get('invoice/{id?}', 'invoice')->name('invoice');
 	});
 
 	Route::prefix('laporan')->as('laporan.')

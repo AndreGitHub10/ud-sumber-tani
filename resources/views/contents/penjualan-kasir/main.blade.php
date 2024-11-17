@@ -540,6 +540,8 @@
 			
 			$(this).attr('disabled', false)
 
+			window.open("{{route('penjualanKasir.invoice')}}/"+response.data.response.id)
+
 			$("#container-btn-sesi-penjualan-akhir").hide('slow', function() {
 				$("#container-btn-sesi-penjualan-awal").show('slow')
 			})

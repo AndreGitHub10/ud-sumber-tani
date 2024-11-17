@@ -105,6 +105,7 @@ class KasirController extends Controller
 			return response()->json(ResponseAxiosDTO::fromArray([
 				'code' => 201,
 				'message' => 'Data berhasil dibuat',
+				'response' => $postPenjualan
 			]), 201);
 		} catch (\Throwable $e) {
 			DB::rollback();
@@ -113,5 +114,12 @@ class KasirController extends Controller
 				'message' => $e->getMessage(),
 			]), 500);
 		}
+	}
+
+	public function invoice($id = 0)
+	{
+		$data['penjualan'] = Penjualan::with('penjualan_detail','user','penjualan_detail.pembelian_detail','penjualan_detail.pembelian_detail.data_produk')
+			->find($id);
+		return view('contents.penjualan-kasir.invoice', $data);
 	}
 }

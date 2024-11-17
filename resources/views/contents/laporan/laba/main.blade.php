@@ -6,6 +6,7 @@
 	
 	<link href="{{asset('assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet" />
 	<link href="{{asset('assets/plugins/select2/css/select2-bootstrap4.css')}}" rel="stylesheet" />
+	<link href="{{asset('assets/plugins/flatpickr/dist/flatpickr.min.css')}}" rel="stylesheet" />
 	<style>
 		.show-alert{
 			border: 1px solid red !important;
@@ -18,7 +19,7 @@
 	<div id="main-page">
 		<!--breadcrumb-->
 		<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-			<div class="breadcrumb-title pe-3">Laporan Barang Habis (Min-Max)</div>
+			<div class="breadcrumb-title pe-3">Laba</div>
 			<div class="ps-3">
 				<nav aria-label="breadcrumb">
 					<ol class="breadcrumb mb-0 p-0">
@@ -31,16 +32,16 @@
 		<!--end breadcrumb-->
 
 		<div class="card">
-			<div class="card-header">
+			{{-- <div class="card-header">
 				<div class="col-12">
 					<button type="button" class="btn btn-primary px-3" id="set-min-max">
 						<i class="fadeIn animated bx bx-plus"></i>Set Min-Max Produk
 					</button>
 				</div>
-			</div>
+			</div> --}}
 			<div class="card-body">
 				<div class="row mb-4">
-					<div class="col-md-6">
+					<div class="col-md-3">
 						<label for="kategori" class="form-label fw-bold">Kategori</label>
 						<select class="single-select validation" id="kategori" onchange="filter()">
 							<option value="" selected>Semua</option>
@@ -48,6 +49,18 @@
 								<option value="{{$item->id}}">{{$item->nama}}</option>
 							@endforeach
 						</select>
+					</div>
+					<div class="col-md-6">
+						<div class="mb-3">
+							<label class="form-label fw-bold">Rentang Tanggal</label>
+							<input type="text" class="form-control date-range" id="date_range" onchange="filter()"/>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3">
+							<label class="form-label fw-bold">Total Laba Bersih</label>
+							<input type="text" class="form-control" id="laba" disabled/>
+						</div>
 					</div>
 				</div>
 				<div class="table-responsive">
@@ -76,6 +89,7 @@
 	<script src="{{asset('assets/plugins/datatable/js/dataTables.bootstrap5.min.js')}}"></script>
 
 	<script src="{{asset('assets/plugins/select2/js/select2.min.js')}}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 	<script>
 		$(async () => {
@@ -86,8 +100,16 @@
 			datatableLaba()
 		})
 
+		$(".date-range").flatpickr({
+			mode: "range",
+			altInput: true,
+			altFormat: "d-m-Y",
+			dateFormat: "Y-m-d",
+			defaultDate: "{{date('Y-m-d')}} to {{date('Y-m-d')}}"
+		});
+
 		function filter() {
-			datatableLaba($('#kategori').val())
+			datatableLaba($('#kategori').val(),$('#date_range').val())
 		}
 
 		$('.single-select').select2({
@@ -170,7 +192,7 @@
 			})
 		})
 
-		async function datatableLaba(kategori=$('#kategori').val()){
+		async function datatableLaba(kategori=$('#kategori').val(),date_range=''){
 			await $('#datatable-min-max').dataTable({
 				scrollX: true,
 				bPaginate: true,
@@ -186,7 +208,8 @@
 					url:"{{route('laporan.laba.datatables')}}",
 					type: 'post',
 					data: {
-						kategori: kategori
+						kategori: kategori,
+						date_range: date_range
 					}
 				},
 				columns: [
@@ -204,8 +227,8 @@
 					}}
 				],
 				initComplete: function (settings, json) {
-					initButton()
-				}
+                    $('#laba').val(module.formatter.formatRupiah(json.laba, 'Rp. '))
+                }
 			})
 		}
 	</script>

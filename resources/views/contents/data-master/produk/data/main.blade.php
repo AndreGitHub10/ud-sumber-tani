@@ -121,6 +121,14 @@
 					$this.attr('disabled', false)
 				})
 			})
+			$(".btn-print-barcode").click(async (e) => {
+				let $this = $(e.currentTarget)
+				const id = $this.data('id')
+				$this.attr('disabled', true)
+				window.open("{{route('dataMaster.produk.data.barcode')}}/"+id)
+
+				$this.attr('disabled', false)
+			})
 		}
 
 		$("#add-new-data").click(async (e) => {

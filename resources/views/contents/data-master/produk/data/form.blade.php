@@ -57,6 +57,14 @@
 								<input type="file" class="form-control" id="input-foto" name="foto_directory">
 							</div>
 						</div>
+						@if ($dataProduk)
+						<div class="row mb-5">
+							<label for="input-foto" class="col-sm-3 col-form-label">Barcode</label>
+							<div class="col-sm-9">
+								<img class="img-fluid" src="data:image/png;base64,{{DNS1D::getBarcodePNG($dataProduk->kode_produk, 'C39E', 2, 70, array(0,0,0), true)}}" alt="barcode" />
+							</div>
+						</div>
+						@endif
 						<div class="row">
 							<div
 								class="col-sm-12"

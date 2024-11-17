@@ -9,7 +9,7 @@ class PenjualanDetail extends Model
 {
 	protected $table = "penjualan_detail";
 
-	public function penjualan_detail(): BelongsTo
+	public function penjualan(): BelongsTo
 	{
 		return $this->belongsTo(Penjualan::class, 'penjualan_id', 'id');
 	}
