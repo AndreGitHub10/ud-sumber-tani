@@ -18,7 +18,7 @@
 	<div id="main-page">
 		<!--breadcrumb-->
 		<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-			<div class="breadcrumb-title pe-3">Laporan Barang Habis (Min-Max)</div>
+			<div class="breadcrumb-title pe-3">Laporan Penjualan</div>
 			<div class="ps-3">
 				<nav aria-label="breadcrumb">
 					<ol class="breadcrumb mb-0 p-0">
@@ -31,35 +31,26 @@
 		<!--end breadcrumb-->
 
 		<div class="card">
-			<div class="card-header">
+			{{-- <div class="card-header">
 				<div class="col-12">
 					<button type="button" class="btn btn-primary px-3" id="set-min-max">
 						<i class="fadeIn animated bx bx-plus"></i>Set Min-Max Produk
 					</button>
 				</div>
-			</div>
+			</div> --}}
 			<div class="card-body">
-				<div class="row mb-4">
-					<div class="col-md-6">
-						<label for="stok_filter" class="form-label fw-bold">Pilih Stok</label>
-						<select class="single-select validation" id="stok_filter" onchange="filter()">
-							<option value="stok_habis" selected>Stok Habis</option>
-							<option value="stok_dibawah_minimal" >Stok Dibawah Minimal</option>
-							<option value="stok_diatas_maksimal" >Stok Diatas Maksimal</option>
-						</select>
-					</div>
-				</div>
 				<div class="table-responsive">
-					<table id="datatable-min-max" class="table table-striped table-bordered" style="width:100%">
+					<table id="datatable-penjualan" class="table table-striped table-bordered" style="width:100%">
 						<thead>
 							<tr>
 								<th>No</th>
-								<th>Kode Barang</th>
-								<th>Nama Barang</th>
-								<th>Satuan</th>
-								<th>Stok</th>
-								<th>Minimal Stok</th>
-								<th>Maksimal Stok</th>
+								<th>Tanggal</th>
+								<th>Nomer Kwitansi</th>
+								<th>Nama Kasir</th>
+								<th>Total Harga</th>
+								<th>Jenis Pembayaran</th>
+								<th>TS</th>
+								<th>Aksi</th>
 							</tr>
 						</thead>
 						<tbody></tbody>
@@ -83,27 +74,16 @@
 			module = await initModul()
 			console.log(module)
 
-			datatableMinMax()
-		})
-
-		function filter() {
-			datatableMinMax($('#stok_filter').val())
-		}
-
-		$('.single-select').select2({
-			theme: 'bootstrap4',
-			width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
-			placeholder: $(this).data('placeholder'),
-			allowClear: Boolean($(this).data('allow-clear')),
+			datatablePenjualan()
 		})
 
 		function initButton(){
-			$(".btn-edit-pembelian").click(async (e) => {
+			$(".btn-detail").click(async (e) => {
 				let $this = $(e.currentTarget)
-				return module.swal.warning({text: 'Masih tahap pengembangan!'})
+				// return module.swal.warning({text: 'Masih tahap pengembangan!'})
 				$this.attr('disabled', true)
 
-				let response = await postRequest("{{route('pembelian.form')}}", {id_user: $this.data('id')})
+				let response = await postRequest("{{route('laporan.penjualan.detail')}}", {id: $this.data('id')})
 				
 				if (response.status !== 200) {
 					await module.swal.warning({
@@ -153,7 +133,7 @@
 		$("#set-min-max").click(async (e) => {
 			const $this = $(e.currentTarget)
 			$this.attr('disabled', true)
-			let response = await postRequest("{{route('laporan.barangHabis.form')}}")
+			let response = await postRequest("{{route('pembelian.form')}}")
 
 			if (response.status !== 200) {
 				await module.swal.warning({
@@ -170,8 +150,8 @@
 			})
 		})
 
-		async function datatableMinMax(stok_filter=$('#stok_filter').val()){
-			await $('#datatable-min-max').dataTable({
+		async function datatablePenjualan(){
+			await $('#datatable-penjualan').dataTable({
 				scrollX: true,
 				bPaginate: true,
 				bFilter: true,
@@ -183,20 +163,20 @@
 					targets: 0
 				}],
 				ajax: {
-					url:"{{route('laporan.barangHabis.datatables')}}",
+					url:"{{route('laporan.penjualan.datatables')}}",
 					type: 'post',
-					data: {
-						stok_filter: stok_filter
-					}
 				},
 				columns: [
 					{data: 'DT_RowIndex', name: 'DT_RowIndex'},
-					{data: 'kode_produk', name: 'kode_produk'},
-					{data: 'nama_produk', name: 'nama_produk'},
-					{data: 'satuan', name: 'satuan'},
-					{data: 'stok', name: 'stok'},
-					{data: 'min_stok', name: 'min_stok'},
-					{data: 'max_stok', name: 'max_stok'}
+					{data: 'tanggal', name: 'tanggal'},
+					{data: 'nomor_kwitansi', name: 'nomor_kwitansi'},
+					{data: 'nama_kasir', name: 'nama_kasir'},
+					{data: 'total_penjualan_diskon', name: 'total_penjualan_diskon', render: function(data, type, row) {
+						return module.formatter.formatRupiah(data, 'Rp. ')
+					}},
+					{data: 'jenis_pembayaran', name: 'jenis_pembayaran'},
+					{data: 'ts', name: 'ts'},
+					{data: 'action', name: 'action'}
 				],
 				initComplete: function (settings, json) {
 					initButton()

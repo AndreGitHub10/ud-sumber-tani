@@ -77,10 +77,10 @@
 		function initButton(){
 			$(".btn-detail").click(async (e) => {
 				let $this = $(e.currentTarget)
-				return module.swal.warning({text: 'Masih tahap pengembangan!'})
+				// return module.swal.warning({text: 'Masih tahap pengembangan!'})
 				$this.attr('disabled', true)
 
-				let response = await postRequest("{{route('pembelian.form')}}", {id_user: $this.data('id')})
+				let response = await postRequest("{{route('laporan.kartuStok.detail')}}", {id: $this.data('id')})
 				
 				if (response.status !== 200) {
 					await module.swal.warning({
@@ -167,7 +167,9 @@
 					{data: 'DT_RowIndex', name: 'DT_RowIndex'},
 					{data: 'kode_produk', name: 'kode_produk'},
 					{data: 'nama_produk', name: 'nama_produk'},
-					{data: 'stok', name: 'stok'},
+					{data: 'stok', name: 'stok', render: function(data, type, row) {
+						return "<ul>"+data+"</ul>"
+					}},
 					{data: 'action', name: 'action'}
 				],
 				initComplete: function (settings, json) {

@@ -41,11 +41,12 @@
 			<div class="card-body">
 				<div class="row mb-4">
 					<div class="col-md-6">
-						<label for="stok_filter" class="form-label fw-bold">Pilih Stok</label>
-						<select class="single-select validation" id="stok_filter" onchange="filter()">
-							<option value="stok_habis" selected>Stok Habis</option>
-							<option value="stok_dibawah_minimal" >Stok Dibawah Minimal</option>
-							<option value="stok_diatas_maksimal" >Stok Diatas Maksimal</option>
+						<label for="kategori" class="form-label fw-bold">Kategori</label>
+						<select class="single-select validation" id="kategori" onchange="filter()">
+							<option value="" selected>Semua</option>
+							@foreach ($kategori as $item)
+								<option value="{{$item->id}}">{{$item->nama}}</option>
+							@endforeach
 						</select>
 					</div>
 				</div>
@@ -56,10 +57,9 @@
 								<th>No</th>
 								<th>Kode Barang</th>
 								<th>Nama Barang</th>
-								<th>Satuan</th>
-								<th>Stok</th>
-								<th>Minimal Stok</th>
-								<th>Maksimal Stok</th>
+								<th>Jumlah Terjual</th>
+								<th>Pendapatan</th>
+								<th>Laba Bersih</th>
 							</tr>
 						</thead>
 						<tbody></tbody>
@@ -83,11 +83,11 @@
 			module = await initModul()
 			console.log(module)
 
-			datatableMinMax()
+			datatableLaba()
 		})
 
 		function filter() {
-			datatableMinMax($('#stok_filter').val())
+			datatableLaba($('#kategori').val())
 		}
 
 		$('.single-select').select2({
@@ -170,7 +170,7 @@
 			})
 		})
 
-		async function datatableMinMax(stok_filter=$('#stok_filter').val()){
+		async function datatableLaba(kategori=$('#kategori').val()){
 			await $('#datatable-min-max').dataTable({
 				scrollX: true,
 				bPaginate: true,
@@ -183,20 +183,25 @@
 					targets: 0
 				}],
 				ajax: {
-					url:"{{route('laporan.barangHabis.datatables')}}",
+					url:"{{route('laporan.laba.datatables')}}",
 					type: 'post',
 					data: {
-						stok_filter: stok_filter
+						kategori: kategori
 					}
 				},
 				columns: [
 					{data: 'DT_RowIndex', name: 'DT_RowIndex'},
 					{data: 'kode_produk', name: 'kode_produk'},
 					{data: 'nama_produk', name: 'nama_produk'},
-					{data: 'satuan', name: 'satuan'},
-					{data: 'stok', name: 'stok'},
-					{data: 'min_stok', name: 'min_stok'},
-					{data: 'max_stok', name: 'max_stok'}
+					{data: 'jumlah', name: 'jumlah', render: function(data, type, row) {
+						return "<ul>"+data+"</ul>"
+					}},
+					{data: 'laba_kotor', name: 'laba_kotor', render: function(data, type, row) {
+						return module.formatter.formatRupiah(data, 'Rp. ')
+					}},
+					{data: 'laba_bersih', name: 'laba_bersih', render: function(data, type, row) {
+						return module.formatter.formatRupiah(data, 'Rp. ')
+					}}
 				],
 				initComplete: function (settings, json) {
 					initButton()

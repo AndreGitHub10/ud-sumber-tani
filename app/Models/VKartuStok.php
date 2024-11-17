@@ -4,18 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class MinMaxProduk extends Model
+class VKartuStok extends Model
 {
-	protected $table = 'minmax_produk';
+    protected $table = 'v_kartu_stok';
 
 	public function data_produk(): BelongsTo
 	{
 		return $this->belongsTo(DataProduk::class, 'kode_produk', 'kode_produk');
 	}
 
-	public function satuan_produk(): BelongsTo
+	public function satuan_produk() : HasOne
 	{
-		return $this->belongsTo(SatuanProduk::class, 'satuan_id', 'id');
+		return $this->hasOne(SatuanProduk::class, 'id', 'satuan_id');
 	}
 }

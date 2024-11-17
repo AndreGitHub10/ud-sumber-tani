@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('minmax_produk', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('produk_id');
+            $table->string('kode_produk');
             $table->integer('min_stok');
             $table->integer('max_stok');
             $table->foreignId('satuan_id');

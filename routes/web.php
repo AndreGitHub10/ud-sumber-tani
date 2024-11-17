@@ -9,6 +9,9 @@ use App\Http\Middleware\Authenticate;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Laporan\KartuStokController;
+use App\Http\Controllers\Laporan\LabaController;
+use App\Http\Controllers\Laporan\MinMaxController;
+use App\Http\Controllers\Laporan\PenjualanController;
 use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\Penjualan\KasirController;
 use App\Http\Controllers\Produk\DataController;
@@ -112,23 +115,32 @@ Route::middleware(Authenticate::class)->group(function () {
 	->group(function () {
 		Route::prefix('barang-habis')->as('barangHabis.')
 		->group(function () {
-			Route::get('/', [DashboardController::class, 'main'])->name('main');
+			Route::get('/', [MinMaxController::class, 'main'])->name('main');
+			Route::post('datatables', [MinMaxController::class, 'datatables'])->name('datatables');
+			Route::post('form', [MinMaxController::class, 'form'])->name('form');
+			Route::post('getMinMax', [MinMaxController::class, 'getMinMax'])->name('getMinMax');
+			Route::post('store', [MinMaxController::class, 'store'])->name('store');
 		});
 
 		Route::prefix('kartu-stok')->as('kartuStok.')
 		->group(function () {
 			Route::get('/', [KartuStokController::class, 'main'])->name('main');
 			Route::post('datatables', [KartuStokController::class, 'datatables'])->name('datatables');
+			Route::post('detail', [KartuStokController::class, 'detail'])->name('detail');
+			Route::post('datatablesDetail', [KartuStokController::class, 'datatablesDetail'])->name('datatablesDetail');
 		});
 
 		Route::prefix('laba')->as('laba.')
 		->group(function () {
-			Route::get('/', [DashboardController::class, 'main'])->name('main');
+			Route::get('/', [LabaController::class, 'main'])->name('main');
+			Route::post('datatables', [LabaController::class, 'datatables'])->name('datatables');
 		});
 
 		Route::prefix('penjualan')->as('penjualan.')
 		->group(function () {
-			Route::get('/', [DashboardController::class, 'main'])->name('main');
+			Route::get('/', [PenjualanController::class, 'main'])->name('main');
+			Route::post('datatables', [PenjualanController::class, 'datatables'])->name('datatables');
+			Route::post('detail', [PenjualanController::class, 'detail'])->name('detail');
 		});
 
 		Route::prefix('persediaan')->as('persediaan.')
