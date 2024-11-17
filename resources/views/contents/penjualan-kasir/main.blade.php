@@ -91,7 +91,15 @@
 							<div class="row mb-2">
 								<div class="col-6">
 									<label for="input-tanggal-penjualan" class="form-label">Tanggal Penjualan</label>
-									<input type="date" class="form-control form-control-sm validation reset" id="input-tanggal-penjualan" name="tanggal_penjualan" value="{{date("Y-m-d")}}" readonly>
+									<input type="date" class="form-control form-control-sm validation" id="input-tanggal-penjualan" name="tanggal_penjualan" value="{{date("Y-m-d")}}" readonly>
+								</div>
+								<div class="col-6">
+									<label for="input-jenis-pembayaran" class="form-label">Jenis Pembayaran</label>
+									<select class="single-select validation reset" id="input-jenis-pembayaran" name="jenis_pembayaran" disabled>
+										<option selected value="">--PILIH OPSI--</option>
+										<option value="tunai">TUNAI</option>
+										<option value="non-tunai">NON - TUNAI</option>
+									</select>
 								</div>
 							</div>
 							<div class="row mb-5">
@@ -101,7 +109,7 @@
 								</div>
 								<div class="col-6">
 									<label for="input-kembalian" class="form-label">Kembalian</label>
-									<input type="text" class="form-control form-control-sm validation reset" id="input-kembalian" name="kembalian" value="Rp. 0" readonly>
+									<input type="text" class="form-control form-control-sm" id="input-kembalian" name="kembalian" value="Rp. 0" readonly>
 								</div>
 							</div>
 							<div class="row mb-4">
@@ -112,7 +120,7 @@
 												<th scope="col">No</th>
 												<th scope="col">Nama Produk</th>
 												<th scope="col">Harga</th>
-												<th scope="col" class="text-center">Diskon %</th>
+												<th scope="col" class="text-center">Diskon</th>
 												<th scope="col" class="text-center">Jumlah</th>
 												<th scope="col" class="nowrap">Total Harga</th>
 												<th scope="col" class="text-center">Aksi</th>
@@ -177,16 +185,19 @@
 				sumTotalHargaDiskon += parseFloat(this.value)
 			})
 
-			// console.log("Murni "+sumTotalHargaMurni)
-			// console.log("Diskon "+sumTotalHargaDiskon)
-
 			$("#total-semua-harga-murni").val(sumTotalHargaMurni)
 			$("#total-semua-harga-diskon").val(sumTotalHargaDiskon)
 
 			$("#container-total-semua-harga").text(module.formatter.formatRupiah(sumTotalHargaDiskon, "Rp. "))
 		}
-		
+
 		$("#form-penjualan").on('keyup change', '.validation', function() {
+			if ($(this).val()) {
+				$(this).removeClass('show-alert');
+				$(this).siblings(".select2-container").removeClass('show-alert');
+			}
+		})
+		$("#form-penjualan-final").on('keyup change', '.validation', function() {
 			if ($(this).val()) {
 				$(this).removeClass('show-alert');
 				$(this).siblings(".select2-container").removeClass('show-alert');
@@ -359,6 +370,8 @@
 			await $(this).val(module.formatter.formatRupiah($(this).val(), "Rp. "))
 			let diskon = parseInt(module.parse.onlyNumber($(this).val()))
 
+			if (isNaN(diskon)) diskon = 0;
+
 			let jumlah = parseInt($(`#rows-${uniqueId} .array-jumlah`).val())
 			let hargaJual = parseInt($(`#rows-${uniqueId} .array-harga-jual`).val())
 			let totalHargaJual = hargaJual * jumlah
@@ -462,6 +475,7 @@
 			$("#input-tanggal-penjualan").attr('readonly', false)
 			$("#input-jumlah-pembayaran").attr('readonly', false)
 			$(".rows-list-penjualan .readonly").attr('readonly', true)
+			$("#input-jenis-pembayaran").attr('disabled', false)
 
 			$("#container-btn-sesi-penjualan-awal").hide('slow', function() {
 				$("#container-btn-sesi-penjualan-akhir").show('slow')
@@ -482,6 +496,7 @@
 			$("#input-tanggal-penjualan").attr('readonly', true)
 			$("#input-jumlah-pembayaran").attr('readonly', true)
 			$(".rows-list-penjualan .readonly").attr('readonly', false)
+			$("#input-jenis-pembayaran").attr('disabled', true)
 
 			$("#container-btn-sesi-penjualan-akhir").hide('slow', function() {
 				$("#container-btn-sesi-penjualan-awal").show('slow')
@@ -490,6 +505,12 @@
 
 		$("#btn-save-list-penjualan").click(async function(e) {
 			e.preventDefault()
+
+			const validation = module.validator.form($("#form-penjualan-final .validation"))
+			if (validation) {
+				return module.swal.warning({text: validation})
+			}
+
 			$(this).attr('disabled', true)
 			if ($("#container-list-penjualan tr").length <= 0) {
 				await module.swal.warning({text: "Tidak ada data untuk disimpan"})
@@ -519,8 +540,28 @@
 			
 			$(this).attr('disabled', false)
 
+			$("#container-btn-sesi-penjualan-akhir").hide('slow', function() {
+				$("#container-btn-sesi-penjualan-awal").show('slow')
+			})
+
+			await module.reset.form($("#form-penjualan-final .reset"))
+
+			jQuery.each([
+				'#input-produk',
+				'#input-jumlah',
+				'#btn-append-penjualan',
+			], function(index, item) {
+				$(item).attr('disabled', false)
+			})
+
+			$("#input-tanggal-penjualan").attr('readonly', true)
+			$("#input-jumlah-pembayaran").attr('readonly', true)
+			$("#input-jenis-pembayaran").attr('disabled', true)
+
+			$("#input-tanggal-penjualan").val("{{date('Y-m-d')}}")
 			$("#container-list-penjualan").empty()
 			$("#container-total-semua-harga").text("Rp. 0")
+			$("#input-kembalian").val("Rp. 0")
 		})
 	</script>
 @endpush

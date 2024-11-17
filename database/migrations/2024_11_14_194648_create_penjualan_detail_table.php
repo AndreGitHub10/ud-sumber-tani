@@ -20,8 +20,6 @@ return new class extends Migration
 			$table->decimal('harga_jual', total: 10, places: 0);
 			$table->decimal('total_harga_jual_murni', total: 10, places: 0);
 			$table->decimal('total_harga_jual_diskon', total: 10, places: 0);
-			$table->decimal('pembayaran', total: 10, places: 0);
-			$table->decimal('kembalian', total: 10, places: 0);
 			$table->timestamps();
 		});
 	}

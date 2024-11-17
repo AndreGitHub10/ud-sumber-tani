@@ -31,7 +31,7 @@ final class PostPenjualanDetailDTO extends DataTransferObject
 		public int|null $total_harga_jual_diskon = null,
 	) {
 		if ($this->diskon) {
-            $this->diskon = (int)preg_replace("/\D+/", "", $this->diskon);
-        }
+			$this->diskon = (int)preg_replace("/\D+/", "", $this->diskon);
+		}
 	}
 }
