@@ -1,3 +1,12 @@
+@php
+	function formatRupiah($angka)
+	{
+		$hasil_rupiah = 'Rp. ' . number_format((int) $angka);
+		$hasil_rupiah = str_replace(',', '.', $hasil_rupiah);
+		return $hasil_rupiah;
+	}
+@endphp
+
 <!--breadcrumb-->
 <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
 	<div class="breadcrumb-title pe-3">Pembelian</div>
@@ -207,10 +216,11 @@
 					</div>
 					<hr class="mb-4"/>
 					<form id="form-invoice">
+						<input type="hidden" class="form-control" id="id-pembelian" placeholder="Masukkan nomor invoice" value="{{$pembelian->id ?? ''}}">
 						<div class="row mb-4">
 							<label for="input-nomor-invoice" class="col-sm-3 col-form-label">Nomor Invoice <span class="text-danger">*)</span></label>
 							<div class="col-sm-9">
-								<input type="text" class="form-control validation" id="input-nomor-invoice" placeholder="Masukkan nomor invoice">
+								<input type="text" class="form-control validation" id="input-nomor-invoice" placeholder="Masukkan nomor invoice" value="{{$pembelian->nomor_invoice ?? ''}}">
 							</div>
 						</div>
 						<div class="row mb-4">
@@ -219,7 +229,7 @@
 								<select class="single-select validation" id="input-supplier">
 									<option selected disabled>--PILIH OPSI--</option>
 									@foreach ($supplier ?? [] as $item)
-									<option value="{{$item->id}}">{{$item->nama}}</option>
+									<option value="{{$item->id}}" {{$pembelian && $pembelian->supplier_id == $item->id ? 'selected' : '' }}>{{$item->nama}}</option>
 									@endforeach
 								</select>
 							</div>
@@ -227,7 +237,7 @@
 						<div class="row mb-4">
 							<label for="input-tanggal-pembelian" class="col-sm-3 col-form-label">Tanggal Pembelian <span class="text-danger">*)</span></label>
 							<div class="col-sm-9">
-								<input type="date" class="form-control validation" id="input-tanggal-pembelian" value="{{date("Y-m-d")}}">
+								<input type="date" class="form-control validation" id="input-tanggal-pembelian" value="{{$pembelian ? $pembelian->tanggal : date("Y-m-d")}}">
 							</div>
 						</div>
 					</form>
@@ -235,6 +245,7 @@
 					<hr class="mb-4"/>
 
 					<div class="row g-3 mb-4" id="container-input-produk">
+						<input type="hidden" class="reset" id="input-unique-id">
 						<div class="col-md-6">
 							<label for="input-nama-produk" class="form-label">Nama Produk</label>
 							<select class="single-select validation reset" id="input-nama-produk" name="level">
@@ -304,68 +315,76 @@
 									<tr>
 										<th scope="col">Nama Produk</th>
 										<th scope="col">Harga Per-Item</th>
-										<th scope="col">Jumlah</th>
+										<th scope="col" class="text-center">Jumlah</th>
 										<th scope="col">Total Harga</th>
 										<th scope="col" class="text-center">Aksi</th>
 									</tr>
 								</thead>
 								<tbody id="container-produk">
-									{{-- <tr id="rows-1">
-										<input type="hidden" name="array_produk[]" class="array-produk" value="2411PDK001">
-										<input type="hidden" name="array_satuan[]" class="array-satuan" value="1">
-										<input type="hidden" name="array_jumlah[]" class="array-jumlah" value="5">
-										<input type="hidden" name="array_tanggal_kedaluwarsa[]" class="array-tanggal-kedaluwarsa" value="">
-										<input type="hidden" name="array_harga_beli[]" class="array-harga-beli" value="12000">
-										<input type="hidden" name="array_total_harga[]" class="array-total-harga" value="60000">
-										<input type="hidden" name="array_harga_jual[]" class="array-harga-jual" value="15000">
-						
-										<td id="container-produk">2411PDK001 - PUPUK KOMPOS (GRAM)</td>
-										<td id="container-harga-beli">Rp. 12.000</td>
-										<td id="container-jumlah" class='text-center'>5</td>
-										<td id="container-total-harga">Rp. 60.000</td>
+									@php
+										$totalSemuaHarga = 0;
+									@endphp
+									@if (isset($pembelian->pembelian_detail))
+									@foreach ($pembelian->pembelian_detail ?? [] as $key => $item)
+									<tr id="rows-{{$item->id}}" data-is-count="{{$item->stok_awal===$item->stok_real ? 'true' : 'false'}}">
+										<input type="hidden" name="array_produk[]" class="array-produk" value="{{$item->kode_produk}}">
+										<input type="hidden" name="array_satuan[]" class="array-satuan" value="{{$item->satuan_id}}">
+										<input type="hidden" name="array_jumlah[]" class="array-jumlah" value="{{$item->stok_real}}">
+										<input type="hidden" name="array_tanggal_kedaluwarsa[]" class="array-tanggal-kedaluwarsa" value="{{$item->tanggal_kedaluwarsa ?? ''}}">
+										<input type="hidden" name="array_harga_beli[]" class="array-harga-beli" value="{{$item->harga_beli}}">
+										<input
+											type="hidden"
+											name="array_total_harga[]"
+											class="array-total-harga"
+											value="{{$item->total_harga_beli}}"
+											data-is-count="{{$item->stok_awal===$item->stok_real ? 'true' : 'false'}}"
+										>
+										<input type="hidden" name="array_harga_jual[]" class="array-harga-jual" value="{{$item->harga_jual}}">
+										<input type="hidden" name="array_id_pembelian_detail[]" class="array-id-pembelian-detail" value="{{$item->id}}">
+
+										<td id="container-produk">{{$item->data_produk->kode_produk}} - {{strtoupper($item->data_produk->nama_produk)}} ({{strtoupper($item->satuan->nama)}})</td>
+										<td id="container-harga-beli">{{formatRupiah($item->harga_beli)}}</td>
+										<td id="container-jumlah" class='text-center'>{{$item->stok_awal === $item->stok_real ? $item->stok_real : "$item->stok_real/$item->stok_awal"}}</td>
+										<td id="container-total-harga">{{formatRupiah($item->total_harga_beli)}}</td>
 										<td>
-											<div class='text-center'>
-												<button type='button' class='btn btn-sm btn-danger px-2 btn-remove-pembelian' data-unique-id="1" title="Hapus">
-													<i class='fadeIn animated bx bx-trash'></i>
-												</button>
-												<button type='button' class='btn btn-sm btn-warning px-2 btn-modify-pembelian' data-unique-id="1" title="Edit">
-													<i class='fadeIn animated bx bx-pencil'></i>
-												</button>
+											<div class="text-center">
+												<span class="tool-tip" data-toggle="tooltip" data-placement="top" title="{{$item->stok_awal===$item->stok_real ? 'Hapus' : 'Produk sudah ada penjualan, tidak bisa dihapus'}}">
+													<button
+														type="button"
+														class="btn btn-sm btn-danger px-2 btn-remove-pembelian {{$item->stok_awal===$item->stok_real ? '' : 'title-nonaktif'}}"
+														data-unique-id="{{$item->id}}"
+														data-is-count="{{$item->stok_awal===$item->stok_real ? 'true' : 'false'}}"
+														{{$item->stok_awal===$item->stok_real ? '' : 'disabled'}}
+													>
+														<i class="fadeIn animated bx bx-trash"></i>
+													</button>
+												</span>
+												<span class="tool-tip" data-toggle="tooltip" data-placement="top" title="Edit">
+													<button
+														type="button"
+														class="btn btn-sm btn-warning px-2 btn-modify-pembelian"
+														data-unique-id="{{$item->id}}"
+														data-is-count="{{$item->stok_awal===$item->stok_real ? 'true' : 'false'}}"
+													>
+														<i class="fadeIn animated bx bx-pencil"></i>
+													</button>
+												</span>
 											</div>
 										</td>
 									</tr>
-									<tr id="rows-2">
-										<input type="hidden" name="array_produk[]" class="array-produk" value="2411PDK002">
-										<input type="hidden" name="array_satuan[]" class="array-satuan" value="2">
-										<input type="hidden" name="array_jumlah[]" class="array-jumlah" value="14">
-										<input type="hidden" name="array_tanggal_kedaluwarsa[]" class="array-tanggal-kedaluwarsa" value="2024-11-15">
-										<input type="hidden" name="array_harga_beli[]" class="array-harga-beli" value="8000">
-										<input type="hidden" name="array_total_harga[]" class="array-total-harga" value="112000">
-										<input type="hidden" name="array_harga_jual[]" class="array-harga-jual" value="10000">
-						
-										<td id="container-produk">2411PDK002 - SPRAYER ELEKTRIK (KG)</td>
-										<td id="container-harga-beli">Rp. 8.000</td>
-										<td id="container-jumlah" class='text-center'>14</td>
-										<td id="container-total-harga">Rp. 112.000</td>
-										<td>
-											<div class='text-center'>
-												<button type='button' class='btn btn-sm btn-danger px-2 btn-remove-pembelian' data-unique-id="2" title="Hapus">
-													<i class='fadeIn animated bx bx-trash'></i>
-												</button>
-												<button type='button' class='btn btn-sm btn-warning px-2 btn-modify-pembelian' data-unique-id="2" title="Edit">
-													<i class='fadeIn animated bx bx-pencil'></i>
-												</button>
-											</div>
-										</td>
-									</tr> --}}
+									@php
+										$totalSemuaHarga +=  $item->total_harga_beli;
+									@endphp
+									@endforeach
+									@endif
 								</tbody>
 								<tfoot id="">
 									<tr>
 										<th colspan="3">
-											<input type="hidden" name="total_semua_harga" id="total-semua-harga" value="">
+											<input type="hidden" name="total_semua_harga" id="total-semua-harga" value="{{$totalSemuaHarga}}">
 											Total Semua Harga : 
 										</th>
-										<th colspan="2" id="container-total-semua-harga">Rp.</th>
+										<th colspan="2" id="container-total-semua-harga">{{$pembelian ? formatRupiah($totalSemuaHarga) : 'Rp.'}}</th>
 										{{-- <th colspan="2" id="container-total-semua-harga">Rp. 172.000</th> --}}
 									</tr>
 								</tfoot>
@@ -388,91 +407,6 @@
 						<button class="btn btn-sm btn-success px-5" id="btn-save-form-pembelian">Simpan</button>
 					</div>
 				</div>
-				{{-- <div class="border p-4 rounded"> --}}
-					{{-- <div class="card-title d-flex align-items-center">
-						<div><i class="bx bxs-basket me-1 font-22 text-info"></i>
-						</div>
-						<h5 class="mb-0 text-secondary">Pembelian</h5>
-					</div>
-					<hr class="mb-4"/>
-					<form id="form-pembelian">
-						<div class="row mb-4">
-							<label for="input-nomor-invoice" class="col-sm-3 col-form-label">Nomor Invoice <span class="text-danger">*)</span></label>
-							<div class="col-sm-9">
-								<input type="text" class="form-control" id="input-nomor-invoice" placeholder="Masukkan nomor invoice">
-							</div>
-						</div>
-						<div class="row mb-4">
-							<label for="input-supplier" class="col-sm-3 col-form-label">Supplier <span class="text-danger">*)</span></label>
-							<div class="col-sm-9">
-								<select class="single-select" id="input-supplier" name="level">
-									<option selected disabled>--PILIH OPSI--</option>
-									@foreach ($supplier ?? [] as $item)
-									<option value="{{$item->id}}">{{$item->nama}}</option>
-									@endforeach
-								</select>
-							</div>
-						</div>
-						<div class="row mb-4">
-							<label for="inputLevel" class="col-sm-3 col-form-label">Tanggal Pembelian <span class="text-danger">*)</span></label>
-							<div class="col-sm-9">
-								<input type="date" class="form-control" id="inputFirstName">
-							</div>
-						</div>
-						<hr class="mb-4"/>
-						<div class="row g-3 mb-4">
-							<div class="col-md-6">
-								<label for="input-produk" class="form-label">Produk</label>
-								<select class="single-select" id="input-produk" name="level">
-									<option selected disabled>--PILIH OPSI--</option>
-									@foreach ($produk ?? [] as $item)
-									<option value="{{$item->id}}">{{$item->kode_produk}} - {{strtoupper($item->nama_produk)}}</option>
-									@endforeach
-								</select>
-							</div>
-							<div class="col-md-6">
-								<label for="input-satuan" class="form-label">Satuan</label>
-								<select class="single-select" id="input-satuan" name="satuan_id">
-									<option selected disabled>--PILIH OPSI--</option>
-									@foreach ($satuan ?? [] as $item)
-									<option value="{{$item->id}}">{{strtoupper($item->nama)}}</option>
-									@endforeach
-								</select>
-							</div>
-							<div class="col-md-6">
-								<label for="input-jumlah" class="form-label">Jumlah</label>
-								<input type="text" class="form-control" id="input-jumlah" placeholder="Masukkkan Jumlah Produk" name="jumlah">
-							</div>
-							<div class="col-md-6">
-								<label for="input-tanggal-kedaluwarsa" class="form-label">Tanggal Kedaluwarsa</label>
-								<input type="date" class="form-control" id="input-tanggal-kedaluwarsa" name="tanggal_kedaluwarsa">
-							</div>
-							<div class="col-md-6">
-								<label for="input-harga-beli" class="form-label">Harga Beli</label>
-								<input type="text" class="form-control" id="input-harga-beli" name="harga_beli">
-							</div>
-							<div class="col-md-6">
-								<label for="input-harga-jual" class="form-label">Harga Jual</label>
-								<input type="text" class="form-control" id="input-harga-jual" name="harga_jual">
-							</div>
-
-						</div>
-						<div class="row">
-							<div
-								class="col-12"
-								style="
-									display: flex;
-									justify-content: space-between;
-								"
-							>
-								<button type="button" class="btn btn-secondary px-3" id="btn-back-form-pembelian">
-									<i class="fadeIn animated bx bx-left-arrow"></i> Kembali
-								</button>
-								<button class="btn btn-info px-5" id="btn-save-form-pembelian">Simpan</button>
-							</div>
-						</div>
-					</form> --}}
-				{{-- </div> --}}
 			</div>
 		</div>
 	</div>
@@ -480,53 +414,63 @@
 <!--end row-->
 
 <script>
-	// function ubahFormat(v) {
-	// 	// loopPajak();
-	// 	// hitungHargaJual();
-	// 	$(v).val(formatRupiah(v.value, "Rp. "));
-	// }
-	$(function() {
-		initButtonPembelian()
+	$('[data-toggle="tooltip"]').tooltip()
+	$("#other-page").on('click', '.btn-remove-pembelian', function(e) {
+		e.preventDefault()
+		const target = $(this).data('unique-id')
+
+		module.swal.confirm().then((then) => {
+			if (then.value) {
+				$("#rows-" + target).hide('slow', async function(){
+					await $(this).remove()
+					totalSemuaHarga()
+
+					if ($("#input-unique-id").val() == target) {
+						module.reset.form($("#container-input-produk .reset"))
+						$("#container-btn-update-batal-pembelian").hide('slow', function() {
+							$("#container-btn-append-pembelian").show('slow').css('display', 'flex')
+						})
+					}
+				})
+			}
+		})
 	})
+	$("#other-page").on('click', '.btn-modify-pembelian', function(e) {
+		e.preventDefault()
+		const uniqueId = $(this).data('unique-id')
+		const isCount = $(this).data('is-count')
+		$("#btn-update-pembelian").data('unique-id', uniqueId)
+		$("#input-unique-id").val(uniqueId)
 
-	function initButtonPembelian(){
-		$(".btn-remove-pembelian").click(function(e) {
-			e.preventDefault()
-			const target = $(this).data('unique-id')
+		let produkValue = $(`#rows-${uniqueId} .array-produk`).val()
+		let satuanValue = $(`#rows-${uniqueId} .array-satuan`).val()
+		let jumlah = $(`#rows-${uniqueId} .array-jumlah`).val()
+		let tanggalKedaluwarsa = $(`#rows-${uniqueId} .array-tanggal-kedaluwarsa`).val()
+		let hargaBeli = $(`#rows-${uniqueId} .array-harga-beli`).val()
+		let hargaJual = $(`#rows-${uniqueId} .array-harga-jual`).val()
 
-			module.swal.confirm().then((then) => {
-				if (then.value) {
-					$("#rows-" + target).hide('slow', async function(){
-						await $(this).remove()
-						totalSemuaHarga()
-					})
-				}
-			})
+		$("#input-nama-produk").val(produkValue).trigger('change')
+		$("#input-satuan").val(satuanValue).trigger('change')
+		$("#input-jumlah").val(jumlah)
+		$("#input-tanggal-kedaluwarsa").val(tanggalKedaluwarsa)
+		$("#input-harga-beli").val(module.formatter.formatRupiah(hargaBeli, "Rp. "))
+		$("#input-harga-jual").val(module.formatter.formatRupiah(hargaJual, "Rp. "))
+		if (!isCount) {
+			$("#input-nama-produk").attr('disabled', true)
+			$("#input-satuan").attr('disabled', true)
+			$("#input-jumlah").attr('readonly', true)
+			$("#input-harga-beli").attr('readonly', true)
+		} else {
+			$("#input-nama-produk").attr('disabled', false)
+			$("#input-satuan").attr('disabled', false)
+			$("#input-jumlah").attr('readonly', false)
+			$("#input-harga-beli").attr('readonly', false)
+		}
+
+		$("#container-btn-append-pembelian").hide("slow", function() {
+			$("#container-btn-update-batal-pembelian").show('slow').css('display', 'flex')
 		})
-		$(".btn-modify-pembelian").click(function(e) {
-			e.preventDefault()
-			const uniqueId = $(this).data('unique-id')
-			$("#btn-update-pembelian").data('unique-id', uniqueId)
-
-			let produkValue = $(`#rows-${uniqueId} .array-produk`).val()
-			let satuanValue = $(`#rows-${uniqueId} .array-satuan`).val()
-			let jumlah = $(`#rows-${uniqueId} .array-jumlah`).val()
-			let tanggalKedaluwarsa = $(`#rows-${uniqueId} .array-tanggal-kedaluwarsa`).val()
-			let hargaBeli = $(`#rows-${uniqueId} .array-harga-beli`).val()
-			let hargaJual = $(`#rows-${uniqueId} .array-harga-jual`).val()
-
-			$("#input-nama-produk").val(produkValue).trigger('change')
-			$("#input-satuan").val(satuanValue).trigger('change')
-			$("#input-jumlah").val(jumlah)
-			$("#input-tanggal-kedaluwarsa").val(tanggalKedaluwarsa)
-			$("#input-harga-beli").val(module.formatter.formatRupiah(hargaBeli, "Rp. "))
-			$("#input-harga-jual").val(module.formatter.formatRupiah(hargaJual, "Rp. "))
-
-			$("#container-btn-append-pembelian").hide("slow", function() {
-				$("#container-btn-update-batal-pembelian").show('slow').css('display', 'flex')
-			})
-		})
-	}
+	})
 
 	function totalSemuaHarga() {
 		let sumTotalHarga = 0
@@ -593,28 +537,45 @@
 			const randomId = module.generate.randomId()
 
 			let html = `
-				<tr id="rows-${randomId}">
+				<tr id="rows-${randomId}" data-is-count="true">
 
 					<input type="hidden" name="array_produk[]" class="array-produk" value="${produkValue}">
 					<input type="hidden" name="array_satuan[]" class="array-satuan" value="${satuanValue}">
 					<input type="hidden" name="array_jumlah[]" class="array-jumlah" value="${jumlah}">
 					<input type="hidden" name="array_tanggal_kedaluwarsa[]" class="array-tanggal-kedaluwarsa" value="${tanggalKedaluwarsa}">
 					<input type="hidden" name="array_harga_beli[]" class="array-harga-beli" value="${fixHargaBeli}">
-					<input type="hidden" name="array_total_harga[]" class="array-total-harga" value="${totalHarga}">
+					<input type="hidden" name="array_total_harga[]" class="array-total-harga" value="${totalHarga}" data-is-count="true">
 					<input type="hidden" name="array_harga_jual[]" class="array-harga-jual" value="${fixHargaJual}">
-	
+					<input type="hidden" name="array_id_pembelian_detail[]" class="array-id-pembelian-detail" value="">
+
 					<td id="container-produk">${produkText} (${satuanText})</td>
 					<td id="container-harga-beli">${hargaBeli}</td>
-					<td id="container-jumlah" class='text-center'>${jumlah}</td>
-					<td id="container-total-harga">${module.formatter.formatRupiah(totalHarga, 'Rp. ')}</td>
+					<td id="container-jumlah" class="text-center">${jumlah}</td>
+					<td id="container-total-harga">${module.formatter.formatRupiah(totalHarga, "Rp. ")}</td>
 					<td>
-						<div class='text-center'>
-							<button type='button' class='btn btn-sm btn-danger px-2 btn-remove-pembelian' data-unique-id="${randomId}" title="Hapus">
-								<i class='fadeIn animated bx bx-trash'></i>
-							</button>
-							<button type='button' class='btn btn-sm btn-warning px-2 btn-modify-pembelian' data-unique-id="${randomId}" title="Edit">
-								<i class='fadeIn animated bx bx-pencil'></i>
-							</button>
+						<div class="text-center">
+							<span class="tool-tip" data-toggle="tooltip" data-placement="top" title="Hapus">
+								<button
+									type="button"
+									class="btn btn-sm btn-danger px-2 btn-remove-pembelian"
+									data-unique-id="${randomId}"
+									title="Hapus"
+									data-is-count="true"
+								>
+									<i class="fadeIn animated bx bx-trash"></i>
+								</button>
+							</span>
+							<span class="tool-tip" data-toggle="tooltip" data-placement="top" title="Edit">
+								<button
+									type="button"
+									class="btn btn-sm btn-warning px-2 btn-modify-pembelian"
+									data-unique-id="${randomId}"
+									title="Edit"
+									data-is-count="true"
+								>
+									<i class="fadeIn animated bx bx-pencil"></i>
+								</button>
+							</span>
 						</div>
 					</td>
 				</tr>
@@ -622,35 +583,47 @@
 			$("#container-produk").append(html)
 		} else {
 			const targetId = $(this).data('unique-id')
-			$(`#rows-${targetId} .array-produk`).val(produkValue)
-			$(`#rows-${targetId} .array-satuan`).val(satuanValue)
-			$(`#rows-${targetId} .array-jumlah`).val(jumlah)
-			$(`#rows-${targetId} .array-tanggal-kedaluwarsa`).val(tanggalKedaluwarsa)
-			$(`#rows-${targetId} .array-harga-beli`).val(fixHargaBeli)
-			$(`#rows-${targetId} .array-total-harga`).val(totalHarga)
-			$(`#rows-${targetId} .array-harga-jual`).val(fixHargaJual)
+			const isCount = $('#rows-'+targetId).data('is-count')
 
-			$(`#rows-${targetId} #container-produk`).html(`${produkText} (${satuanText})`)
-			$(`#rows-${targetId} #container-harga-beli`).html(hargaBeli)
-			$(`#rows-${targetId} #container-jumlah`).html(jumlah)
-			$(`#rows-${targetId} #container-total-harga`).html(module.formatter.formatRupiah(totalHarga, "Rp. "))
+			if (isCount) {
+				$(`#rows-${targetId} .array-produk`).val(produkValue)
+				$(`#rows-${targetId} .array-jumlah`).val(jumlah)
+				$(`#rows-${targetId} .array-satuan`).val(satuanValue)
+				$(`#rows-${targetId} .array-harga-beli`).val(fixHargaBeli)
+				$(`#rows-${targetId} .array-total-harga`).val(totalHarga)
+				$(`#rows-${targetId} #container-produk`).html(`${produkText} (${satuanText})`)
+				$(`#rows-${targetId} #container-harga-beli`).html(hargaBeli)
+				$(`#rows-${targetId} #container-jumlah`).html(jumlah)
+				$(`#rows-${targetId} #container-total-harga`).html(module.formatter.formatRupiah(totalHarga, "Rp. "))
+			} else {
+				$("#input-nama-produk").attr('disabled', false)
+				$("#input-satuan").attr('disabled', false)
+				$("#input-jumlah").attr('readonly', false)
+				$("#input-harga-beli").attr('readonly', false)
+			}
+
+			$(`#rows-${targetId} .array-tanggal-kedaluwarsa`).val(tanggalKedaluwarsa)
+			$(`#rows-${targetId} .array-harga-jual`).val(fixHargaJual)
 
 			$("#container-btn-update-batal-pembelian").hide('slow', function() {
 				$("#container-btn-append-pembelian").show('slow').css('display', 'flex')
 			})
-			// $("#btn-update-pembelian").data('unique-id', '')
 		}
 
 		totalSemuaHarga()
 
 		module.reset.form($("#container-input-produk .reset"))
-
-		initButtonPembelian()
 	})
 
 	$("#btn-batal-pembelian").click(function(e) {
 		e.preventDefault()
 		module.reset.form($("#container-input-produk .reset"))
+
+		$("#input-nama-produk").attr('disabled', false)
+		$("#input-satuan").attr('disabled', false)
+		$("#input-jumlah").attr('readonly', false)
+		$("#input-harga-beli").attr('readonly', false)
+
 		$("#container-btn-update-batal-pembelian").hide('slow', function() {
 			$("#container-btn-append-pembelian").show('slow').css('display', 'flex')
 		})
@@ -665,21 +638,22 @@
 
 	$("#btn-save-form-pembelian").click(async function(e) {
 		e.preventDefault()
-		// $(this).attr('disabled', true)
-
 		if($("#container-produk tr").length <= 0){
 			return module.swal.warning({text: "Tidak ada data untuk disimpan."})
 		}
-		
+
 		let validation = module.validator.form($("#form-invoice .validation"))
 		if (validation) {
 			return module.swal.warning({text: validation})
 		}
 
+		$(this).attr('disabled', true)
+
 		const data = new FormData($("#form-pembelian")[0])
 		data.append("nomor_invoice", $("#input-nomor-invoice").val())
 		data.append("id_supplier", $("#input-supplier").val())
 		data.append("tanggal_pembelian", $("#input-tanggal-pembelian").val())
+		data.append("id_pembelian", $("#id-pembelian").val())
 		// data.append("total_semua_harga", $("#input-tanggal-pembelian").val())
 
 		const response = await postRequest("{{route('pembelian.store')}}", data)

@@ -22,7 +22,7 @@ class PembelianSeeder extends Seeder
 		Pembelian::create([
 			'supplier_id' => 1,
 			'nomor_invoice' => 12345,
-			'total_harga' => 3535000,
+			'total_harga' => 159000,
 			'tanggal' => date("Y-m-d", $timestamps)
 		]);
 	}

@@ -38,6 +38,9 @@ final class PostPembelianDTO extends DataTransferObject
 		#[WithDefaultValue([])]
 		public array $array_harga_jual,
 
+		#[WithDefaultValue([])]
+		public array $array_id_pembelian_detail,
+
 		#[WithDefaultValue(null)]
 		public int|null $id_supplier = null,
 

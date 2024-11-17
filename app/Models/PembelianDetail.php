@@ -20,6 +20,11 @@ class PembelianDetail extends Model
 		return $this->belongsTo(SatuanProduk::class, 'satuan_id', 'id');
 	}
 
+	public function pembelian(): BelongsTo
+	{
+		return $this->belongsTo(Pembelian::class, 'invoice_id', 'id');
+	}
+
 	public function penjualan_detail(): HasMany
 	{
 		return $this->hasMany(PenjualanDetail::class, 'detail_pembelian_id', 'id');

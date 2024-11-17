@@ -25,7 +25,7 @@ final class DetailPembelianDTO extends DataTransferObject
 
 		public int|null $id_pembelian = null,
 
-		#[BindModel(using: 'id')]
+		#[BindModel(using: 'id', with: ['pembelian_detail.data_produk', 'pembelian_detail.satuan:id,nama'])]
 		#[WithDefaultValue(Pembelian::class)]
 		public Pembelian|null $model_pembelian = null,
 	) {
