@@ -77,7 +77,7 @@ class KasirController extends Controller
 			# End validasi stok
 
 			if (!$request->id_penjualan) {
-				$pembelian = $this->penjualanService->create($postPenjualan);
+				$penjualan = $this->penjualanService->create($postPenjualan);
 				foreach($produk as $key => $val){
 					$this->pembelianDetailService->updateStokReal(
 						DetailPembelianDetailDTO::fromArray([
@@ -89,7 +89,7 @@ class KasirController extends Controller
 
 					$this->penjualanDetailService->create(
 						PostPenjualanDetailDTO::fromArray([
-							'id_penjualan' => $pembelian->id,
+							'id_penjualan' => $penjualan->id,
 							'id_pembelian_detail' => $produk[$key],
 							'diskon' => $diskon[$key] ?? null,
 							'jumlah' => $jumlah[$key],
