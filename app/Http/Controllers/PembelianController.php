@@ -35,7 +35,6 @@ class PembelianController extends Controller
 
 	public function datatables(Request $request)
 	{
-		// return Pembelian::all();
 		return DataTables::of(Pembelian::with('supplier')->get())
 			->addIndexColumn()
 			->addColumn('action', function($item) {
@@ -91,9 +90,9 @@ class PembelianController extends Controller
 	// public function store(PostKategoriDTO $data)
 	public function store(Request $request)
 	{
-		DB::beginTransaction();
+		// DB::beginTransaction();
 		try {
-			$postPembelian = PostPembelianDTO::fromRequest($request);
+			return $postPembelian = PostPembelianDTO::fromRequest($request);
 			$produk = $postPembelian->array_produk;
 			$satuan = $postPembelian->array_satuan;
 			$jumlah = $postPembelian->array_jumlah;

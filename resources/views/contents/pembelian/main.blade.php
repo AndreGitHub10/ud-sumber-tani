@@ -75,58 +75,81 @@
 			datatablePembelian()
 		})
 
-		function initButton(){
-			$(".btn-edit-pembelian").click(async (e) => {
-				let $this = $(e.currentTarget)
-				return module.swal.warning({text: 'Masih tahap pengembangan!'})
-				$this.attr('disabled', true)
+		$("#datatable-pembelian").on('click', '.btn-edit-pembelian', async function(e) {
+			e.preventDefault()
+			let $this = $(e.currentTarget)
+			// return module.swal.warning({text: 'Masih tahap pengembangan!'})
+			$this.attr('disabled', true)
 
-				let response = await postRequest("{{route('pembelian.form')}}", {id_user: $this.data('id')})
-				
-				if (response.status !== 200) {
-					await module.swal.warning({
-						text: response.data.message,
-						hideClass: module.var_animasi.fadeOutUp,
-					})
-
-					return $this.attr('disabled', false)
-				}
-
-				$("#main-page").hide('slow', function () {
-					$this.attr('disabled', false)
-					$("#other-page").html($(response.data.response)).hide().fadeIn(400)
+			let response = await postRequest("{{route('pembelian.form')}}", {id_pembelian: $this.data('id'), model_pembelian: $this.data('id')})
+			
+			if (response.status !== 200) {
+				await module.swal.warning({
+					text: response.data.message,
+					hideClass: module.var_animasi.fadeOutUp,
 				})
+
+				return $this.attr('disabled', false)
+			}
+
+			$("#main-page").hide('slow', function () {
+				$this.attr('disabled', false)
+				$("#other-page").html($(response.data.response)).hide().fadeIn(400)
 			})
+		})
+		
+		$("#datatable-pembelian").on('click', '.btn-delete-pembelian', async function(e) {
+			e.preventDefault()
+			return module.swal.warning({text: 'Masih tahap pengembangan!'})
+			$(this).attr('disabled', true)
 
-			$(".btn-delete-pembelian").click(async (e) => {
-				let $this = $(e.currentTarget)
-				return module.swal.warning({text: 'Masih tahap pengembangan!'})
-				$this.attr('disabled', true)
+			module.swal.confirm().then(async (e) => {
+				if (e.value) {
+					const response = await postRequest("{{route('pembelian.destroy')}}", {id_user: $(this).data('id')})
+					code = response.status
 
-				module.swal.confirm().then(async (e) => {
-					if (e.value) {
-						const response = await postRequest("{{route('pembelian.destroy')}}", {id_user: $this.data('id')})
-						code = response.status
-
-						if (code !== 200) {
-							await module.swal.warning({
-								text: code !== 204 ? response.data.message : 'Data tidak ditemukan, silahkan reload halaman terlebih dahulu!'
-							})
-
-							return $this.attr('disabled', false)
-						}
-
-						await module.swal.success({
-							text: response.data.message,
-							hideClass: module.var_swal.fadeOutUp,
+					if (code !== 200) {
+						await module.swal.warning({
+							text: code !== 204 ? response.data.message : 'Data tidak ditemukan, silahkan reload halaman terlebih dahulu!'
 						})
 
-						datatablePembelian()
+						return $(this).attr('disabled', false)
 					}
-					$this.attr('disabled', false)
-				})
+
+					await module.swal.success({
+						text: response.data.message,
+						hideClass: module.var_swal.fadeOutUp,
+					})
+
+					datatablePembelian()
+				}
+				$(this).attr('disabled', false)
 			})
-		}
+		})
+
+		// function initButton(){
+			// $(".btn-edit-pembelian").click(async (e) => {
+			// 	let $this = $(e.currentTarget)
+			// 	return module.swal.warning({text: 'Masih tahap pengembangan!'})
+			// 	$this.attr('disabled', true)
+
+			// 	let response = await postRequest("{{route('pembelian.form')}}", {id_user: $this.data('id')})
+				
+			// 	if (response.status !== 200) {
+			// 		await module.swal.warning({
+			// 			text: response.data.message,
+			// 			hideClass: module.var_animasi.fadeOutUp,
+			// 		})
+
+			// 		return $this.attr('disabled', false)
+			// 	}
+
+			// 	$("#main-page").hide('slow', function () {
+			// 		$this.attr('disabled', false)
+			// 		$("#other-page").html($(response.data.response)).hide().fadeIn(400)
+			// 	})
+			// })
+		// }
 
 		$("#add-new-pembelian").click(async (e) => {
 			const $this = $(e.currentTarget)
@@ -174,9 +197,9 @@
 					{data: 'supplier.nama', name: 'supplier.nama'},
 					{data: 'action', name: 'action'}
 				],
-				initComplete: function (settings, json) {
-					initButton()
-				}
+				// initComplete: function (settings, json) {
+				// 	initButton()
+				// }
 			})
 		}
 	</script>
