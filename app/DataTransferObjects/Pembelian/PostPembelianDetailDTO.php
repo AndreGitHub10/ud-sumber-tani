@@ -2,11 +2,14 @@
 
 namespace App\DataTransferObjects\Pembelian;
 
-use OpenSoutheners\LaravelDto\DataTransferObject;
 use OpenSoutheners\LaravelDto\Attributes\WithDefaultValue;
+use OpenSoutheners\LaravelDto\DataTransferObject;
 
 final class PostPembelianDetailDTO extends DataTransferObject
 {
+	/**
+	 * Please check the DTO guide before you start. https://docs.opensoutheners.com/laravel-dto
+	 */
 	public function __construct(
 		#[WithDefaultValue(201)]
 		public int $res_code,

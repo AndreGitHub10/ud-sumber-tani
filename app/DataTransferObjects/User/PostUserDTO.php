@@ -12,6 +12,9 @@ use App\Http\Requests\User\PostUserRequest;
 
 final class PostUserDTO extends DataTransferObject implements ValidatedDataTransferObject
 {
+	/**
+	 * Please check the DTO guide before you start. https://docs.opensoutheners.com/laravel-dto
+	 */
 	public function __construct(
 		public int $res_code,
 		public string $res_message,

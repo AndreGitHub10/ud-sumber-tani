@@ -29,6 +29,15 @@ class PembelianDetailService
 		return $pembelianDetail;
 	}
 
+    public function updateStokReal(DetailPembelianDetailDTO $pembelianDetailDTO): PembelianDetail
+    {
+        $pembelianDetail = $pembelianDetailDTO->model_pembelian_detail;
+        $pembelianDetail->stok_real = $pembelianDetailDTO->stok_real_terbaru;
+        $pembelianDetail->save();
+
+        return $pembelianDetail;
+    }
+
 	public function update(PostPembelianDetailDTO $pembelianDetailDTO): PembelianDetail
 	{
 		$pembelianDetail = PembelianDetail::find($pembelianDetailDTO->id_pembelian_detail);
