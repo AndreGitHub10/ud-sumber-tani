@@ -8,6 +8,7 @@
         "php": "^8.2",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
+        "milon/barcode": "^11.0",
         "open-southeners/laravel-dto": "^3.6",
         "yajra/laravel-datatables-oracle": "^11.1"
     },

@@ -28,7 +28,7 @@ class PostUserRequest extends FormRequest
 			'name' => ['required', 'string', 'min:3'],
 			'level' => ['required', 'string', 'in:admin,kasir'],
 			'username' => ['required', 'min:3'],
-			'password' => ['required_without:id'],
+			'password' => ['required_without:id_user'],
 		];
 	}
 

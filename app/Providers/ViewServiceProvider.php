@@ -23,5 +23,8 @@ class ViewServiceProvider extends ServiceProvider
 		View::composer(
 			'main', 'App\Http\View\Composers\MenuComposer'
 		);
+		View::composer(
+			'components.header.main', 'App\Http\View\Composers\NotifComposer'
+		);
 	}
 }
