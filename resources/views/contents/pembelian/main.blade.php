@@ -84,7 +84,6 @@
 		$("#datatable-pembelian").on('click', '.btn-edit-pembelian', async function(e) {
 			e.preventDefault()
 			let $this = $(e.currentTarget)
-			// return module.swal.warning({text: 'Masih tahap pengembangan!'})
 			$this.attr('disabled', true)
 
 			let response = await postRequest("{{route('pembelian.form')}}", {id_pembelian: $this.data('id'), model_pembelian: $this.data('id')})
@@ -132,30 +131,6 @@
 				$(this).attr('disabled', false)
 			})
 		})
-
-		// function initButton(){
-			// $(".btn-edit-pembelian").click(async (e) => {
-			// 	let $this = $(e.currentTarget)
-			// 	return module.swal.warning({text: 'Masih tahap pengembangan!'})
-			// 	$this.attr('disabled', true)
-
-			// 	let response = await postRequest("{{route('pembelian.form')}}", {id_user: $this.data('id')})
-				
-			// 	if (response.status !== 200) {
-			// 		await module.swal.warning({
-			// 			text: response.data.message,
-			// 			hideClass: module.var_animasi.fadeOutUp,
-			// 		})
-
-			// 		return $this.attr('disabled', false)
-			// 	}
-
-			// 	$("#main-page").hide('slow', function () {
-			// 		$this.attr('disabled', false)
-			// 		$("#other-page").html($(response.data.response)).hide().fadeIn(400)
-			// 	})
-			// })
-		// }
 
 		$("#add-new-pembelian").click(async (e) => {
 			const $this = $(e.currentTarget)

@@ -70,6 +70,22 @@ class PembelianController extends Controller
 		]), $data->res_code);
 	}
 
+	public function findProduk(Request $request)
+	{
+		$string = $request->query_string ?? "###";
+
+		$data = PembelianDetail::whereHas('data_produk', function($q) use($string) {
+			return $q->where('kode_produk', 'like', "%$string%")->orWhere('nama_produk', 'like', "%$string%");
+		})->with(['data_produk', 'satuan'])->get();
+		return response()->json($data);
+
+		// return response()->json(ResponseAxiosDTO::fromArray([
+		// 	'code' => 200,
+		// 	'message' => 'Ok',
+		// 	'response' => collect($data),
+		// ]), 200);
+	}
+
 	public function form(Request $request)
 	{
 		$data = DetailPembelianDTO::fromRequest($request);
