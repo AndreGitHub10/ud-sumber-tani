@@ -122,4 +122,81 @@ class DataController extends Controller
 		];
 		return view('contents.data-master.produk.data.barcode',$array);
 	}
+
+	public function importForm(Request $request)
+	{
+		$content = view('contents.data-master.produk.data.import-form')->render();
+
+		return response()->json(ResponseAxiosDTO::fromArray([
+			'code' => 200,
+			'message' => 'Berhasil',
+			'response' => $content,
+		]), 200);
+	}
+
+	public function downloadTemplate()
+	{
+		$fileMateri = public_path("template/template.xlsx");
+		return response()->download($fileMateri);
+	}
+
+	public function import(Request $request)
+	{
+		// if (!isset($request->file)) {
+		// 	return response()->json(ResponseAxiosDTO::fromArray([
+		// 		'code' => 400,
+		// 		'message' => 'File excel harus di isi'
+		// 	]), 400);
+		// }
+		// $array = Excel::toArray(new SiswaImport, $request->file('file'));
+		// DB::beginTransaction();
+		// try {
+		// 	$total = 0;
+		// 	foreach ($array[0] as $key => $value) {
+		// 		$siswa = Siswa::where([
+		// 				'nis'=>$value[0],
+		// 				'tingkat'=>$request->tingkat
+		// 			])
+		// 			->first();
+		// 		if ($siswa) {
+		// 			continue;
+		// 		}
+		// 		$stop=false;
+		// 		foreach ($value as $k => $v) {
+		// 			if ($k==4) {
+		// 				break;
+		// 			}
+		// 			if ($v==''&&$k!=1) {
+		// 				$stop = true;
+		// 			}
+		// 			if ($k==3&&!in_array(substr(strtoupper($v),0,1),['L','P'])) {
+		// 				$stop = true;
+		// 			}
+		// 		}
+		// 		if ($stop) {
+		// 			continue;
+		// 		}
+		// 		$siswa = new Siswa;
+		// 		$siswa->nama = $value[2];
+		// 		$siswa->nis = $value[0];
+		// 		$siswa->nisn = $value[1];
+		// 		$siswa->jenis_kelamin = substr(strtoupper($value[3]),0,1);
+		// 		$siswa->tahun_masuk = $request->tahun_masuk;
+		// 		$siswa->tingkat = $request->tingkat;
+		// 		if (!$siswa->save()) {
+		// 			DB::rollBack();
+		// 			return ['status'=>'error','message'=>'Gagal menyimpan data, coba lagi atau hubungi admin!'];
+		// 		}
+		// 		$total+=1;
+		// 	}
+		// 	DB::commit();
+		// 	return ['status'=>'success','message'=>"Berhasil mengupload $total data!"];
+		// } catch (\Throwable $th) {
+		// 	Log::info($th->getMessage());
+		// 	DB::rollBack();
+		// 	throw $th;
+		// 	return ['status'=>'error','message'=>'Terjadi Kesalahan Sistem!'];
+		// }
+		// return $array;
+	}
 }

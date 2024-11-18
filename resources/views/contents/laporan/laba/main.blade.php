@@ -97,19 +97,19 @@
 			module = await initModul()
 			console.log(module)
 
-			datatableLaba()
+			
+			$(".date-range").flatpickr({
+				mode: "range",
+				altInput: true,
+				altFormat: "d-m-Y",
+				dateFormat: "Y-m-d",
+				defaultDate: "{{date('Y-m-d')}} to {{date('Y-m-d')}}"
+			});
+			await datatableLaba($('#kategori').val(),$('#date_range').val())
 		})
 
-		$(".date-range").flatpickr({
-			mode: "range",
-			altInput: true,
-			altFormat: "d-m-Y",
-			dateFormat: "Y-m-d",
-			defaultDate: "{{date('Y-m-d')}} to {{date('Y-m-d')}}"
-		});
-
-		function filter() {
-			datatableLaba($('#kategori').val(),$('#date_range').val())
+		async function filter() {
+			await datatableLaba($('#kategori').val(),$('#date_range').val())
 		}
 
 		$('.single-select').select2({

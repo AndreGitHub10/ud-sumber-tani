@@ -89,4 +89,7 @@
         </div>
     </main>
 
+    <script>
+        window.print()
+    </script>
 </body></html>

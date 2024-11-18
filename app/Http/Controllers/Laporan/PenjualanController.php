@@ -14,14 +14,28 @@ class PenjualanController extends Controller
 		return view('contents.laporan.penjualan.main');
 	}
 
-    public function datatables() {
-        return DataTables::of(Penjualan::with('user','penjualan_detail','penjualan_detail.pembelian_detail')->get())
+    public function datatables(Request $request) {
+		$date_range = $request->date_range != '' ? explode(' to ',$request->date_range) : [];
+        if (count($date_range)==1) {
+            $date_range[]=$date_range[0];
+        }
+		$data = Penjualan::with('user','penjualan_detail','penjualan_detail.pembelian_detail')->
+			when(count($date_range)==0, function($q) {
+				$q->limit(0);
+			})->
+			when($request->pembayaran!='', function($q) use ($request) {
+				$q->where('jenis_pembayaran',$request->pembayaran);
+			})->
+			when(count($date_range)>1, function($q) use ($date_range) {
+				$start = date($date_range[0]);
+				$end = date($date_range[1]);
+				$q->whereBetween('tanggal', [$start,$end]);
+			})->
+			get();
+        return DataTables::of($data)
 			->addIndexColumn()
 			->addColumn('nama_kasir', function($item) {
 				return $item->user ? "<b>" . $item->user->username . "</b>" : '<span>(tidak ditemukan)<span>';
-			})
-			->addColumn('jenis_pembayaran', function($item) {
-				return 'Tunai/Non-Tunai';
 			})
 			->editColumn('tanggal', function($item) {
 				return Date('Y-m-d',strtotime($item->tanggal));
@@ -44,6 +58,11 @@ class PenjualanController extends Controller
 					<div class='text-center'>
 						<button type='button' class='btn btn-sm btn-primary px-2 btn-detail' data-id='$item->id'>
 							<i class='fadeIn animated bx bx-detail'></i>
+						</button>
+					</div>
+					<div class='text-center'>
+						<button type='button' class='btn btn-sm btn-secondary px-2 btn-invoice' data-id='$item->id'>
+							<i class='fadeIn animated bx bx-receipt'></i>
 						</button>
 					</div>
 				";

@@ -106,7 +106,7 @@ class KasirController extends Controller
 			return response()->json(ResponseAxiosDTO::fromArray([
 				'code' => 201,
 				'message' => 'Data berhasil dibuat',
-				'response' => $postPenjualan
+				'response' => $penjualan->id
 			]), 201);
 		} catch (\Throwable $e) {
 			DB::rollback();

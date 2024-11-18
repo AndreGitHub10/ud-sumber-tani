@@ -18,7 +18,7 @@ return new class extends Migration
                 p.nomor_invoice AS nomor_invoice,
                 pd.id AS detail_pembelian_id,
                 NULL AS detail_penjualan_id,
-                pd.stok_real AS stok_masuk,
+                pd.stok_awal AS stok_masuk,
                 pd.satuan_id AS satuan_id,
                 NULL AS stok_keluar,
                 pd.created_at AS ts 

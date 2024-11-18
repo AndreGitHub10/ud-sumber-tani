@@ -110,6 +110,8 @@
 		// $(this).attr('disabled', true)
 
 		if($("#input-maksimal-stok").val() <= $("#input-minimal-stok").val()){
+			console.log($("#input-maksimal-stok").val() + 'aa' + $("#input-minimal-stok").val());
+			
 			return module.swal.warning({text: "Maksimal stok tidak boleh lebih kecil atau sama dengan Minimal stok."})
 		}
 

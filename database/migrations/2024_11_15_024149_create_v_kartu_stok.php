@@ -16,8 +16,7 @@ return new class extends Migration
             SELECT
                 dp.kode_produk AS kode_produk,(
                     sum(
-                        COALESCE ( pd.stok_real, 0 )) - sum(
-                    COALESCE ( sub_pd2.jumlah, 0 ))) AS stok,
+                        COALESCE ( pd.stok_real, 0 ))) AS stok,
                 pd.satuan_id AS satuan_id 
             FROM
                 ((

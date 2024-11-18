@@ -8,6 +8,7 @@ use App\Http\Middleware\Authenticate;
 # Controllers
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DBController;
 use App\Http\Controllers\Laporan\KartuStokController;
 use App\Http\Controllers\Laporan\LabaController;
 use App\Http\Controllers\Laporan\MinMaxController;
@@ -52,6 +53,8 @@ Route::middleware(Authenticate::class)->group(function () {
 				Route::post('destroy', 'destroy')->name('destroy');
 				Route::post('store', 'store')->name('store');
 				Route::get('barcode/{barcode?}', 'barcode')->name('barcode');
+				Route::post('importForm', 'importForm')->name('importForm');
+				Route::get('download-template', 'downloadTemplate')->name('downloadTemplate');
 			});
 
 			Route::controller(KategoriController::class)->prefix('kategori')->as('kategori.')
@@ -150,4 +153,6 @@ Route::middleware(Authenticate::class)->group(function () {
 			Route::get('/', [DashboardController::class, 'main'])->name('main');
 		});
 	});
+
+	Route::get('backup', [DBController::class, 'backup'])->name('backup');
 });

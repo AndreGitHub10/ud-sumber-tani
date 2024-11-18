@@ -31,6 +31,9 @@
 					<button type="button" class="btn btn-primary px-3" id="add-new-data">
 						<i class="fadeIn animated bx bx-plus"></i>Tambah Data Baru
 					</button>
+					<button type="button" class="btn btn-success px-3" id="import-new-data">
+						<i class="fadeIn animated bx bx-plus"></i>Import Data Baru
+					</button>
 				</div>
 			</div>
 			<div class="card-body">
@@ -135,6 +138,26 @@
 			const $this = $(e.currentTarget)
 			$this.attr('disabled', true)
 			let response = await postRequest("{{route('dataMaster.produk.data.form')}}")
+
+			if (response.status !== 200) {
+				await module.swal.warning({
+					text: response.data.message,
+					hideClass: module.var_swal.fadeOutUp,
+				})
+
+				return $this.attr('disabled', false)
+			}
+
+			$("#main-page").hide('slow', function () {
+				$this.attr('disabled', false)
+				$("#other-page").html($(response.data.response)).hide().fadeIn(400)
+			})
+		})
+
+		$("#import-new-data").click(async (e) => {
+			const $this = $(e.currentTarget)
+			$this.attr('disabled', true)
+			let response = await postRequest("{{route('dataMaster.produk.data.importForm')}}")
 
 			if (response.status !== 200) {
 				await module.swal.warning({

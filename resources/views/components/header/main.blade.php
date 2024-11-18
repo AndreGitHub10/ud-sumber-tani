@@ -7,36 +7,38 @@
 			<div class="top-menu ms-auto">
 				<ul class="navbar-nav align-items-center">
 					<li class="nav-item dropdown dropdown-large">
-						<a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"> <span class="alert-count">1</span>
-							<i class='bx bx-bell'></i>
+						<a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"> <span class="alert-count">{{$notif}}</span>
+							<i class='bx bx-package'></i>
 						</a>
 						<div class="dropdown-menu dropdown-menu-end">
 							<a href="javascript:;">
 								<div class="msg-header">
-									<p class="msg-header-title">Notifications</p>
-									<p class="msg-header-clear ms-auto">Marks all as read</p>
+									<p class="msg-header-title">Barang Habis</p>
+									{{-- <p class="msg-header-clear ms-auto">Marks all as read</p> --}}
 								</div>
 							</a>
 							<div class="header-notifications-list">
+								@foreach ($barang_habis as $item)
 								<a class="dropdown-item" href="javascript:;">
 									<div class="d-flex align-items-center">
-										<div class="notify bg-light-primary text-primary"><i class="bx bx-group"></i>
+										<div class="notify bg-light-primary text-primary"><i class="bx bx-package"></i>
 										</div>
 										<div class="flex-grow-1">
 											<h6 class="msg-name">
-												New Customers<span class="msg-time float-end">14 Sec ago</span>
+												{{$item->data_produk->nama_produk}}<span class="msg-time float-end">{{$item->satuan_produk?$item->satuan_produk->nama:''}}</span>
 											</h6>
-											<p class="msg-info">5 new user registered</p>
+											<p class="msg-info">{{$item->data_produk->kode_produk}}</p>
 										</div>
 									</div>
 								</a>
+								@endforeach
 							</div>
 							<a href="javascript:;">
-								<div class="text-center msg-footer">View All Notifications</div>
+								{{-- <div class="text-center msg-footer">View All Notifications</div> --}}
 							</a>
 						</div>
 					</li>
-					<li class="nav-item dropdown dropdown-large">
+					{{-- <li class="nav-item dropdown dropdown-large">
 						<a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"> <span class="alert-count">2</span>
 							<i class='bx bx-comment'></i>
 						</a>
@@ -79,7 +81,7 @@
 								<div class="text-center msg-footer">View All Messages</div>
 							</a>
 						</div>
-					</li>
+					</li> --}}
 				</ul>
 			</div>
 			<div class="user-box dropdown">
@@ -91,7 +93,7 @@
 					</div>
 				</a>
 				<ul class="dropdown-menu dropdown-menu-end">
-					<li>
+					{{-- <li>
 						<a class="dropdown-item" href="javascript:;"><i class="bx bx-user"></i><span>Profile</span></a>
 					</li>
 					<li>
@@ -108,7 +110,7 @@
 					</li>
 					<li>
 						<div class="dropdown-divider mb-0"></div>
-					</li>
+					</li> --}}
 					<li>
 						<a class="dropdown-item" href="{{route('auth.removeToken')}}"><i class='bx bx-log-out-circle'></i><span>Logout</span></a>
 					</li>

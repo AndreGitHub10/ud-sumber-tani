@@ -6,6 +6,7 @@
 	
 	<link href="{{asset('assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet" />
 	<link href="{{asset('assets/plugins/select2/css/select2-bootstrap4.css')}}" rel="stylesheet" />
+	<link href="{{asset('assets/plugins/flatpickr/dist/flatpickr.min.css')}}" rel="stylesheet" />
 	<style>
 		.show-alert{
 			border: 1px solid red !important;
@@ -39,6 +40,22 @@
 				</div>
 			</div> --}}
 			<div class="card-body">
+				<div class="row mb-4">
+					<div class="col-md-6">
+						<div class="mb-3">
+							<label class="form-label fw-bold">Rentang Tanggal</label>
+							<input type="text" class="form-control date-range" id="date_range" onchange="filter()"/>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<label for="pembayaran" class="form-label fw-bold">Pembayaran</label>
+						<select class="single-select validation" id="pembayaran" onchange="filter()">
+							<option value="" selected>Semua</option>
+							<option value="tunai" >Tunai</option>
+							<option value="non-tunai" >Semua</option>
+						</select>
+					</div>
+				</div>
 				<div class="table-responsive">
 					<table id="datatable-penjualan" class="table table-striped table-bordered" style="width:100%">
 						<thead>
@@ -67,6 +84,7 @@
 	<script src="{{asset('assets/plugins/datatable/js/dataTables.bootstrap5.min.js')}}"></script>
 
 	<script src="{{asset('assets/plugins/select2/js/select2.min.js')}}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 	<script>
 		$(async () => {
@@ -74,8 +92,27 @@
 			module = await initModul()
 			console.log(module)
 
-			datatablePenjualan()
+			datatablePenjualan($('#date_range').val(),$('#pembayaran').val())
 		})
+
+		$(".date-range").flatpickr({
+			mode: "range",
+			altInput: true,
+			altFormat: "d-m-Y",
+			dateFormat: "Y-m-d",
+			defaultDate: "{{date('Y-m-d')}} to {{date('Y-m-d')}}"
+		});
+
+		$('.single-select').select2({
+			theme: 'bootstrap4',
+			width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+			placeholder: $(this).data('placeholder'),
+			allowClear: Boolean($(this).data('allow-clear')),
+		})
+
+		function filter() {
+			datatablePenjualan($('#date_range').val(),$('#pembayaran').val())
+		}
 
 		function initButton(){
 			$(".btn-detail").click(async (e) => {
@@ -98,6 +135,15 @@
 					$this.attr('disabled', false)
 					$("#other-page").html($(response.data.response)).hide().fadeIn(400)
 				})
+			})
+			$(".btn-invoice").click(async (e) => {
+				let $this = $(e.currentTarget)
+				// return module.swal.warning({text: 'Masih tahap pengembangan!'})
+				$this.attr('disabled', true)
+
+				window.open("{{route('penjualanKasir.invoice')}}/"+$this.data('id'))
+
+				$this.attr('disabled', false)
 			})
 
 			$(".btn-delete-pembelian").click(async (e) => {
@@ -150,7 +196,7 @@
 			})
 		})
 
-		async function datatablePenjualan(){
+		async function datatablePenjualan(date_range=$('#date_range').val(),pembayaran=$('#pembayaran').val()){
 			await $('#datatable-penjualan').dataTable({
 				scrollX: true,
 				bPaginate: true,
@@ -165,6 +211,10 @@
 				ajax: {
 					url:"{{route('laporan.penjualan.datatables')}}",
 					type: 'post',
+					data: {
+						date_range:date_range,
+						pembayaran:pembayaran
+					}
 				},
 				columns: [
 					{data: 'DT_RowIndex', name: 'DT_RowIndex'},
