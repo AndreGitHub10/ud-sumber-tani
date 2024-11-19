@@ -99,6 +99,7 @@ Route::middleware(Authenticate::class)->group(function () {
 	Route::controller(KonversiSatuanController::class)->prefix('konversi-satuan')->as('konversiSatuan.')
 	->group(function () {
 		Route::get('/', 'main')->name('main');
+		Route::post('get-konversi', 'getKonversi')->name('getKonversi');
 	});
 
 	Route::controller(PembelianController::class)->prefix('pembelian')->as('pembelian.')
