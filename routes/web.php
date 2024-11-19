@@ -9,6 +9,7 @@ use App\Http\Middleware\Authenticate;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DBController;
+use App\Http\Controllers\Konversi\SatuanController as KonversiSatuanController;
 use App\Http\Controllers\Laporan\KartuStokController;
 use App\Http\Controllers\Laporan\LabaController;
 use App\Http\Controllers\Laporan\MinMaxController;
@@ -95,9 +96,10 @@ Route::middleware(Authenticate::class)->group(function () {
 		});
 	});
 
-	Route::prefix('konversi-satuan')->as('konversiSatuan.')
+	Route::controller(KonversiSatuanController::class)->prefix('konversi-satuan')->as('konversiSatuan.')
 	->group(function () {
-		Route::get('/', [DashboardController::class, 'main'])->name('main');
+		Route::get('/', 'main')->name('main');
+		Route::post('get-konversi', 'getKonversi')->name('getKonversi');
 	});
 
 	Route::controller(PembelianController::class)->prefix('pembelian')->as('pembelian.')
@@ -107,6 +109,7 @@ Route::middleware(Authenticate::class)->group(function () {
 		Route::post('datatables', 'datatables')->name('datatables');
 		Route::post('destroy', 'destroy')->name('destroy');
 		Route::post('store', 'store')->name('store');
+		Route::post('find-produk', 'findProduk')->name('findProduk');
 	});
 
 	Route::controller(KasirController::class)->prefix('penjualan-kasir')->as('penjualanKasir.')
