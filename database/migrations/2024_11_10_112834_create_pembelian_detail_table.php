@@ -23,7 +23,7 @@ return new class extends Migration
 			$table->decimal('total_harga_beli', total: 10, places: 0)->nullable();
 			$table->decimal('harga_jual', total: 10, places: 0);
 			$table->integer('konversi_id')->nullable();
-			$table->boolean('is_konversi')->default(0)->change()->nullable();
+			$table->enum('is_konversi', [0, 1])->default(0)->comment("0=false, 1=true")->nullable();
 			$table->timestamps();
 		});
 	}

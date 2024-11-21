@@ -20,7 +20,7 @@ return new class extends Migration
 			$table->decimal('harga_jual', total: 10, places: 0);
 			$table->decimal('total_harga_jual_murni', total: 10, places: 0);
 			$table->decimal('total_harga_jual_diskon', total: 10, places: 0);
-			$table->boolean('is_konversi')->nullable()->default(0)->change();
+			$table->enum('is_konversi', [0, 1])->default(0)->comment("0=false, 1=true")->nullable();
 			$table->timestamps();
 		});
 	}
