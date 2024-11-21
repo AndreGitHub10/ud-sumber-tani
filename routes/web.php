@@ -9,6 +9,7 @@ use App\Http\Middleware\Authenticate;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DBController;
+use App\Http\Controllers\Konversi\MasterKonversiController;
 use App\Http\Controllers\Konversi\SatuanController as KonversiSatuanController;
 use App\Http\Controllers\Laporan\KartuStokController;
 use App\Http\Controllers\Laporan\LabaController;
@@ -24,6 +25,9 @@ use App\Http\Controllers\User\UserController;
 
 Route::get('/', function () {
 	return redirect()->route('auth.login');
+});
+Route::get('test', function() {
+    return view('utama');
 });
 
 Route::prefix('auth')
@@ -74,6 +78,7 @@ Route::middleware(Authenticate::class)->group(function () {
 				Route::post('datatables', 'datatables')->name('datatables');
 				Route::post('destroy', 'destroy')->name('destroy');
 				Route::post('store', 'store')->name('store');
+				Route::post('konversi', 'konversi')->name('konversi');
 			});
 		});
 
@@ -94,11 +99,22 @@ Route::middleware(Authenticate::class)->group(function () {
 			Route::post('destroy', 'destroy')->name('destroy');
 			Route::post('store', 'store')->name('store');
 		});
+
+		Route::controller(MasterKonversiController::class)->prefix('konversi')->as('konversi.')
+		->group(function () {
+			Route::get('/', 'main')->name('main');
+			Route::post('form', 'form')->name('form');
+			Route::post('store', 'store')->name('store');
+			Route::post('datatables', 'datatables')->name('datatables');
+			Route::post('get-master', 'getMaster')->name('getMaster');
+			Route::post('destroy', 'destroy')->name('destroy');
+		});
 	});
 
 	Route::controller(KonversiSatuanController::class)->prefix('konversi-satuan')->as('konversiSatuan.')
 	->group(function () {
-		Route::get('/', 'main')->name('main');
+		Route::get('/', 'form')->name('form');
+		Route::post('store', 'store')->name('store');
 		Route::post('get-konversi', 'getKonversi')->name('getKonversi');
 	});
 

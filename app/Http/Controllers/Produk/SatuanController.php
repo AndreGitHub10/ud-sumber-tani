@@ -66,6 +66,16 @@ class SatuanController extends Controller
 			'response' => $content,
 		]), $data->res_code);
 	}
+
+	public function konversi(Request $request)
+	{
+		$data = SatuanProduk::whereNotIn('id', [$request->satuan_id])->get();
+		return response()->json(ResponseAxiosDTO::fromArray([
+			'code' => 200,
+			'message' => 'Ok',
+			'response' => $data,
+		]), 200);
+	}
 	
 	public function main(Request $request)
 	{
@@ -80,7 +90,7 @@ class SatuanController extends Controller
 			} else {
 				$satuan = $this->satuanService->update($data);
 			}
-	
+
 			return response()->json(ResponseAxiosDTO::fromArray([
 				'code' => $data->res_code,
 				'message' => $data->res_message,

@@ -7,12 +7,15 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 # Models
 use App\Models\KonversiSatuan;
+use App\Models\PembelianDetail;
+use App\Models\SatuanProduk;
 
 class SatuanController extends Controller
 {
-	public function main(Request $request)
+	public function form(Request $request)
 	{
-		return view('contents.konversi-satuan.main');
+		$data = SatuanProduk::all();
+		return view('contents.konversi-satuan.form', ['satuan' => $data]);
 	}
 
 	public function getKonversi(Request $request)
@@ -25,4 +28,17 @@ class SatuanController extends Controller
 			'response' => $data
 		]), $code);
 	}
+
+    public function store(Request $request)
+    {
+        return $request->all();
+        try {
+            $pembelianDetail = new PembelianDetail;
+            $pembelianDetail->
+        } catch (\Throwable $e) {
+            $e->getFile(); # Get location file error
+            $e->getMessage(); # Get error message
+            $e->getLine(); # Get line error
+        }
+    }
 }

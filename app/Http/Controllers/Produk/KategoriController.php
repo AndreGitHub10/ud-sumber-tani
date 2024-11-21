@@ -46,7 +46,8 @@ class KategoriController extends Controller
 
 	public function destroy(DetailKategoriDTO $data)
 	{
-		$this->satuanService->destroy($data);
+		// $this->satuanService->destroy($data);
+		$this->kategoriService->destroy($data);
 
 		return response()->json(ResponseAxiosDTO::fromArray([
 			'code' => $data->res_code,
