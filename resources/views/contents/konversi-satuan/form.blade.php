@@ -47,130 +47,131 @@
 			</div>
 		</div>
 
-		<div class="row">
-			<div class="col-xl-12 mx-auto">
-				<div class="card">
-					<div class="card-header bg-secondary">
-						<h5 class="mb-0 text-light">Form Konversi Satuan</h5>
-					</div>
-					<div class="card-body">
-						<div class="row">
-							<div class="col-md-12">
-								{{-- <label for="data-produk" class="form-label">Cari <span class="fw-bolder">(Kode / Nama)</span> Produk</label> --}}
-								<div class="select2-middle">
-									<select class="form-control" id="data-produk" name="kode_produk"></select>
-								</div>
-							</div>
+		<div id="main-form-konversi-satuan">
+			<div class="row">
+				<div class="col-xl-12 mx-auto">
+					<div class="card">
+						<div class="card-header bg-secondary">
+							<h5 class="mb-0 text-light">Form Konversi Satuan</h5>
 						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-xl-5 mx-auto">
-				<div class="card" style="height: 100%;">
-					<div class="card-header bg-info" style="display: flex; justify-content: space-between">
-						<h5 class="mb-0 text-light">Master</h5>
-						{{-- <button class="btn btn-sm btn-primary" type="button" title="Buat master baru" data-bs-toggle="modal" data-bs-target="#master-konversi-modal">Buat Master</button> --}}
-					</div>
-					<div class="card-body">
-						<div class="row">
-							<div class="col-12 mb-2">
-								<label for="satuan-asal" class="form-label">Satuan Master</label>
-								<div class="select2-middle">
-									<select class="form-control select2" id="satuan-asal" name="satuan_asal" disabled>
-										<option value="" selected>PILIH PRODUK DULU</option>
-									</select>
-								</div>
-							</div>
-							<div class="col-12 mb-2">
-								<label for="harga-jual-asal" class="form-label">Harga Jual Master</label>
-								<input type="text" class="form-control form-control-sm" id="harga-jual-asal" readonly>
-							</div>
-							<div class="col-12 mb-2">
-								<label for="jumlah-asal" class="form-label">Jumlah Stok Master</label>
-								<div class="input-group">
-									<input type="text" class="form-control form-control-sm" id="jumlah-asal" readonly>
-									{{-- <input type="text" class="form-control form-control-sm text-center" id="stok-tujuan" readonly> --}}
-									<span class="input-group-text" id="container-satuan">-</span>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-xl-1" style="display: flex; justify-content: center; align-items: center; font-size: 3rem;">
-				<span class="mb-0 text-secondary"><i class="fw-bolder fadeIn animated bx bx-transfer-alt"></i></span>
-			</div>
-
-			<div class="col-xl-6 mx-auto">
-				{{-- <h1 class="mb-0 text-secondary"><i class="fw-bolder fadeIn animated bx bx-transfer-alt"></i></h1> --}}
-				<div class="card" style="height: 100%;">
-					<div class="card-header bg-success">
-						<h5 class="mb-0 text-light">Konversi</h5>
-					</div>
-					<div class="card-body konversi-tujuan">
-						<form id="form-konversi-satuan">
+						<div class="card-body">
 							<div class="row">
-								<div class="col-12 mb-2">
-									<label for="harga-jual-tujuan" class="form-label">Harga Jual</label>
-									<div class="input-group">
-										<input type="text" class="form-control form-control-sm reset" id="harga-jual-tujuan" name="harga_jual_tujuan" readonly>
-										<span class="input-group-text" id="container-satuan-harga-jual-tujuan"></span>
+								<div class="col-md-12">
+									{{-- <label for="data-produk" class="form-label">Cari <span class="fw-bolder">(Kode / Nama)</span> Produk</label> --}}
+									<div class="select2-middle">
+										<select class="form-control reset" id="data-produk" name="kode_produk"></select>
 									</div>
 								</div>
-	
-								<div class="col-5 mb-2">
-									<label
-										for="total-stok-asal-konversi"
-										class="form-label"
-										data-bs-toggle="tooltip"
-										data-bs-placement="top"
-										data-bs-original-title="Inputkan <b>jumlah stok master</b> yang akan dikonversi.<br>stok master akan otomatis <b>berkurang</b> ketika konversi disimpan!"
-									>
-										Stok Master
-									</label>
-									<input type="text" class="form-control form-control-sm text-center reset" id="total-stok-asal-konversi" name="total_stok_asal_konversi" readonly>
-								</div>
-								<div class="col-2 mb-2" style="display: grid; justify-content: center; align-items: end;">
-									<h4 class="m-0">x</h4>
-								</div>
-								<div class="col-5 mb-2">
-									<label
-										for="stok-tujuan"
-										id="label-stok-tujuan"
-										class="form-label"
-										data-bs-toggle="tooltip"
-										data-bs-placement="top"
-										title="Ttt"
-									>
-										Nilai Konversi
-									</label>
-									<input type="text" class="form-control form-control-sm text-center reset" id="stok-tujuan" name="stok_tujuan" readonly>
-								</div>
-								<div class="col-12 mb-4">
-									<label for="total-stok-tujuan" class="form-label">
-										Total Stok Konversi
-									</label>
-									<input type="text" class="form-control form-control-sm text-center reset" id="total-stok-tujuan" name="total_stok_tujuan" readonly>
-								</div>
-								<div class="col-12">
-									<button class="btn btn-success" id="btn-simpan-konversi-satuan" style="width: 100%;">Simpan Konversi</button>
-								</div>
-								{{-- <div class="col-12 mb-2 mt-2">
-									<input class="form-check-input mb-2" type="checkbox" value="" id="harga-jual-terkecil-check">
-									<label class="form-check-label" for="harga-jual-terkecil-check">Gunakan Harga Jual Terkecil?</label>
-									<input type="text" class="form-control form-control-sm" id="harga-jual-terkecil" name="harga_jual_terkecil" readonly>
-								</div> --}}
 							</div>
-						</form>
+						</div>
+					</div>
+				</div>
+			</div>
+	
+			<div class="row">
+				<div class="col-xl-5 mx-auto">
+					<div class="card" style="height: 100%;">
+						<div class="card-header bg-info" style="display: flex; justify-content: space-between">
+							<h5 class="mb-0 text-light">Master</h5>
+							{{-- <button class="btn btn-sm btn-primary" type="button" title="Buat master baru" data-bs-toggle="modal" data-bs-target="#master-konversi-modal">Buat Master</button> --}}
+						</div>
+						<div class="card-body">
+							<div class="row">
+								<div class="col-12 mb-2">
+									<label for="satuan-asal" class="form-label">Satuan Master</label>
+									<div class="select2-middle">
+										<select class="form-control select2 reset" id="satuan-asal" name="satuan_asal" disabled>
+											<option value="" selected>PILIH PRODUK DULU</option>
+										</select>
+									</div>
+								</div>
+								<div class="col-12 mb-2">
+									<label for="harga-jual-asal" class="form-label">Harga Jual Master</label>
+									<input type="text" class="form-control form-control-sm reset" id="harga-jual-asal" readonly>
+								</div>
+								<div class="col-12 mb-2">
+									<label for="jumlah-asal" class="form-label">Jumlah Stok Master</label>
+									<div class="input-group">
+										<input type="text" class="form-control form-control-sm reset" id="jumlah-asal" readonly>
+										{{-- <input type="text" class="form-control form-control-sm text-center" id="stok-tujuan" readonly> --}}
+										<span class="input-group-text" id="container-satuan"></span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+	
+				<div class="col-xl-1" style="display: flex; justify-content: center; align-items: center; font-size: 3rem;">
+					<span class="mb-0 text-secondary"><i class="fw-bolder fadeIn animated bx bx-transfer-alt"></i></span>
+				</div>
+	
+				<div class="col-xl-6 mx-auto">
+					{{-- <h1 class="mb-0 text-secondary"><i class="fw-bolder fadeIn animated bx bx-transfer-alt"></i></h1> --}}
+					<div class="card" style="height: 100%;">
+						<div class="card-header bg-success">
+							<h5 class="mb-0 text-light">Konversi</h5>
+						</div>
+						<div class="card-body konversi-tujuan">
+							<form id="form-konversi-satuan" class="form-konversi-satuan">
+								<div class="row">
+									<div class="col-12 mb-2">
+										<label for="input-harga-jual" class="form-label">Harga Jual</label>
+										<div class="input-group">
+											<input type="text" class="form-control form-control-sm validation remove-alert reset" id="input-harga-jual" name="harga_jual_tujuan" readonly>
+											<span class="input-group-text" id="container-satuan-harga-jual-tujuan"></span>
+										</div>
+									</div>
+		
+									<div class="col-5 mb-2">
+										<label
+											for="total-stok-asal-konversi"
+											class="form-label"
+											data-bs-toggle="tooltip"
+											data-bs-placement="top"
+											data-bs-original-title="Inputkan <b>jumlah stok master</b> yang akan dikonversi.<br>stok master akan otomatis <b>berkurang</b> ketika konversi disimpan!"
+										>
+											Stok Master
+										</label>
+										<input type="text" class="form-control form-control-sm text-center validation remove-alert reset" id="total-stok-asal-konversi" name="total_stok_asal_konversi" readonly>
+									</div>
+									<div class="col-2 mb-2" style="display: grid; justify-content: center; align-items: end;">
+										<h4 class="m-0">x</h4>
+									</div>
+									<div class="col-5 mb-2">
+										<label
+											for="stok-tujuan"
+											id="label-stok-tujuan"
+											class="form-label"
+											data-bs-toggle="tooltip"
+											data-bs-placement="top"
+											title="Ttt"
+										>
+											Nilai Konversi
+										</label>
+										<input type="text" class="form-control form-control-sm text-center validation remove-alert reset" id="stok-tujuan" name="stok_tujuan" readonly>
+									</div>
+									<div class="col-12 mb-4">
+										<label for="total-stok-tujuan" class="form-label">
+											Total Stok Konversi
+										</label>
+										<input type="text" class="form-control form-control-sm text-center reset" id="total-stok-tujuan" name="total_stok_tujuan" readonly>
+									</div>
+									<div class="col-12">
+										<button class="btn btn-success" id="btn-simpan-konversi-satuan" style="width: 100%;">Simpan Konversi</button>
+									</div>
+									{{-- <div class="col-12 mb-2 mt-2">
+										<input class="form-check-input mb-2" type="checkbox" value="" id="harga-jual-terkecil-check">
+										<label class="form-check-label" for="harga-jual-terkecil-check">Gunakan Harga Jual Terkecil?</label>
+										<input type="text" class="form-control form-control-sm" id="harga-jual-terkecil" name="harga_jual_terkecil" readonly>
+									</div> --}}
+								</div>
+							</form>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-		<!--end row-->
 	</div>
 	<div id="other-page" style="display:none;"></div>
 @endsection
@@ -234,6 +235,7 @@
 									<span class="fw-bolder" style="color: #00b30f;">${item.stok_real}</span>
 								`,
 								id: item.id,
+								invoice_id: item.invoice_id,
 								kode_produk: item.kode_produk,
 								satuan_id: item.satuan_id,
 								satuan_name: item.satuan.nama,
@@ -247,6 +249,7 @@
 			},
 			// render html for the selected option
 			templateSelection: function (container) {
+				$(container.element).attr('data-invoice_id', container.invoice_id)
 				$(container.element).attr('data-kode_produk', container.kode_produk)
 				$(container.element).attr('data-satuan_id', container.satuan_id)
 				$(container.element).attr('data-satuan_name', container.satuan_name)
@@ -267,14 +270,13 @@
 				let hargaJual = $this.data('harga_jual')
 				let stokReal = $this.data('stok_real')
 
-				$("#satuan-asal").val(satuanText.toUpperCase())
-				$("#harga-jual-asal").val(module.formatter.formatRupiah(hargaJual, "Rp. "))
-				$("#jumlah-asal").val(stokReal)
-				$("#jumlah-asal").data('jumlah', stokReal)
-
 				const resSatuanAwal = await postRequest("{{route('dataMaster.konversi.getMaster')}}", {
 					satuan_id: satuanId
 				})
+
+				if (resSatuanAwal.status !== 200) {
+					return module.swal.warning({text: 'Master Konversi Satuan belum dibuat!'})
+				}
 
 				const dataSatuanAwal = JSON.parse(resSatuanAwal.data.response)
 
@@ -298,6 +300,10 @@
 					`)
 				})
 
+				// $("#satuan-asal").val(satuanText.toUpperCase())
+				$("#harga-jual-asal").val(module.formatter.formatRupiah(hargaJual, "Rp. "))
+				$("#jumlah-asal").val(stokReal)
+				$("#jumlah-asal").data('jumlah', stokReal)
 				$("#container-satuan").text(satuanText.toUpperCase())
 
 				// const response = await postRequest("{{route('dataMaster.produk.satuan.konversi')}}", {
@@ -323,6 +329,10 @@
 			}
 		})
 
+		$(".remove-alert").on('keyup', function() {
+			if ($(this).hasClass('show-alert')) $(this).removeClass('show-alert');
+		})
+
 		$("#satuan-asal").change(async function() {
 			await module.reset.form($(".konversi-tujuan .reset"))
 
@@ -331,36 +341,35 @@
 			let satuanAsalText = ''
 			if ($(this).val()) {
 				isDisabled = false
-				satuanTujuanText = $(this).find(':selected').data('satuan-tujuan-text')
+				satuanTujuanText = "Per-"+$(this).find(':selected').data('satuan-tujuan-text')
 				satuanAsalText = $(this).find(':selected').data('satuan-asal-text')
 			}
 
-			// $("#label-stok-tujuan").attr('title', `Jumlah per 1 ${satuanAsalText}`)
 			await $("#label-stok-tujuan").attr('data-bs-original-title', `Jumlah per 1 ${satuanAsalText}`)
 			$("#label-stok-tujuan").tooltip()
 
-			$("#container-satuan-harga-jual-tujuan").text("Per-"+satuanTujuanText)
+			$("#container-satuan-harga-jual-tujuan").text(satuanTujuanText)
 			// $("#container-satuan-nilai-konversi").text(satuanTujuanText)
 			$("#satuan-tujuan").attr('disabled', isDisabled)
-			$("#harga-jual-tujuan").attr('readonly', isDisabled)
+			$("#input-harga-jual").attr('readonly', isDisabled)
 			$("#total-stok-asal-konversi").attr('readonly', isDisabled)
 			$("#stok-tujuan").attr('readonly', isDisabled)
 			// toolTip()
 
 		})
 
-		$("#harga-jual-tujuan").setRules('0-9').on('keyup', function() {
+		$("#input-harga-jual").setRules('0-9').on('keyup', function() {
 			$(this).val(module.formatter.formatRupiah($(this).val(), 'Rp. '))
 		})
 
-		$("#harga-jual-terkecil-check").change(function() {
-			const nilaiKonversi = parseInt($("#stok-tujuan").val())
+		// $("#harga-jual-terkecil-check").change(function() {
+		// 	const nilaiKonversi = parseInt($("#stok-tujuan").val())
 
-			if (!$(this).is(':checked') || !nilaiKonversi) return $("#harga-jual-terkecil").val('');
+		// 	if (!$(this).is(':checked') || !nilaiKonversi) return $("#harga-jual-terkecil").val('');
 
-			const hargaJualTujuan = parseInt(module.parse.onlyNumber($("#harga-jual-tujuan").val()))
-			$("#harga-jual-terkecil").val(module.formatter.formatRupiah(parseInt(hargaJualTujuan / nilaiKonversi)))
-		})
+		// 	const hargaJualTujuan = parseInt(module.parse.onlyNumber($("#harga-jual").val()))
+		// 	$("#harga-jual-terkecil").val(module.formatter.formatRupiah(parseInt(hargaJualTujuan / nilaiKonversi)))
+		// })
 
 		$("#total-stok-asal-konversi, #stok-tujuan").setRules('0-9').on("keyup change", function() {
 			let jumlahMasterData = parseInt($("#jumlah-asal").data('jumlah'))
@@ -383,14 +392,34 @@
 			$("#total-stok-tujuan").val(totalStok=== 0 ? '' : totalStok)
 		})
 
-		$("#btn-simpan-konversi-satuan").click(function(e) {
+		$("#btn-simpan-konversi-satuan").click(async function(e) {
 			e.preventDefault()
 
-			const data = new FormData($("#form-konversi-satuan")[0])
-			data.append('kode_produk', $("#data-produk").find(':selected').data('kode_produk'))
-			data.append('satuan_tujuan_id', $("#satuan-asal").find(':selected').data('satuan-tujuan-id'))
+			const validation = module.validator.form($("#form-konversi-satuan .validation"))
+			if (validation) {
+				return module.swal.warning({text: validation})
+			}
 
-			const response = postRequest("{{route('konversiSatuan.store')}}", data)
+			const data = new FormData($("#form-konversi-satuan")[0])
+			data.append('detail_pembelian_id', $("#data-produk").find(':selected').val())
+			data.append('konversi_id', $("#satuan-asal").find(':selected').data('id'))
+			data.append('kode_produk', $("#data-produk").find(':selected').data('kode_produk'))
+			data.append('invoice_id', $("#data-produk").find(':selected').data('invoice_id'))
+			data.append('satuan_tujuan_id', $("#satuan-asal").find(':selected').data('satuan-tujuan-id'))
+			data.set('harga_jual_tujuan', parseInt(module.parse.onlyNumber($("#input-harga-jual").val())))
+
+			const response = await postRequest("{{route('konversiSatuan.store')}}", data)
+
+			if (response.status !== 201) {
+				return module.swal.warning({text: response.data.message})
+			}
+
+			module.swal.success({text: response.data.message})
+
+			module.reset.form($("#main-form-konversi-satuan .reset"))
+			$("#data-produk").empty().append(`Masukkan (<span style="color: #000;">Kode</span>/<span style="color: #00b8dd;">Nama</span>) Produk`).val('').trigger('change')
+			$("#container-satuan").text('')
+			$("#satuan-asal").val('').trigger('change').attr('disabled', true)
 		})
 	</script>
 @endpush
