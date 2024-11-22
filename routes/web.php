@@ -56,6 +56,7 @@ Route::middleware(Authenticate::class)->group(function () {
 				Route::get('barcode/{barcode?}', 'barcode')->name('barcode');
 				Route::post('importForm', 'importForm')->name('importForm');
 				Route::get('download-template', 'downloadTemplate')->name('downloadTemplate');
+				Route::post('import', 'import')->name('import');
 			});
 
 			Route::controller(KategoriController::class)->prefix('kategori')->as('kategori.')
@@ -117,6 +118,8 @@ Route::middleware(Authenticate::class)->group(function () {
 		Route::get('/', 'main')->name('main');
 		Route::post('store', 'store')->name('store');
 		Route::get('invoice/{id?}', 'invoice')->name('invoice');
+		Route::post('get-produk', 'getProduk')->name('getProduk');
+		Route::post('scan-barcode', 'scanBarcode')->name('scanBarcode');
 	});
 
 	Route::prefix('laporan')->as('laporan.')

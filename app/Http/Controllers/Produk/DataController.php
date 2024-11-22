@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Produk;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use DataTables;
+use DataTables, Excel, DB;
 # DTO
 use App\DataTransferObjects\Produk\DetailDataDTO;
 use App\DataTransferObjects\Produk\PostDataDTO;
@@ -13,6 +13,7 @@ use App\DataTransferObjects\Response\ResponseAxiosDTO;
 use App\Http\Requests\Produk\PostDataRequest;
 # Helpers
 use App\Helpers\Generate;
+use App\Imports\DataProdukImport;
 # Models
 use App\Models\DataProduk;
 use App\Models\KategoriProduk;
@@ -35,6 +36,9 @@ class DataController extends Controller
 	{
 		return DataTables::of(DataProduk::with('kategori')->get())
 			->addIndexColumn()
+			->addColumn('nama_kategori', function($item) {
+				return $item->kategori ? $item->kategori->nama : '';
+			})
 			->addColumn('action', function($item) {
 				return "
 					<div class='text-center'>
@@ -44,7 +48,7 @@ class DataController extends Controller
 						<button type='button' class='btn btn-sm btn-warning px-2 btn-edit-data-produk' data-id='$item->id'>
 							<i class='fadeIn animated bx bx-pencil'></i>
 						</button>
-						<button type='button' class='btn btn-sm btn-secondary px-2 btn-print-barcode' data-id='$item->kode_produk'>
+						<button type='button' class='btn btn-sm btn-secondary px-2 btn-print-barcode' data-id='$item->barcode'>
 							<i class='fadeIn animated bx bx-barcode'></i>
 						</button>
 					</div>
@@ -117,15 +121,20 @@ class DataController extends Controller
 	}
 
 	public function barcode($barcode='') {
+		$produk = DataProduk::where('barcode',$barcode)->first();
 		$array = [
-			'barcode' => $barcode
+			'barcode' => $barcode,
+			'produk' => $produk
 		];
 		return view('contents.data-master.produk.data.barcode',$array);
 	}
 
 	public function importForm(Request $request)
 	{
-		$content = view('contents.data-master.produk.data.import-form')->render();
+		$array = [
+			'kategori' => KategoriProduk::get()
+		];
+		$content = view('contents.data-master.produk.data.import-form',$array)->render();
 
 		return response()->json(ResponseAxiosDTO::fromArray([
 			'code' => 200,
@@ -142,61 +151,54 @@ class DataController extends Controller
 
 	public function import(Request $request)
 	{
-		// if (!isset($request->file)) {
-		// 	return response()->json(ResponseAxiosDTO::fromArray([
-		// 		'code' => 400,
-		// 		'message' => 'File excel harus di isi'
-		// 	]), 400);
-		// }
-		// $array = Excel::toArray(new SiswaImport, $request->file('file'));
-		// DB::beginTransaction();
-		// try {
-		// 	$total = 0;
-		// 	foreach ($array[0] as $key => $value) {
-		// 		$siswa = Siswa::where([
-		// 				'nis'=>$value[0],
-		// 				'tingkat'=>$request->tingkat
-		// 			])
-		// 			->first();
-		// 		if ($siswa) {
-		// 			continue;
-		// 		}
-		// 		$stop=false;
-		// 		foreach ($value as $k => $v) {
-		// 			if ($k==4) {
-		// 				break;
-		// 			}
-		// 			if ($v==''&&$k!=1) {
-		// 				$stop = true;
-		// 			}
-		// 			if ($k==3&&!in_array(substr(strtoupper($v),0,1),['L','P'])) {
-		// 				$stop = true;
-		// 			}
-		// 		}
-		// 		if ($stop) {
-		// 			continue;
-		// 		}
-		// 		$siswa = new Siswa;
-		// 		$siswa->nama = $value[2];
-		// 		$siswa->nis = $value[0];
-		// 		$siswa->nisn = $value[1];
-		// 		$siswa->jenis_kelamin = substr(strtoupper($value[3]),0,1);
-		// 		$siswa->tahun_masuk = $request->tahun_masuk;
-		// 		$siswa->tingkat = $request->tingkat;
-		// 		if (!$siswa->save()) {
-		// 			DB::rollBack();
-		// 			return ['status'=>'error','message'=>'Gagal menyimpan data, coba lagi atau hubungi admin!'];
-		// 		}
-		// 		$total+=1;
-		// 	}
-		// 	DB::commit();
-		// 	return ['status'=>'success','message'=>"Berhasil mengupload $total data!"];
-		// } catch (\Throwable $th) {
-		// 	Log::info($th->getMessage());
-		// 	DB::rollBack();
-		// 	throw $th;
-		// 	return ['status'=>'error','message'=>'Terjadi Kesalahan Sistem!'];
-		// }
-		// return $array;
+		if (!isset($request->file)) {
+			return response()->json(ResponseAxiosDTO::fromArray([
+				'code' => 400,
+				'message' => 'File excel harus di isi'
+			]), 400);
+		}
+		$array = Excel::toArray(new DataProdukImport, $request->file('file'));
+		DB::beginTransaction();
+		try {
+			$total = 0;
+			foreach ($array[0] as $key => $value) {
+				if ($value[0]=='' || $key==0) {
+					continue;
+				}
+				$newRequest = new Request;
+				// $newRequest->id_data_produk = '';
+				$newRequest->nama_produk = $value[0];
+				$newRequest->kategori = $request->kategori;
+				$data = PostDataDTO::fromRequest($newRequest);
+				if ($data->res_code !== 500) {
+					if ($data->id_data_produk) {
+						$file = $data->model_data_produk->foto_directory;
+						$fileExists = public_path()."/storage/public/$file";
+						if ($file && file_exists($fileExists)) {
+							unlink($fileExists);
+						}
+						$supplier = $this->dataProdukService->update($data);
+					} else {
+						$supplier = $this->dataProdukService->create($data);
+					}
+					if ($newRequest->hasFile('foto_directory')) {
+						$newRequest->file('foto_directory')->storeAs("public/".$newRequest->master, $newRequest->file_name);
+					}
+					$total+=1;
+				}
+			}
+			DB::commit();
+			return response()->json(ResponseAxiosDTO::fromArray([
+				'code' => 200,
+				'message' => "Berhasil mengupload $total data!",
+				'response' => $array,
+			]), 200);
+		} catch (\Throwable $th) {
+			return response()->json(ResponseAxiosDTO::fromArray([
+				'code' => 500,
+				'message' => "Gagal mengupload data! periksa file.",
+				'response' => $th->getMessage()
+			]), 500);
+		}
 	}
 }

@@ -1,24 +1,29 @@
 @extends('main')
 
 @push('styles')
+	{{-- <link href="{{asset('assets/plugins/highcharts/css/highcharts.css')}}" rel="stylesheet" /> --}}
 	<link href="{{asset('assets/plugins/datatable/css/dataTables.bootstrap5.min.css')}}" rel="stylesheet" />
 	
 	<link href="{{asset('assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet" />
 	<link href="{{asset('assets/plugins/select2/css/select2-bootstrap4.css')}}" rel="stylesheet" />
+	<style>
+		.show-alert{
+			border: 1px solid red !important;
+			border-radius: 5px;
+		}
+	</style>
 @endpush
 
 @section('content')
 	<div id="main-page">
 		<!--breadcrumb-->
 		<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-			<div class="breadcrumb-title pe-3">Data Master</div>
+			<div class="breadcrumb-title pe-3">Laporan Persediaan</div>
 			<div class="ps-3">
 				<nav aria-label="breadcrumb">
 					<ol class="breadcrumb mb-0 p-0">
 						<li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a>
 						</li>
-						<li class="breadcrumb-item active" aria-current="page">Produk</li>
-						<li class="breadcrumb-item active" aria-current="page">Data</li>
 					</ol>
 				</nav>
 			</div>
@@ -28,24 +33,31 @@
 		<div class="card">
 			<div class="card-header">
 				<div class="col-12">
-					<button type="button" class="btn btn-primary px-3" id="add-new-data">
-						<i class="fadeIn animated bx bx-plus"></i>Tambah Data Baru
-					</button>
-					<button type="button" class="btn btn-success px-3" id="import-new-data">
-						<i class="fadeIn animated bx bx-plus"></i>Import Data Baru
+					<button type="button" class="btn btn-primary px-3" id="set-min-max">
+						<i class="fadeIn animated bx bx-plus"></i>Tambah Uang Masuk/Keluar
 					</button>
 				</div>
 			</div>
 			<div class="card-body">
+				<div class="row mb-4">
+					<div class="col-md-6">
+						<label for="stok_filter" class="form-label fw-bold">Pilih Stok</label>
+						<select class="single-select validation" id="stok_filter" onchange="filter()">
+							<option value="stok_habis" selected>Stok Habis</option>
+							<option value="stok_dibawah_minimal" >Stok Dibawah Minimal</option>
+							<option value="stok_diatas_maksimal" >Stok Diatas Maksimal</option>
+						</select>
+					</div>
+				</div>
 				<div class="table-responsive">
-					<table id="datatable-data" class="table table-striped table-bordered" style="width:100%">
+					<table id="datatable-min-max" class="table table-striped table-bordered" style="width:100%">
 						<thead>
 							<tr>
 								<th>No</th>
-								<th>Kode</th>
-								<th>Nama</th>
-								<th>Kategori</th>
-								<th>Action</th>
+								<th>Keterangan</th>
+								<th>Nominal</th>
+								<th>Tanggal & Waktu</th>
+								<th>Aksi</th>
 							</tr>
 						</thead>
 						<tbody></tbody>
@@ -69,18 +81,28 @@
 			module = await initModul()
 			console.log(module)
 
-			datatableDataProduk()
+			datatableMinMax()
+		})
 
+		function filter() {
+			datatableMinMax($('#stok_filter').val())
+		}
+
+		$('.single-select').select2({
+			theme: 'bootstrap4',
+			width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+			placeholder: $(this).data('placeholder'),
+			allowClear: Boolean($(this).data('allow-clear')),
 		})
 
 		function initButton(){
-			$(".btn-edit-data-produk").click(async (e) => {
+			$(".btn-edit-pembelian").click(async (e) => {
 				let $this = $(e.currentTarget)
-                const id = $this.data('id')
+				return module.swal.warning({text: 'Masih tahap pengembangan!'})
 				$this.attr('disabled', true)
 
-				let response = await postRequest("{{route('dataMaster.produk.data.form')}}", {id_data_produk: id, model_data_produk: id})
-
+				let response = await postRequest("{{route('pembelian.form')}}", {id_user: $this.data('id')})
+				
 				if (response.status !== 200) {
 					await module.swal.warning({
 						text: response.data.message,
@@ -96,14 +118,14 @@
 				})
 			})
 
-			$(".btn-delete-data-produk").click(async (e) => {
+			$(".btn-delete-pembelian").click(async (e) => {
 				let $this = $(e.currentTarget)
-				const id = $this.data('id')
+				return module.swal.warning({text: 'Masih tahap pengembangan!'})
 				$this.attr('disabled', true)
 
 				module.swal.confirm().then(async (e) => {
-					if(e.value === true){
-						const response = await postRequest("{{route('dataMaster.produk.data.destroy')}}", {id_data_produk: id, model_data_produk: id, is_destroy: true})
+					if (e.value) {
+						const response = await postRequest("{{route('pembelian.destroy')}}", {id_user: $this.data('id')})
 						code = response.status
 
 						if (code !== 200) {
@@ -119,25 +141,17 @@
 							hideClass: module.var_swal.fadeOutUp,
 						})
 
-						datatableDataProduk()
+						datatablePembelian()
 					}
 					$this.attr('disabled', false)
 				})
 			})
-			$(".btn-print-barcode").click(async (e) => {
-				let $this = $(e.currentTarget)
-				const id = $this.data('id')
-				$this.attr('disabled', true)
-				window.open("{{route('dataMaster.produk.data.barcode')}}/"+id)
-
-				$this.attr('disabled', false)
-			})
 		}
 
-		$("#add-new-data").click(async (e) => {
+		$("#set-min-max").click(async (e) => {
 			const $this = $(e.currentTarget)
 			$this.attr('disabled', true)
-			let response = await postRequest("{{route('dataMaster.produk.data.form')}}")
+			let response = await postRequest("{{route('laporan.barangHabis.form')}}")
 
 			if (response.status !== 200) {
 				await module.swal.warning({
@@ -154,28 +168,8 @@
 			})
 		})
 
-		$("#import-new-data").click(async (e) => {
-			const $this = $(e.currentTarget)
-			$this.attr('disabled', true)
-			let response = await postRequest("{{route('dataMaster.produk.data.importForm')}}")
-
-			if (response.status !== 200) {
-				await module.swal.warning({
-					text: response.data.message,
-					hideClass: module.var_swal.fadeOutUp,
-				})
-
-				return $this.attr('disabled', false)
-			}
-
-			$("#main-page").hide('slow', function () {
-				$this.attr('disabled', false)
-				$("#other-page").html($(response.data.response)).hide().fadeIn(400)
-			})
-		})
-
-		async function datatableDataProduk(){
-			await $('#datatable-data').dataTable({
+		async function datatableMinMax(stok_filter=$('#stok_filter').val()){
+			await $('#datatable-min-max').dataTable({
 				scrollX: true,
 				bPaginate: true,
 				bFilter: true,
@@ -187,14 +181,17 @@
 					targets: 0
 				}],
 				ajax: {
-					url:"{{route('dataMaster.produk.data.datatables')}}",
+					url:"{{route('laporan.barangHabis.datatables')}}",
 					type: 'post',
+					data: {
+						stok_filter: stok_filter
+					}
 				},
 				columns: [
 					{data: 'DT_RowIndex', name: 'DT_RowIndex'},
-					{data: 'kode_produk', name: 'kode_produk'},
-					{data: 'nama_produk', name: 'nama_produk'},
-					{data: 'nama_kategori', name: 'nama_kategori'},
+					{data: 'keterangan', name: 'keterangan'},
+					{data: 'nominal', name: 'nominal'},
+					{data: 'tanggal', name: 'tanggal'},
 					{data: 'action', name: 'action'}
 				],
 				initComplete: function (settings, json) {

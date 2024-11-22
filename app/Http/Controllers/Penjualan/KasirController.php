@@ -12,6 +12,7 @@ use App\DataTransferObjects\Penjualan\DetailPenjualanDTO;
 use App\DataTransferObjects\Penjualan\PostPenjualanDetailDTO;
 use App\DataTransferObjects\Penjualan\PostPenjualanDTO;
 use App\DataTransferObjects\Response\ResponseAxiosDTO;
+use App\Models\DataProduk;
 # Models
 use App\Models\PembelianDetail;
 use App\Models\Penjualan;
@@ -42,7 +43,7 @@ class KasirController extends Controller
 	{
 		$produk = PembelianDetail::select('id', 'kode_produk', 'satuan_id', 'stok_real', 'harga_jual')
 			->with([
-				'data_produk:id,kode_produk,nama_produk',
+				'data_produk:id,kode_produk,nama_produk,foto_directory',
 				'satuan:id,nama'
 			])->get();
 		return view('contents.penjualan-kasir.main', ['produk' => $produk]);
@@ -122,5 +123,60 @@ class KasirController extends Controller
 		$data['penjualan'] = Penjualan::with('penjualan_detail','user','penjualan_detail.pembelian_detail','penjualan_detail.pembelian_detail.data_produk')
 			->find($id);
 		return view('contents.penjualan-kasir.invoice', $data);
+	}
+
+	public function getProduk(Request $request) {
+		$data = DataProduk::find($request->id);
+		if ($data) {
+			$data->res_code=200;
+			$data->res_message="Data Ditemukan";
+			$fileExists = public_path()."/storage/public/".$data->foto_directory;
+			if (!$data->foto_directory || !file_exists($fileExists)) {
+				$data->foto = asset('/assets/images/errors-images/no-image.jpg');
+			} else {
+				$data->foto = url("storage/public/".$data->foto_directory);
+			}
+		} else {
+			$data->res_code=400;
+			$data->res_message="Data Tidak Ditemukan";
+		}
+
+		return response()->json(ResponseAxiosDTO::fromArray([
+			'code' => 200,
+			'message' => $data->getMessage(),
+		]), 500);
+	}
+
+	public function scanBarcode(Request $request) {
+		$data = PembelianDetail::select('id', 'kode_produk', 'satuan_id', 'stok_real', 'harga_jual')->
+			with([
+				'data_produk:id,kode_produk,nama_produk,foto_directory',
+				'satuan:id,nama'
+			])->
+			where('stok_real','>',0)->
+			whereHas('data_produk',function ($q) use ($request) {
+				$q->where('barcode',$request->barcode);
+			})->
+			get();
+		$return = (object)[];
+		if (count($data)) {
+			$return->res_code=200;
+			$return->res_message="Data Ditemukan";
+			// $fileExists = public_path()."/storage/public/".$data->foto_directory;
+			// if (!$data->foto_directory || !file_exists($fileExists)) {
+			// 	$data->foto = asset('/assets/images/errors-images/no-image.jpg');
+			// } else {
+			// 	$data->foto = url("storage/public/".$data->foto_directory);
+			// }
+		} else {
+			$return->res_code=400;
+			$return->res_message="Data Tidak Ditemukan";
+		}
+
+		return response()->json(ResponseAxiosDTO::fromArray([
+			'code' => $return->res_code,
+			'message' => $return->res_message,
+			'response' => $data,
+		]), $return->res_code);
 	}
 }
