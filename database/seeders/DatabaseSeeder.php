@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
 		$this->call(DataSeeder::class);
 		$this->call(PembelianSeeder::class);
 		$this->call(PembelianDetailSeeder::class);
+		$this->call(MasterKonversiSeeder::class);
 
 		// User::factory(10)->create();
 		// User::factory()->create([

@@ -14,10 +14,9 @@ class SatuanSeeder extends Seeder
 	 */
 	public function run(): void
 	{
-		SatuanProduk::create(['nama' => 'gram']);
-		SatuanProduk::create(['nama' => 'kg']);
-		SatuanProduk::create(['nama' => 'pcs']);
-		SatuanProduk::create(['nama' => 'lusin']);
-		SatuanProduk::create(['nama' => 'dus']);
+		$array = ['dus', 'lusin', 'pcs', 'bal', 'kg', 'gram'];
+		foreach($array as $key => $val){
+			SatuanProduk::create(['nama' => $val]);
+		}
 	}
 }

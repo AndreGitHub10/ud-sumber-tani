@@ -23,4 +23,14 @@ class SatuanProduk extends Model
 	{
 		return $this->hasMany(PembelianDetail::class, 'satuan_id', 'id');
 	}
+
+	public function konversi_satuan_asal(): HasMany
+	{
+		return $this->hasMany(KonversiSatuan::class, 'satuan_id_asal', 'id');
+	}
+
+	public function konversi_satuan_tujuan(): HasMany
+	{
+		return $this->hasMany(KonversiSatuan::class, 'satuan_id_tujuan', 'id');
+	}
 }

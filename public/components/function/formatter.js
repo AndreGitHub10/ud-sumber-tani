@@ -1,7 +1,7 @@
 import parse from "./parse.js"
 
 const func_formatter = {
-	formatRupiah(angka, prefix){
+	formatRupiah(angka, prefix = 'Rp. '){
 		// let number_string = angka.toString().replace(/[^,\d]/g, "")
 		let isNegative = angka.toString().indexOf("-")
 		let number_string = parse.onlyNumber(angka)
@@ -18,6 +18,13 @@ const func_formatter = {
 		}
 
 		rupiah = split[1] !== undefined ? rupiah + "," + split[1] : rupiah
+
+		let text = prefix+rupiah
+
+		if (isNegative !== -1) text = `${prefix} -${rupiah}`;
+		if (!rupiah) text = '';
+
+		return text;
 		return prefix === undefined ? rupiah : (isNegative !== -1 ? `${prefix} -${rupiah}` : prefix+rupiah);
 		// return prefix === undefined ? rupiah : rupiah ? "Rp. " + rupiah : ""
 	}

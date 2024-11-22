@@ -12,11 +12,11 @@ return new class extends Migration
 	public function up(): void
 	{
 		Schema::create('konversi_satuan', function (Blueprint $table) {
-			$table->integer('produk_id');
+			$table->id();
 			$table->integer('satuan_id_asal');
 			$table->integer('satuan_id_tujuan');
-			$table->integer('jumlah_tujuan');
-			$table->primary(['produk_id', 'satuan_id_asal', 'satuan_id_tujuan']);
+			$table->integer('nilai_konversi');
+			// $table->primary(['satuan_id_asal', 'satuan_id_tujuan', 'nilai_konversi']);
 			$table->timestamps();
 		});
 	}
