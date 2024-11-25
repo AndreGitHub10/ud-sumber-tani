@@ -15,6 +15,7 @@ use App\Http\Controllers\Laporan\KartuStokController;
 use App\Http\Controllers\Laporan\LabaController;
 use App\Http\Controllers\Laporan\MinMaxController;
 use App\Http\Controllers\Laporan\PenjualanController;
+use App\Http\Controllers\Laporan\PersediaanController;
 use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\Penjualan\KasirController;
 use App\Http\Controllers\Produk\DataController;
@@ -172,7 +173,10 @@ Route::middleware(Authenticate::class)->group(function () {
 
 		Route::prefix('persediaan')->as('persediaan.')
 		->group(function () {
-			Route::get('/', [DashboardController::class, 'main'])->name('main');
+			Route::get('/', [PersediaanController::class, 'main'])->name('main');
+			Route::post('datatables', [PersediaanController::class, 'datatables'])->name('datatables');
+			Route::post('form', [PersediaanController::class, 'form'])->name('form');
+			Route::post('store', [PersediaanController::class, 'store'])->name('store');
 		});
 	});
 

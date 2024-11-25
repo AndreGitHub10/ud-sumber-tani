@@ -64,7 +64,7 @@
 												data-harga-jual="{{$item->harga_jual}}"
 												class="fw-bolder"
 											>
-												{{ $item->kode_produk }}|{{ strtoupper($item->data_produk->nama_produk) }} ({{ strtoupper($item->satuan->nama) }})|{{ $item->stok_real }}
+												{{ $item->barcode }}|{{ strtoupper($item->data_produk->nama_produk) }} ({{ strtoupper($item->satuan->nama) }})|{{ $item->stok_real }}
 											</option>
 										@endforeach
 									</select>

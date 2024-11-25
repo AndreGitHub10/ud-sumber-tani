@@ -6,6 +6,7 @@
 	
 	<link href="{{asset('assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet" />
 	<link href="{{asset('assets/plugins/select2/css/select2-bootstrap4.css')}}" rel="stylesheet" />
+	<link href="{{asset('assets/plugins/flatpickr/dist/flatpickr.min.css')}}" rel="stylesheet" />
 	<style>
 		.show-alert{
 			border: 1px solid red !important;
@@ -33,7 +34,7 @@
 		<div class="card">
 			<div class="card-header">
 				<div class="col-12">
-					<button type="button" class="btn btn-primary px-3" id="set-min-max">
+					<button type="button" class="btn btn-primary px-3" id="btn-tambah">
 						<i class="fadeIn animated bx bx-plus"></i>Tambah Uang Masuk/Keluar
 					</button>
 				</div>
@@ -41,12 +42,10 @@
 			<div class="card-body">
 				<div class="row mb-4">
 					<div class="col-md-6">
-						<label for="stok_filter" class="form-label fw-bold">Pilih Stok</label>
-						<select class="single-select validation" id="stok_filter" onchange="filter()">
-							<option value="stok_habis" selected>Stok Habis</option>
-							<option value="stok_dibawah_minimal" >Stok Dibawah Minimal</option>
-							<option value="stok_diatas_maksimal" >Stok Diatas Maksimal</option>
-						</select>
+						<div class="mb-3">
+							<label class="form-label fw-bold">Rentang Tanggal</label>
+							<input type="text" class="form-control date-range" id="date_range" onchange="filter()"/>
+						</div>
 					</div>
 				</div>
 				<div class="table-responsive">
@@ -54,10 +53,12 @@
 						<thead>
 							<tr>
 								<th>No</th>
-								<th>Keterangan</th>
-								<th>Nominal</th>
-								<th>Tanggal & Waktu</th>
-								<th>Aksi</th>
+								<th>Tanggal</th>
+								<th>Nilai Awal</th>
+								<th>Masuk</th>
+								<th>Keluar</th>
+								<th>Nilai Akhir</th>
+								{{-- <th>Aksi</th> --}}
 							</tr>
 						</thead>
 						<tbody></tbody>
@@ -74,6 +75,7 @@
 	<script src="{{asset('assets/plugins/datatable/js/dataTables.bootstrap5.min.js')}}"></script>
 
 	<script src="{{asset('assets/plugins/select2/js/select2.min.js')}}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 	<script>
 		$(async () => {
@@ -83,9 +85,17 @@
 
 			datatableMinMax()
 		})
+		
+		$(".date-range").flatpickr({
+			mode: "range",
+			altInput: true,
+			altFormat: "d-m-Y",
+			dateFormat: "Y-m-d",
+			defaultDate: "{{date('Y-m-d')}} to {{date('Y-m-d')}}"
+		});
 
 		function filter() {
-			datatableMinMax($('#stok_filter').val())
+			datatableMinMax($('#date_range').val())
 		}
 
 		$('.single-select').select2({
@@ -148,10 +158,10 @@
 			})
 		}
 
-		$("#set-min-max").click(async (e) => {
+		$("#btn-tambah").click(async (e) => {
 			const $this = $(e.currentTarget)
 			$this.attr('disabled', true)
-			let response = await postRequest("{{route('laporan.barangHabis.form')}}")
+			let response = await postRequest("{{route('laporan.persediaan.form')}}")
 
 			if (response.status !== 200) {
 				await module.swal.warning({
@@ -168,7 +178,7 @@
 			})
 		})
 
-		async function datatableMinMax(stok_filter=$('#stok_filter').val()){
+		async function datatableMinMax(date_range=$('#date_range').val()){
 			await $('#datatable-min-max').dataTable({
 				scrollX: true,
 				bPaginate: true,
@@ -181,22 +191,32 @@
 					targets: 0
 				}],
 				ajax: {
-					url:"{{route('laporan.barangHabis.datatables')}}",
+					url:"{{route('laporan.persediaan.datatables')}}",
 					type: 'post',
 					data: {
-						stok_filter: stok_filter
+						date_range: date_range
 					}
 				},
 				columns: [
 					{data: 'DT_RowIndex', name: 'DT_RowIndex'},
-					{data: 'keterangan', name: 'keterangan'},
-					{data: 'nominal', name: 'nominal'},
 					{data: 'tanggal', name: 'tanggal'},
-					{data: 'action', name: 'action'}
+					{data: 'uang_awal', name: 'uang_awal', render: function(data, type, row) {
+						return module.formatter.formatRupiah(data, 'Rp. ')
+					}},
+					{data: 'masuk', name: 'masuk', render: function(data, type, row) {
+						return module.formatter.formatRupiah(data, 'Rp. ')
+					}},
+					{data: 'keluar', name: 'keluar', render: function(data, type, row) {
+						return module.formatter.formatRupiah(data, 'Rp. ')
+					}},
+					{data: 'uang_akhir', name: 'uang_akhir', render: function(data, type, row) {
+						return module.formatter.formatRupiah(data, 'Rp. ')
+					}},
+					// {data: 'action', name: 'action'}
 				],
-				initComplete: function (settings, json) {
-					initButton()
-				}
+				// initComplete: function (settings, json) {
+				// 	initButton()
+				// }
 			})
 		}
 	</script>

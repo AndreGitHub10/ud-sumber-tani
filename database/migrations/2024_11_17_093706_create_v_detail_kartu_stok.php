@@ -15,7 +15,7 @@ return new class extends Migration
         DB::statement("CREATE OR REPLACE VIEW v_detail_kartu_stok AS
             SELECT
                 dp.kode_produk AS kode_produk,
-                p.nomor_invoice AS nomor_invoice,
+                (case when pd.is_konversi='1' then concat(p.nomor_invoice,' (konversi)') else p.nomor_invoice end) AS nomor_invoice,
                 pd.id AS detail_pembelian_id,
                 NULL AS detail_penjualan_id,
                 pd.stok_awal AS stok_masuk,
@@ -33,7 +33,7 @@ return new class extends Migration
                         ))) UNION
             SELECT
                 dp.kode_produk AS kode_produk,
-                sub_pd2.nomor_kwitansi AS nomor_invoice,
+                (case when sub_pd2.is_konversi='1' then '(konversi)' else sub_pd2.nomor_kwitansi end) AS nomor_invoice,
                 NULL AS detail_pembelian_id,
                 sub_pd2.detail_penjualan_id AS detail_penjualan_id,
                 NULL AS stok_masuk,
@@ -52,6 +52,7 @@ return new class extends Migration
                         pd2.id AS detail_penjualan_id,
                         pd2.jumlah AS jumlah,
                         pd2.created_at AS created_at,
+                        pd2.is_konversi AS is_konversi,
                         p.nomor_kwitansi AS nomor_kwitansi 
                     FROM
                         ((
@@ -59,7 +60,7 @@ return new class extends Migration
                                 JOIN penjualan_detail pd2 ON ((
                                         pd.id = pd2.detail_pembelian_id 
                                     )))
-                            JOIN penjualan p ON ((
+                            LEFT JOIN penjualan p ON ((
                                     p.id = pd2.penjualan_id 
                                 )))) sub_pd2 ON ((
                         pd.id = sub_pd2.id 

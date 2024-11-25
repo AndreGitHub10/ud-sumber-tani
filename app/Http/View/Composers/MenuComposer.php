@@ -156,7 +156,7 @@ class MenuComposer
 		$auth = Auth::user();
 		if ($auth && $auth->level === 'kasir') {
 			# Kasir hanya bisa akses menu 1 (dashboard) & 5 (penjualan kasir)
-			$menu = collect($menu)->filter(fn ($item) => in_array($item['id'], [1, 5]))->values()->toArray();
+			$menu = collect($menu)->filter(fn ($item) => in_array($item['id'], [5]))->values()->toArray();
 		}
 
 		$view->with('menu', $menu);
