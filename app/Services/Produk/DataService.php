@@ -20,6 +20,7 @@ class DataService
 		$dataProduk->kode_produk = $postDataDTO->kode_produk;
 		$dataProduk->kategori_id = $postDataDTO->kategori;
 		$dataProduk->nama_produk = $postDataDTO->nama_produk;
+		$dataProduk->barcode = $postDataDTO->barcode;
 
 		if ($postDataDTO->file_path) {
 			$dataProduk->foto_directory = $postDataDTO->file_path;
@@ -34,6 +35,7 @@ class DataService
 		$dataProduk = DataProduk::find($postDataDTO->id_data_produk);
 		$dataProduk->kategori_id = $postDataDTO->kategori;
 		$dataProduk->nama_produk = $postDataDTO->nama_produk;
+		$dataProduk->barcode = $postDataDTO->barcode;
 
 		if ($postDataDTO->file_path) {
 			$dataProduk->foto_directory = $postDataDTO->file_path;

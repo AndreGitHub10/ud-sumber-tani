@@ -23,6 +23,7 @@ final class PostDataDTO extends DataTransferObject
 		public string $kode_produk,
 		public string $file_path,
 		public string $nama_produk,
+		public string $barcode,
 		public int|null $kategori,
 		public int|null $id_data_produk,
 		public DataProduk|null $model_data_produk,
@@ -79,6 +80,7 @@ final class PostDataDTO extends DataTransferObject
 			$kodeProduk,
 			$filePath,
 			$request->nama_produk ?? null,
+			$request->barcode ?? $kodeProduk,
 			$request->kategori ?? null,
 			$request->id_data_produk ?? null,
 			$isNew ? null : DataProduk::find($request->id_data_produk)

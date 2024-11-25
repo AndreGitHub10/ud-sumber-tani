@@ -27,6 +27,7 @@ class MenuComposer
 		 *       -- Satuan
 		 *    - Supplier
 		 *    - Pengguna
+		 *    - Konversi
 		 * 3. Konversi Satuan (repack)
 		 * 4. Pembelian
 		 * 5. Penjualan Kasir
@@ -82,13 +83,17 @@ class MenuComposer
 						'link' => route('dataMaster.pengguna.main'),
 						'text' => 'Pengguna',
 					],
+					[
+						'link' => route('dataMaster.konversi.main'),
+						'text' => 'Konversi',
+					],
 				],
 			],
 
 			# Konversi satuan
 			[
 				'id' => 3,
-				'link' => route('konversiSatuan.main'),
+				'link' => route('konversiSatuan.form'),
 				'text' => 'Konversi Satuan (repack)',
 				'icon' => 'bx bx-transfer-alt',
 				'sub_menu_icon' => 'bx bx-right-arrow-alt',
@@ -151,7 +156,7 @@ class MenuComposer
 		$auth = Auth::user();
 		if ($auth && $auth->level === 'kasir') {
 			# Kasir hanya bisa akses menu 1 (dashboard) & 5 (penjualan kasir)
-			$menu = collect($menu)->filter(fn ($item) => in_array($item['id'], [1, 5]))->values()->toArray();
+			$menu = collect($menu)->filter(fn ($item) => in_array($item['id'], [5]))->values()->toArray();
 		}
 
 		$view->with('menu', $menu);

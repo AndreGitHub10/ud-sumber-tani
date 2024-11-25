@@ -17,6 +17,7 @@ return new class extends Migration
 			$table->integer('kategori_id')->nullable();
 			$table->string('nama_produk');
 			$table->text('foto_directory')->nullable();
+			$table->string('barcode');
 			$table->timestamps();
 		});
 	}

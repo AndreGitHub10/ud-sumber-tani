@@ -9,10 +9,13 @@ use App\Http\Middleware\Authenticate;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DBController;
+use App\Http\Controllers\Konversi\MasterKonversiController;
+use App\Http\Controllers\Konversi\SatuanController as KonversiSatuanController;
 use App\Http\Controllers\Laporan\KartuStokController;
 use App\Http\Controllers\Laporan\LabaController;
 use App\Http\Controllers\Laporan\MinMaxController;
 use App\Http\Controllers\Laporan\PenjualanController;
+use App\Http\Controllers\Laporan\PersediaanController;
 use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\Penjualan\KasirController;
 use App\Http\Controllers\Produk\DataController;
@@ -23,6 +26,9 @@ use App\Http\Controllers\User\UserController;
 
 Route::get('/', function () {
 	return redirect()->route('auth.login');
+});
+Route::get('test', function() {
+    return view('utama');
 });
 
 Route::prefix('auth')
@@ -55,6 +61,7 @@ Route::middleware(Authenticate::class)->group(function () {
 				Route::get('barcode/{barcode?}', 'barcode')->name('barcode');
 				Route::post('importForm', 'importForm')->name('importForm');
 				Route::get('download-template', 'downloadTemplate')->name('downloadTemplate');
+				Route::post('import', 'import')->name('import');
 			});
 
 			Route::controller(KategoriController::class)->prefix('kategori')->as('kategori.')
@@ -73,6 +80,7 @@ Route::middleware(Authenticate::class)->group(function () {
 				Route::post('datatables', 'datatables')->name('datatables');
 				Route::post('destroy', 'destroy')->name('destroy');
 				Route::post('store', 'store')->name('store');
+				Route::post('konversi', 'konversi')->name('konversi');
 			});
 		});
 
@@ -93,11 +101,23 @@ Route::middleware(Authenticate::class)->group(function () {
 			Route::post('destroy', 'destroy')->name('destroy');
 			Route::post('store', 'store')->name('store');
 		});
+
+		Route::controller(MasterKonversiController::class)->prefix('konversi')->as('konversi.')
+		->group(function () {
+			Route::get('/', 'main')->name('main');
+			Route::post('form', 'form')->name('form');
+			Route::post('store', 'store')->name('store');
+			Route::post('datatables', 'datatables')->name('datatables');
+			Route::post('get-master', 'getMaster')->name('getMaster');
+			Route::post('destroy', 'destroy')->name('destroy');
+		});
 	});
 
-	Route::prefix('konversi-satuan')->as('konversiSatuan.')
+	Route::controller(KonversiSatuanController::class)->prefix('konversi-satuan')->as('konversiSatuan.')
 	->group(function () {
-		Route::get('/', [DashboardController::class, 'main'])->name('main');
+		Route::get('/', 'form')->name('form');
+		Route::post('store', 'store')->name('store');
+		Route::post('get-konversi', 'getKonversi')->name('getKonversi');
 	});
 
 	Route::controller(PembelianController::class)->prefix('pembelian')->as('pembelian.')
@@ -107,6 +127,7 @@ Route::middleware(Authenticate::class)->group(function () {
 		Route::post('datatables', 'datatables')->name('datatables');
 		Route::post('destroy', 'destroy')->name('destroy');
 		Route::post('store', 'store')->name('store');
+		Route::post('find-produk', 'findProduk')->name('findProduk');
 	});
 
 	Route::controller(KasirController::class)->prefix('penjualan-kasir')->as('penjualanKasir.')
@@ -114,6 +135,8 @@ Route::middleware(Authenticate::class)->group(function () {
 		Route::get('/', 'main')->name('main');
 		Route::post('store', 'store')->name('store');
 		Route::get('invoice/{id?}', 'invoice')->name('invoice');
+		Route::post('get-produk', 'getProduk')->name('getProduk');
+		Route::post('scan-barcode', 'scanBarcode')->name('scanBarcode');
 	});
 
 	Route::prefix('laporan')->as('laporan.')
@@ -150,7 +173,10 @@ Route::middleware(Authenticate::class)->group(function () {
 
 		Route::prefix('persediaan')->as('persediaan.')
 		->group(function () {
-			Route::get('/', [DashboardController::class, 'main'])->name('main');
+			Route::get('/', [PersediaanController::class, 'main'])->name('main');
+			Route::post('datatables', [PersediaanController::class, 'datatables'])->name('datatables');
+			Route::post('form', [PersediaanController::class, 'form'])->name('form');
+			Route::post('store', [PersediaanController::class, 'store'])->name('store');
 		});
 	});
 

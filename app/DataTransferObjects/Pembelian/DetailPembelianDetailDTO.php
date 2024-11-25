@@ -38,6 +38,9 @@ final class DetailPembelianDetailDTO extends DataTransferObject
 		#[WithDefaultValue(null)]
 		public int|null $stok_real_terbaru = null,
 
+		#[WithDefaultValue("")]
+		public string|null $query_string = "",
+
 		#[BindModel(using: 'id', with: ['data_produk'])]
 		#[WithDefaultValue(PembelianDetail::class)]
 		public PembelianDetail|null $model_pembelian_detail = null,

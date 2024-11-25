@@ -138,6 +138,7 @@
 	</div> --}}
 	{{-- end switcher--}}
 
+	@include('components.loader.main')
 	@include('scripts/main')
 </body>
 

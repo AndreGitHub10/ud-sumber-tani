@@ -33,6 +33,17 @@
 								<input type="file" class="form-control" name="file" id="file" accept=".xls, .xlsx">
 							</div>
 						</div>
+						<div class="row mb-3">
+							<label for="inputKategori" class="col-sm-3 col-form-label">Kategori</label>
+							<div class="col-sm-9">
+								<select class="single-select" id="inputKategori" name="kategori">
+									<option selected disabled>--PILIH OPSI--</option>
+									@foreach ($kategori ?? [] as $item)
+									<option value="{{$item->id}}">{{$item->nama}}</option>
+									@endforeach
+								</select>
+							</div>
+						</div>
 						<div class="row">
 							<div
 								class="col-sm-12"
@@ -81,7 +92,7 @@
 
 		const data = new FormData($("#form-import-data-produk")[0])
 
-		const response = await postRequest("{{route('dataMaster.produk.data.store')}}", data)
+		const response = await postRequest("{{route('dataMaster.produk.data.import')}}", data)
 
 		if (jQuery.inArray(response.status, [200, 201]) === -1) {
 			await module.swal.warning({

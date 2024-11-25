@@ -41,6 +41,14 @@
 					</div>
 					<div class="card-body">
 						<form id="form-penjualan">
+							<div class="row">
+								<div class="col-12">
+									<div class="form-check form-switch">
+										<input class="form-check-input" type="checkbox" role="switch" id="is-scan" name="is-scan">
+										<label class="form-check-label" for="is-scan">Scanner Mode <span id="scanner-mode"></span></label>
+									</div>
+								</div>
+							</div>
 							<div class="row mb-4">
 								<label for="input-produk" class="form-label">Temukan Produk</label>
 								<div class="col-12">
@@ -50,12 +58,13 @@
 											<option
 												value="{{$item->id}}"
 												data-nama-produk="{{strtoupper($item->data_produk->nama_produk)}}"
+												data-foto-directory="{{strtoupper($item->data_produk->foto_directory)}}"
 												data-kode-produk="{{$item->kode_produk}}"
 												data-jumlah="{{$item->stok_real}}"
 												data-harga-jual="{{$item->harga_jual}}"
 												class="fw-bolder"
 											>
-												{{ $item->kode_produk }}|{{ strtoupper($item->data_produk->nama_produk) }} ({{ strtoupper($item->satuan->nama) }})|{{ $item->stok_real }}
+												{{ $item->barcode }}|{{ strtoupper($item->data_produk->nama_produk) }} ({{ strtoupper($item->satuan->nama) }})|{{ $item->stok_real }}
 											</option>
 										@endforeach
 									</select>
@@ -75,6 +84,11 @@
 							<div class="row">
 								<div class="col-sm-12 text-center">
 									<button class="btn btn-sm btn-info px-5 text-light" id="btn-append-penjualan">Tambahkan ke list penjualan</button>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-12">
+									<img id="preview-gambar" src="" class="img-fluid" alt="...">
 								</div>
 							</div>
 						</form>
@@ -160,6 +174,34 @@
 		<!--end row-->
 	</div>
 	<div id="other-page" style="display:none;"></div>
+<!-- Modal -->
+<div class="modal fade" id="scannerModal" tabindex="-1" aria-labelledby="scannerModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+	<div class="modal-content">
+	<div class="modal-header">
+		<h5 class="modal-title" id="scannerModalLabel">Pilih Produk</h5>
+		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	</div>
+	<div class="modal-body">
+		<table class="table table-striped" id="tbl-list-produk-scanner">
+			<thead>
+				<th>
+					<td>Nama Produk</td>
+					<td>Satuan</td>
+					<td>Stok</td>
+					<td>Harga Jual</td>
+					<td>Pilih</td>
+				</th>
+			</thead>
+			<tbody></tbody>
+		</table>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+	</div>
+	</div>
+</div>
+</div>
 @endsection
 
 @push('scripts')
@@ -169,11 +211,300 @@
 	<script src="{{asset('assets/plugins/select2/js/select2.min.js')}}"></script>
 
 	<script>
+		var scannerModal = new bootstrap.Modal(document.getElementById('scannerModal'), {keyboard : false})
 		$(async () => {
 			// initModul() in "scripts.main.blade.php"
 			module = await initModul()
 			console.log(module)
+			$('#preview-gambar').hide()
+			$('#is-scan').prop('checked',false)
+			$('#scanner-mode').html('off')
 		})
+
+		$('#is-scan').click(async function(){
+			await scanToggleHandler()
+		})
+
+		async function scanToggleHandler() { 
+			await module.reset.form($("#form-penjualan .reset"))
+			$('#preview-gambar').hide("slow")
+			$('#preview-gambar').attr('src',"")
+			$("#display-harga-jual").text("")
+			var isChecked = $('#is-scan').prop('checked');
+            if (isChecked) {
+                $('#form-penjualan .reset').prop("disabled", true);
+				$('#btn-append-penjualan').prop("disabled", true);
+				$('#scanner-mode').html("On");
+            } else {
+				$('#form-penjualan .reset').prop("disabled", false);
+				$('#btn-append-penjualan').prop("disabled", false);
+				$('#scanner-mode').html("Off");
+            }
+		}
+
+		var interval;
+        var scan_barcode = '';
+        document.addEventListener('keydown', function(evt) {
+            var isChecked = $('#is-scan').prop('checked');
+            if (isChecked) {
+                if (interval)
+                    clearInterval(interval);
+                if (evt.code == 'Enter') {
+                    if (scan_barcode)
+                        handleBarcode(scan_barcode);
+                    scan_barcode = '';
+                    return;
+                }
+                if (evt.key != 'Shift')
+                    scan_barcode += evt.key;
+                interval = setInterval(() => {
+                    handleBarcode(scan_barcode);
+                    scan_barcode = ''
+                }, 200);
+            } else {
+                clearInterval(interval); // Clear the interval if isChecked is false
+            }
+        });
+
+		async function handleBarcode(sc_code) {
+
+			if (sc_code.length > 0) {
+				var data = {
+					barcode: sc_code
+				};
+				$('#loader-full').removeClass('d-none')
+				$('#loader-full').addClass('d-block')
+				
+				const response = await postRequest("{{route('penjualanKasir.scanBarcode')}}", data)
+				// return console.log(response)
+				$('#loader-full').addClass('d-none')
+				$('#loader-full').removeClass('d-block')
+
+				if (jQuery.inArray(response.status, [200, 201]) === -1) {
+					await module.swal.warning({
+						text: response.data.message,
+						hideClass: module.var_swal.fadeOutUp,
+					})
+
+					return $(this).attr('disabled', false)
+				}
+
+				await module.swal.success({
+					title: response.data.message,
+					text: '',
+					showClass: module.var_swal.fadeInDown,
+					hideClass: module.var_swal.fadeOutUp,
+				})
+
+				if (JSON.parse(response.data.response).length == 1) {
+					const produk = JSON.parse(response.data.response)[0]
+					let produkText = produk.data_produk.nama_produk
+					let idPembelian = produk.id
+					let jumlahReal = produk.stok_real
+					let jumlahRequest = 1
+
+					let duplikat = false
+					await $(".array-pembelian").each(function(idx) {
+						if (idPembelian === this.value) {
+							duplikat = true
+							return false
+						}
+					})
+
+					if (duplikat) {
+						return module.swal.warning({text: "Produk sudah ada di list penjualan"})
+					}
+
+					if (jumlahRequest > jumlahReal) {
+						return module.swal.warning({text: "Jumlah penjualan tidak bisa melebihi stok!"})
+					}
+
+					let hargaJual = produk.harga_jual
+					let totalHargaPerProduk = hargaJual * jumlahRequest
+
+					let nomor = $("#container-list-penjualan tr").length + 1
+
+					const randomId = module.generate.randomId(10)
+
+					let html = `
+						<tr class="rows-list-penjualan" id="rows-${randomId}">
+							<input type="hidden" name="array_pembelian[]" class="array-pembelian" value="${idPembelian}">
+							<input type="hidden" name="array_jumlah_real[]" class="array-jumlah-real" value="${jumlahReal}">
+							<input type="hidden" name="array_harga_jual[]" class="array-harga-jual" value="${hargaJual}">
+							<input type="hidden" name="array_total_harga_per_produk_murni[]" class="array-total-harga-per-produk-murni" value="${totalHargaPerProduk}">
+							<input type="hidden" name="array_total_harga_per_produk_diskon[]" class="array-total-harga-per-produk-diskon" value="${totalHargaPerProduk}">
+
+							<td id="container-nomor">${nomor}</td>
+							<td id="container-produk">${produkText}</td>
+							<td id="container-harga-jual" class="nowrap">${module.formatter.formatRupiah(hargaJual, 'Rp. ')}</td>
+							<td>
+								<input type="text" class="form-control text-center array-diskon readonly" name="array_diskon[]" data-unique-id="${randomId}">
+							</td>
+							<td id="container-jumlah" class='text-center'>
+								<div class="input-group" style="margin-bottom: 4px; width: 87%; margin-left: auto; margin-right: auto;">
+									<div class="input-group-prepend">
+										<button
+											class="btn btn-outline-secondary btn-decrease-jumlah btn-update-jumlah"
+											data-unique-id="${randomId}"
+											data-is-increase="false"
+										>-</button>
+									</div>
+									<input
+										type="number"
+										class="form-control w-25 text-center array-jumlah"
+										name="array_jumlah[]"
+										value="${jumlahRequest}"
+										aria-describedby="basic-addon1"
+										autocomplete="off"
+										readonly
+										style="cursor: pointer; box-shadow: none; border: 1px solid #ced4da; z-index: 0;"
+									>
+									<div class="input-group-append">
+										<button
+											class="btn btn-outline-secondary btn-increase-jumlah btn-update-jumlah"
+											data-unique-id="${randomId}"
+											data-is-increase="true"
+										>+</button>
+									</div>
+								</div>
+							</td>
+							<td id="container-total-harga-per-produk" class="nowrap">${module.formatter.formatRupiah(totalHargaPerProduk, 'Rp. ')}</td>
+							<td class="text-center">
+								<button type="button" class="btn btn-sm btn-danger px-2 btn-remove-list-penjualan" data-unique-id="${randomId}" title="Hapus">
+									<i class="fadeIn animated bx bx-trash"></i>
+								</button>
+							</td>
+						</tr>
+					`
+
+					await $("#container-list-penjualan").append(html)
+					totalSemuaHarga()
+				}
+				if (JSON.parse(response.data.response).length > 1) {
+					
+					let htmlList = '';
+					$.each(JSON.parse(response.data.response), function (i, v) { 
+						htmlList += `<tr>
+								<td>
+									${v.data_produk.nama_produk}
+									<input type="hidden" value="${v.id}" id="list_${i}" />
+									<input type="hidden" value="${v.data_produk.nama_produk}" id="nama_produk_${i}" />
+									<input type="hidden" value="${v.stok_real}" id="stok_real_${i}" />
+									<input type="hidden" value="${v.harga_jual}" id="harga_jual_${i}" />
+								</td>
+								<td>
+									${v.satuan.nama}
+								</td>
+								<td>
+									${v.stok_real}
+								</td>
+								<td>
+									${v.harga_jual}
+								</td>
+								<td>
+									<button class="btn btn-sm btn-info px-5 text-light btn-pilih-barcode" data-ind="${i}">Pilih</button>
+								</td>
+							</tr>`
+					});
+					$('#tbl-list-produk-scanner tbody').html(htmlList)
+					scannerModal.show()
+					initPilihBtn()
+				}
+			}
+		}
+
+		function initPilihBtn() { 
+
+			$(".btn-pilih-barcode").click(async (e) => {
+				let $this = $(e.currentTarget)
+				// return module.swal.warning({text: 'Masih tahap pengembangan!'})
+				$this.attr('disabled', true)
+				let produkText = $('#nama_produk_'+$this.data('ind')).val()
+				let idPembelian = $('#list_'+$this.data('ind')).val()
+				let jumlahReal = $('#stok_real_'+$this.data('ind')).val()
+				let jumlahRequest = 1
+	
+				let duplikat = false
+				await $(".array-pembelian").each(function(idx) {
+					if (idPembelian === this.value) {
+						duplikat = true
+						return false
+					}
+				})
+	
+				if (duplikat) {
+					return module.swal.warning({text: "Produk sudah ada di list penjualan"})
+				}
+	
+				if (jumlahRequest > jumlahReal) {
+					return module.swal.warning({text: "Jumlah penjualan tidak bisa melebihi stok!"})
+				}
+	
+				let hargaJual = $('#harga_jual_'+$this.data('ind')).val()
+				let totalHargaPerProduk = hargaJual * jumlahRequest
+	
+				let nomor = $("#container-list-penjualan tr").length + 1
+	
+				const randomId = module.generate.randomId(10)
+	
+				let html = `
+					<tr class="rows-list-penjualan" id="rows-${randomId}">
+						<input type="hidden" name="array_pembelian[]" class="array-pembelian" value="${idPembelian}">
+						<input type="hidden" name="array_jumlah_real[]" class="array-jumlah-real" value="${jumlahReal}">
+						<input type="hidden" name="array_harga_jual[]" class="array-harga-jual" value="${hargaJual}">
+						<input type="hidden" name="array_total_harga_per_produk_murni[]" class="array-total-harga-per-produk-murni" value="${totalHargaPerProduk}">
+						<input type="hidden" name="array_total_harga_per_produk_diskon[]" class="array-total-harga-per-produk-diskon" value="${totalHargaPerProduk}">
+	
+						<td id="container-nomor">${nomor}</td>
+						<td id="container-produk">${produkText}</td>
+						<td id="container-harga-jual" class="nowrap">${module.formatter.formatRupiah(hargaJual, 'Rp. ')}</td>
+						<td>
+							<input type="text" class="form-control text-center array-diskon readonly" name="array_diskon[]" data-unique-id="${randomId}">
+						</td>
+						<td id="container-jumlah" class='text-center'>
+							<div class="input-group" style="margin-bottom: 4px; width: 87%; margin-left: auto; margin-right: auto;">
+								<div class="input-group-prepend">
+									<button
+										class="btn btn-outline-secondary btn-decrease-jumlah btn-update-jumlah"
+										data-unique-id="${randomId}"
+										data-is-increase="false"
+									>-</button>
+								</div>
+								<input
+									type="number"
+									class="form-control w-25 text-center array-jumlah"
+									name="array_jumlah[]"
+									value="${jumlahRequest}"
+									aria-describedby="basic-addon1"
+									autocomplete="off"
+									readonly
+									style="cursor: pointer; box-shadow: none; border: 1px solid #ced4da; z-index: 0;"
+								>
+								<div class="input-group-append">
+									<button
+										class="btn btn-outline-secondary btn-increase-jumlah btn-update-jumlah"
+										data-unique-id="${randomId}"
+										data-is-increase="true"
+									>+</button>
+								</div>
+							</div>
+						</td>
+						<td id="container-total-harga-per-produk" class="nowrap">${module.formatter.formatRupiah(totalHargaPerProduk, 'Rp. ')}</td>
+						<td class="text-center">
+							<button type="button" class="btn btn-sm btn-danger px-2 btn-remove-list-penjualan" data-unique-id="${randomId}" title="Hapus">
+								<i class="fadeIn animated bx bx-trash"></i>
+							</button>
+						</td>
+					</tr>
+				`
+	
+				await $("#container-list-penjualan").append(html)
+				totalSemuaHarga()
+				$('#tbl-list-produk-scanner tbody').html('')
+				scannerModal.hide()
+			})
+		}
+
 
 		function totalSemuaHarga() {
 			let sumTotalHargaMurni = 0
@@ -245,6 +576,14 @@
 				let hargaJual = $(this).find(':selected').data('harga-jual')
 				await $("#display-harga-jual").text(module.formatter.formatRupiah(hargaJual, "Rp. "))
 				$("#input-jumlah").focus()
+				
+				let gambar = $(this).find(':selected').data('foto-directory')
+				if (gambar) {
+					$('#preview-gambar').attr('src','{{url("storage/public/")}}'+gambar)
+				} else {
+					$('#preview-gambar').attr('src',"{{asset('/assets/images/errors-images/no-image.jpg')}}")
+				}
+				$('#preview-gambar').show("slow")
 			} else {
 				$("#display-harga-jual").text("")
 			}
@@ -344,6 +683,8 @@
 			totalSemuaHarga()
 
 			await module.reset.form($("#form-penjualan .reset"))
+			$('#preview-gambar').hide("slow")
+			$('#preview-gambar').attr('src',"")
 			$("#display-harga-jual").text("")
 
 			// $("#input-jumlah").blur()

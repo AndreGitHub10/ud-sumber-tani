@@ -25,16 +25,19 @@ class DataSeeder extends Seeder
 			'kode_produk' => date('ym', $timestamps)."PDK001",
 			'kategori_id' => 1,
 			'nama_produk' => 'Pupuk Kompos',
+			'barcode' => date('ym', $timestamps)."PDK001",
 		]);
 		DataProduk::create([
 			'kode_produk' => date('ym', $timestamps)."PDK002",
 			'kategori_id' => 2,
 			'nama_produk' => 'Sprayer Elektrik',
+			'barcode' => date('ym', $timestamps)."PDK002",
 		]);
 		DataProduk::create([
 			'kode_produk' => date('ym', $timestamps)."PDK003",
 			'kategori_id' => 2,
 			'nama_produk' => 'Sekop',
+			'barcode' => date('ym', $timestamps)."PDK003",
 		]);
 	}
 }

@@ -194,7 +194,7 @@
 					{data: 'DT_RowIndex', name: 'DT_RowIndex'},
 					{data: 'kode_produk', name: 'kode_produk'},
 					{data: 'nama_produk', name: 'nama_produk'},
-					{data: 'kategori.nama', name: 'kategori.nama'},
+					{data: 'nama_kategori', name: 'nama_kategori'},
 					{data: 'action', name: 'action'}
 				],
 				initComplete: function (settings, json) {

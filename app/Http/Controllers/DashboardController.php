@@ -4,11 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\PenjualanDetail;
 use Illuminate\Http\Request;
+use Auth;
 
 class DashboardController extends Controller
 {
 	public function main(Request $request)
 	{
+		if (Auth::user()->level!='admin') {
+			return redirect()->route('penjualanKasir.main');
+		}
 		$penjualanHarian = PenjualanDetail::whereHas('penjualan',function ($q) {
 			$q->where('penjualan.tanggal',date('Y-m-d'));
 		})->get();
