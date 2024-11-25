@@ -2,9 +2,10 @@
 
 namespace App\Providers;
 
+use Carbon\Carbon;
+use Config;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\URL;
-use Config;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,5 +25,9 @@ class AppServiceProvider extends ServiceProvider
 		if (Config::get('redirect_https.status')) {
 			URL::forceScheme('https');
 		}
+
+		config(['app.locale' => 'id']);
+		Carbon::setLocale('id');
+		date_default_timezone_set('Asia/Jakarta');
 	}
 }
