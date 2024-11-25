@@ -53,7 +53,7 @@ class SatuanController extends Controller
 
 			$penjualanDetail = new PenjualanDetail;
 			$penjualanDetail->penjualan_id = 0;
-			$penjualanDetail->detail_pembelian_id = $pembelianDetail->id;
+			$penjualanDetail->detail_pembelian_id = $request->detail_pembelian_id;
 			$penjualanDetail->jumlah = $request->total_stok_asal_konversi;
 			$penjualanDetail->harga_jual = $request->harga_jual_tujuan;
 			$penjualanDetail->total_harga_jual_murni = $request->harga_jual_tujuan;
