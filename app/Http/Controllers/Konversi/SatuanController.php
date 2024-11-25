@@ -44,7 +44,7 @@ class SatuanController extends Controller
 			$pembelianDetail->stok_real = $request->total_stok_tujuan;
 			$pembelianDetail->harga_jual = $request->harga_jual_tujuan;
 			$pembelianDetail->konversi_id = $request->konversi_id;
-			$pembelianDetail->is_konversi = 1;
+			$pembelianDetail->is_konversi = '1';
 			$pembelianDetail->save();
 
 			$updatePembelianDetail = PembelianDetail::find($request->detail_pembelian_id);
@@ -58,7 +58,7 @@ class SatuanController extends Controller
 			$penjualanDetail->harga_jual = $request->harga_jual_tujuan;
 			$penjualanDetail->total_harga_jual_murni = $request->harga_jual_tujuan;
 			$penjualanDetail->total_harga_jual_diskon = $request->harga_jual_tujuan;
-			$penjualanDetail->is_konversi = 1;
+			$penjualanDetail->is_konversi = '1';
 			$penjualanDetail->save();
 
 			DB::commit();
