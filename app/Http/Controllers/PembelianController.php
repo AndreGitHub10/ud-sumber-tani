@@ -14,6 +14,7 @@ use App\Models\DataProduk;
 # Models
 use App\Models\Pembelian;
 use App\Models\PembelianDetail;
+use App\Models\PenjualanDetail;
 use App\Models\SatuanProduk;
 use App\Models\Supplier;
 # Services
@@ -38,6 +39,9 @@ class PembelianController extends Controller
 	{
 		return DataTables::of(Pembelian::with('supplier')->get())
 			->addIndexColumn()
+			->addColumn('nama_supplier', function($item) {
+				return $item->supplier ? $item->supplier->nama : '(tidak ditemukan)';
+			})
 			->addColumn('action', function($item) {
 				// return "
 				// 	<div class='text-center'>
@@ -54,20 +58,49 @@ class PembelianController extends Controller
 						<button type='button' class='btn btn-sm btn-warning px-2 btn-edit-pembelian' data-id='$item->id' title='Edit Pembelian'>
 							<i class='fadeIn animated bx bx-pencil'></i>
 						</button>
+						<button type='button' class='btn btn-sm btn-danger px-2 btn-delete-pembelian' data-id='$item->id'>
+							<i class='fadeIn animated bx bx-trash'></i>
+						</button>
 					</div>
 				";
 			})
 			->toJson();
 	}
 
-	public function destroy(DetailPembelianDTO $data)
+	public function destroy(Request $request)
 	{
-		$this->satuanService->destroy($data);
+		DB::beginTransaction();
+		try {
+			$pembelian = Pembelian::find($request->id);
+			if ($pembelian) {
+				$detailPembelian = PembelianDetail::where('invoice_id',$pembelian->id)->get();
+				foreach ($detailPembelian as $k => $v) {
+					$detailPenjualan = PenjualanDetail::where('detail_pembelian_id',$v->id)->get();
+					if (count($detailPenjualan)>0) {
+						return response()->json(ResponseAxiosDTO::fromArray([
+							'code' => 201,
+							'message' => 'Tidak dapat menghapus pembelian karena ada stok barang yang sudah terjual'
+						]), 201);
+					}
+					PembelianDetail::destroy($v->id);
+				}
+				$pembelian->delete();
+			}
 
-		return response()->json(ResponseAxiosDTO::fromArray([
-			'code' => $data->res_code,
-			'message' => $data->res_message,
-		]), $data->res_code);
+			DB::commit();
+
+			return response()->json(ResponseAxiosDTO::fromArray([
+				'code' => 200,
+				'message' => 'Data berhasil Dihapus',
+				'response' => $pembelian
+			]), 200);
+		} catch (\Throwable $e) {
+			DB::rollback();
+			return response()->json(ResponseAxiosDTO::fromArray([
+				'code' => 500,
+				'message' => $e->getMessage(),
+			]), 500);
+		}
 	}
 
 	public function findProduk(Request $request)

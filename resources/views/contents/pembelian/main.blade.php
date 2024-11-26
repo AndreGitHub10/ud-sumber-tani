@@ -103,34 +103,34 @@
 			})
 		})
 		
-		$("#datatable-pembelian").on('click', '.btn-delete-pembelian', async function(e) {
-			e.preventDefault()
-			return module.swal.warning({text: 'Masih tahap pengembangan!'})
-			$(this).attr('disabled', true)
+		// $("#datatable-pembelian").on('click', '.btn-delete-pembelian', async function(e) {
+		// 	e.preventDefault()
+		// 	return module.swal.warning({text: 'Masih tahap pengembangan!'})
+		// 	$(this).attr('disabled', true)
 
-			module.swal.confirm().then(async (e) => {
-				if (e.value) {
-					const response = await postRequest("{{route('pembelian.destroy')}}", {id_user: $(this).data('id')})
-					code = response.status
+		// 	module.swal.confirm().then(async (e) => {
+		// 		if (e.value) {
+		// 			const response = await postRequest("{{route('pembelian.destroy')}}", {id_user: $(this).data('id')})
+		// 			code = response.status
 
-					if (code !== 200) {
-						await module.swal.warning({
-							text: code !== 204 ? response.data.message : 'Data tidak ditemukan, silahkan reload halaman terlebih dahulu!'
-						})
+		// 			if (code !== 200) {
+		// 				await module.swal.warning({
+		// 					text: code !== 204 ? response.data.message : 'Data tidak ditemukan, silahkan reload halaman terlebih dahulu!'
+		// 				})
 
-						return $(this).attr('disabled', false)
-					}
+		// 				return $(this).attr('disabled', false)
+		// 			}
 
-					await module.swal.success({
-						text: response.data.message,
-						hideClass: module.var_swal.fadeOutUp,
-					})
+		// 			await module.swal.success({
+		// 				text: response.data.message,
+		// 				hideClass: module.var_swal.fadeOutUp,
+		// 			})
 
-					datatablePembelian()
-				}
-				$(this).attr('disabled', false)
-			})
-		})
+		// 			datatablePembelian()
+		// 		}
+		// 		$(this).attr('disabled', false)
+		// 	})
+		// })
 
 		$("#add-new-pembelian").click(async (e) => {
 			const $this = $(e.currentTarget)
@@ -151,7 +151,37 @@
 				$("#other-page").html($(response.data.response)).hide().fadeIn(400)
 			})
 		})
+		
+		function initButton() { 
+			$(".btn-delete-pembelian").click(async (e) => {
+				let $this = $(e.currentTarget)
+				// return module.swal.warning({text: 'Masih tahap pengembangan!'})
+				$this.attr('disabled', true)
 
+				module.swal.confirm().then(async (e) => {
+					if (e.value) {
+						const response = await postRequest("{{route('pembelian.destroy')}}", {id: $this.data('id')})
+						code = response.data.code
+
+						if (code != 200) {
+							await module.swal.warning({
+								text: code !== 204 ? response.data.message : 'Data tidak ditemukan, silahkan reload halaman terlebih dahulu!'
+							})
+
+							return $this.attr('disabled', false)
+						}
+
+						await module.swal.success({
+							text: response.data.message,
+							hideClass: module.var_swal.fadeOutUp,
+						})
+
+						datatablePembelian()
+					}
+					$this.attr('disabled', false)
+				})
+			})
+		}
 		async function datatablePembelian(){
 			await $('#datatable-pembelian').dataTable({
 				scrollX: true,
@@ -175,12 +205,12 @@
 						return module.formatter.formatRupiah(data, 'Rp. ')
 					}},
 					{data: 'tanggal', name: 'tanggal'},
-					{data: 'supplier.nama', name: 'supplier.nama'},
+					{data: 'nama_supplier', name: 'nama_supplier'},
 					{data: 'action', name: 'action'}
 				],
-				// initComplete: function (settings, json) {
-				// 	initButton()
-				// }
+				initComplete: function (settings, json) {
+					initButton()
+				}
 			})
 		}
 	</script>
