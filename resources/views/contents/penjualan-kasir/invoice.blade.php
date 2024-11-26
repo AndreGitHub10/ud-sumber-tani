@@ -25,8 +25,8 @@
     <main class="container receipt-wrapper" id="download-section">
         <div class="receipt-top">
             <div class="company-name fw-bold fs-custom">UD. SUMBER TANI</div>
-            <div class="company-address fw-bold fs-custom">Alamat: Jl. Tamiajeng, Kali Jaten, Selotapak, Kec. Trawas, Kabupaten Mojokerto, Jawa Timur 61375</div>
-            <div class="company-mobile fw-bold fs-custom">Telp: 081111111111</div>
+            <div class="company-address fw-bold fs-custom">Alamat: Jl. Tamiajeng, Kec. Trawas</div>
+            <div class="company-mobile fw-bold fs-custom">Telp: 085231391718</div>
         </div>
         <div class="receipt-body">
             <div class="receipt-heading fw-bold fs-custom"><span>Struk Belanja</span></div>

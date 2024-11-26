@@ -155,7 +155,7 @@
 										<label for="total-stok-tujuan" class="form-label">
 											Total Stok Konversi
 										</label>
-										<input type="text" class="form-control form-control-sm text-center reset" id="total-stok-tujuan" name="total_stok_tujuan" readonly>
+										<input type="text" class="form-control form-control-sm text-center reset" id="total-stok-tujuan" name="total_stok_tujuan">
 									</div>
 									<div class="col-12">
 										<button class="btn btn-success" id="btn-simpan-konversi-satuan" style="width: 100%;">Simpan Konversi</button>
