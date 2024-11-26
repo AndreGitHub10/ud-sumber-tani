@@ -13,6 +13,7 @@
             height:23px;
             /* line-height:20px; Height / no. of lines to display */
             overflow:hidden;
+            text-align: center;
         }
         .barcode {
             width: calc(3*44px);
