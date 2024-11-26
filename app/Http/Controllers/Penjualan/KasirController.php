@@ -41,9 +41,9 @@ class KasirController extends Controller
 
 	public function main(Request $request)
 	{
-		$produk = PembelianDetail::select('id', 'kode_produk', 'satuan_id', 'stok_real', 'harga_jual', 'barcode')
+		$produk = PembelianDetail::select('id', 'kode_produk', 'satuan_id', 'stok_real', 'harga_jual')
 			->with([
-				'data_produk:id,kode_produk,nama_produk,foto_directory',
+				'data_produk:id,kode_produk,nama_produk,foto_directory,barcode',
 				'satuan:id,nama'
 			])->
 			where('stok_real','>',0)->get();

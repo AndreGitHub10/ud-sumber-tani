@@ -169,6 +169,7 @@ Route::middleware(Authenticate::class)->group(function () {
 			Route::get('/', [PenjualanController::class, 'main'])->name('main');
 			Route::post('datatables', [PenjualanController::class, 'datatables'])->name('datatables');
 			Route::post('detail', [PenjualanController::class, 'detail'])->name('detail');
+			Route::post('destroy', [PenjualanController::class, 'destroy'])->name('destroy');
 		});
 
 		Route::prefix('persediaan')->as('persediaan.')
