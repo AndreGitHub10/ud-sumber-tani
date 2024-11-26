@@ -52,7 +52,7 @@
 						<select class="single-select validation" id="pembayaran" onchange="filter()">
 							<option value="" selected>Semua</option>
 							<option value="tunai" >Tunai</option>
-							<option value="non-tunai" >Semua</option>
+							<option value="non-tunai" >Non-tunai</option>
 						</select>
 					</div>
 				</div>
@@ -146,17 +146,17 @@
 				$this.attr('disabled', false)
 			})
 
-			$(".btn-delete-pembelian").click(async (e) => {
+			$(".btn-delete").click(async (e) => {
 				let $this = $(e.currentTarget)
-				return module.swal.warning({text: 'Masih tahap pengembangan!'})
+				// return module.swal.warning({text: 'Masih tahap pengembangan!'})
 				$this.attr('disabled', true)
 
 				module.swal.confirm().then(async (e) => {
 					if (e.value) {
-						const response = await postRequest("{{route('pembelian.destroy')}}", {id_user: $this.data('id')})
-						code = response.status
+						const response = await postRequest("{{route('laporan.penjualan.destroy')}}", {id: $this.data('id')})
+						code = response.data.code
 
-						if (code !== 200) {
+						if (code != 200) {
 							await module.swal.warning({
 								text: code !== 204 ? response.data.message : 'Data tidak ditemukan, silahkan reload halaman terlebih dahulu!'
 							})
@@ -169,7 +169,7 @@
 							hideClass: module.var_swal.fadeOutUp,
 						})
 
-						datatablePembelian()
+						filter()
 					}
 					$this.attr('disabled', false)
 				})

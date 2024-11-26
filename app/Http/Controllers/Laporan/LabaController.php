@@ -37,6 +37,9 @@ class LabaController extends Controller
                     $qq->whereBetween('tanggal', [$start,$end]);
                 });
             })->
+            whereHas('pembelian_detail.penjualan_detail',function ($q) {
+                $q->where('is_konversi','0');
+            })->
             get();
         $laba = 0;
         foreach ($data as $key => $value) {

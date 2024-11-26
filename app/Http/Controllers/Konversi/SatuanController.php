@@ -36,6 +36,10 @@ class SatuanController extends Controller
 		// return $request->all();
 		DB::beginTransaction();
 		try {
+			$updatePembelianDetail = PembelianDetail::find($request->detail_pembelian_id);
+			$updatePembelianDetail->stok_real = $updatePembelianDetail->stok_real - $request->total_stok_asal_konversi;
+			$updatePembelianDetail->save();
+
 			$pembelianDetail = new PembelianDetail;
 			$pembelianDetail->invoice_id = $request->invoice_id;
 			$pembelianDetail->kode_produk = $request->kode_produk;
@@ -43,13 +47,11 @@ class SatuanController extends Controller
 			$pembelianDetail->stok_awal = $request->total_stok_tujuan;
 			$pembelianDetail->stok_real = $request->total_stok_tujuan;
 			$pembelianDetail->harga_jual = $request->harga_jual_tujuan;
+			$pembelianDetail->harga_beli = ($updatePembelianDetail->harga_beli * $request->total_stok_asal_konversi) / $request->total_stok_tujuan;
+			$pembelianDetail->total_harga_beli = ($updatePembelianDetail->harga_beli * $request->total_stok_asal_konversi);
 			$pembelianDetail->konversi_id = $request->konversi_id;
 			$pembelianDetail->is_konversi = '1';
 			$pembelianDetail->save();
-
-			$updatePembelianDetail = PembelianDetail::find($request->detail_pembelian_id);
-			$updatePembelianDetail->stok_real = $updatePembelianDetail->stok_real - $request->total_stok_asal_konversi;
-			$updatePembelianDetail->save();
 
 			$penjualanDetail = new PenjualanDetail;
 			$penjualanDetail->penjualan_id = 0;
