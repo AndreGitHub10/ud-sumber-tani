@@ -26,7 +26,7 @@ class PostDataRequest extends FormRequest
 		return [
 			'nama_produk' => ['required', 'min:3'],
 			'foto_directory' => ['nullable', 'file', 'mimes:jpeg,jpg,png', 'max:2048'],
-			'barcode' => ['required', 'min:1'],
+			'barcode' => ['required_with:id_data_produk'],
 			
 			# value "nullable" berfungsi untuk menjaga key supaya bisa ditangkap/diakses di __construct DTO
 			'id_data_produk' => 'nullable',
@@ -43,8 +43,7 @@ class PostDataRequest extends FormRequest
 		return [
 			'nama_produk.required' => 'Nama Produk Wajib diisi',
 			'nama_produk.min' => 'Nama Produk min: 3 karakter',
-			'barcode.required' => 'Kode Barcode Wajib diisi',
-			'barcode.min' => 'Kode Barcode min: 3 karakter',
+			'barcode.required_with' => 'Kode Barcode Wajib diisi',
 			'foto_directory.file' => 'Foto harus berupa file',
 			'foto_directory.mimes' => 'Format Foto: jpeg, jpg, png',
 			'foto_directory.max' => 'Ukuran Foto max: 2MB',

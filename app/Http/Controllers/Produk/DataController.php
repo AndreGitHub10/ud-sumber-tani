@@ -34,7 +34,15 @@ class DataController extends Controller
 
 	public function datatables(Request $request)
 	{
-		return DataTables::of(DataProduk::with('kategori')->get())
+		$kategori = $request->kategori ? $request->kategori : '';
+		$data = DataProduk::with('kategori')->
+			when($kategori!='',function($q) use ($kategori){
+				$q->whereHas('kategori',function($qq) use ($kategori){
+					$qq->where('id',$kategori);
+				});
+			})->
+			get();
+		return DataTables::of($data)
 			->addIndexColumn()
 			->addColumn('nama_kategori', function($item) {
 				return $item->kategori ? $item->kategori->nama : '';
@@ -91,7 +99,11 @@ class DataController extends Controller
 
 	public function main(Request $request)
 	{
-		return view('contents.data-master.produk.data.main');
+		$kategori = KategoriProduk::get();
+		$array = [
+			'kategori' => $kategori
+		];
+		return view('contents.data-master.produk.data.main',$array);
 	}
 
 	public function store(PostDataRequest $request)
@@ -99,6 +111,15 @@ class DataController extends Controller
 		$data = PostDataDTO::fromRequest($request);
 		if ($data->res_code !== 500) {
 			if ($data->id_data_produk) {
+				if (DataProduk::where('id', '!=', $data->id_data_produk)->
+					where('nama_produk', $data->nama_produk)->
+					first()
+				) {
+					return response()->json(ResponseAxiosDTO::fromArray([
+						'code' => 400,
+						'message' => 'Nama produk sudah digunakan'
+					]), 400);
+				}
 				$file = $data->model_data_produk->foto_directory;
 				$fileExists = public_path()."/storage/public/$file";
 				if ($file && file_exists($fileExists)) {
@@ -106,6 +127,12 @@ class DataController extends Controller
 				}
 				$supplier = $this->dataProdukService->update($data);
 			} else {
+				if (DataProduk::where('nama_produk', $data->nama_produk)->first()) {
+					return response()->json(ResponseAxiosDTO::fromArray([
+						'code' => 400,
+						'message' => 'Nama produk sudah digunakan'
+					]), 400);
+				}
 				$supplier = $this->dataProdukService->create($data);
 			}
 			if ($request->hasFile('foto_directory')) {
@@ -161,6 +188,7 @@ class DataController extends Controller
 		DB::beginTransaction();
 		try {
 			$total = 0;
+			$sama = 0;
 			foreach ($array[0] as $key => $value) {
 				if ($value[0]=='' || $key==0) {
 					continue;
@@ -172,6 +200,13 @@ class DataController extends Controller
 				$data = PostDataDTO::fromRequest($newRequest);
 				if ($data->res_code !== 500) {
 					if ($data->id_data_produk) {
+						if (DataProduk::where('id', '!=', $data->id_data_produk)->
+							where('nama_produk', $data->nama_produk)->
+							first()
+						) {
+							$sama += 1;
+							continue;
+						}
 						$file = $data->model_data_produk->foto_directory;
 						$fileExists = public_path()."/storage/public/$file";
 						if ($file && file_exists($fileExists)) {
@@ -179,6 +214,10 @@ class DataController extends Controller
 						}
 						$supplier = $this->dataProdukService->update($data);
 					} else {
+						if (DataProduk::where('nama_produk', $data->nama_produk)->first()) {
+							$sama += 1;
+							continue;
+						}
 						$supplier = $this->dataProdukService->create($data);
 					}
 					if ($newRequest->hasFile('foto_directory')) {
@@ -188,9 +227,10 @@ class DataController extends Controller
 				}
 			}
 			DB::commit();
+			$msg = $sama > 0 ? 'Data produk berhasil di import dengan total data '.$total.' dan data yang sama '.$sama : 'Data produk berhasil di import dengan total data '.$total;
 			return response()->json(ResponseAxiosDTO::fromArray([
 				'code' => 200,
-				'message' => "Berhasil mengupload $total data!",
+				'message' => $msg,
 				'response' => $array,
 			]), 200);
 		} catch (\Throwable $th) {
