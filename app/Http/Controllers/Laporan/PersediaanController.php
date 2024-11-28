@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Laporan;
 
 use App\DataTransferObjects\Response\ResponseAxiosDTO;
 use App\Http\Controllers\Controller;
+use App\Models\PembelianDetail;
 use App\Models\UangMasukKeluar;
 use App\Models\VUangMasukKeluar;
 use DateInterval;
@@ -20,6 +21,15 @@ class PersediaanController extends Controller
 	}
 
 	public function datatables(Request $request) {
+		$persediaan = DB::select("SELECT
+				sum(p.persediaan_beli) as persediaan_beli,
+				sum(p.persediaan_jual) as persediaan_jual
+			FROM
+				(SELECT
+					(stok_real * harga_beli) as persediaan_beli,
+					(stok_real * harga_jual) as persediaan_jual
+				FROM
+					pembelian_detail) p");
 		$date_range = $request->date_range != '' ? explode(' to ',$request->date_range) : [];
         if (count($date_range)==1) {
             $date_range[1]=date('Y-m-d',strtotime($date_range[0]));
@@ -86,6 +96,7 @@ class PersediaanController extends Controller
 				";
 			})
 			->rawColumns(["action"])
+			->with('persediaan',$persediaan)
 			->toJson();
 	}
 

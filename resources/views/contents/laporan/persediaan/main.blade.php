@@ -47,6 +47,18 @@
 							<input type="text" class="form-control date-range" id="date_range" onchange="filter()"/>
 						</div>
 					</div>
+					<div class="col-md-3">
+						<div class="mb-3">
+							<label class="form-label fw-bold">Persediaan (hrg beli)</label>
+							<input type="text" class="form-control" id="harga_beli" readonly/>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3">
+							<label class="form-label fw-bold">Persediaan (hrg jual)</label>
+							<input type="text" class="form-control" id="harga_jual" readonly/>
+						</div>
+					</div>
 				</div>
 				<div class="table-responsive">
 					<table id="datatable-min-max" class="table table-striped table-bordered" style="width:100%">
@@ -214,9 +226,10 @@
 					}},
 					// {data: 'action', name: 'action'}
 				],
-				// initComplete: function (settings, json) {
-				// 	initButton()
-				// }
+				initComplete: function (settings, json) {
+					$('#harga_beli').val(module.formatter.formatRupiah(json.persediaan[0].persediaan_beli, 'Rp. '))
+					$('#harga_jual').val(module.formatter.formatRupiah(json.persediaan[0].persediaan_jual, 'Rp. '))
+				}
 			})
 		}
 	</script>
