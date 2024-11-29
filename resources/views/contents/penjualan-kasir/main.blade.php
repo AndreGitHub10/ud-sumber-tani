@@ -881,7 +881,7 @@
 			
 			$(this).attr('disabled', false)
 
-			window.open("{{route('penjualanKasir.invoice')}}/"+response.data.response)
+			
 
 			$("#container-btn-sesi-penjualan-akhir").hide('slow', function() {
 				$("#container-btn-sesi-penjualan-awal").show('slow')
@@ -905,6 +905,7 @@
 			$("#container-list-penjualan").empty()
 			$("#container-total-semua-harga").text("Rp. 0")
 			$("#input-kembalian").val("Rp. 0")
+			window.open("{{route('penjualanKasir.invoice')}}/"+response.data.response)
 		})
 	</script>
 @endpush
