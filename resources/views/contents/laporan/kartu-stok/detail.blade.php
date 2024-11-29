@@ -140,7 +140,7 @@
 					{data: 'stok_keluar', name: 'stok_keluar'},
 					{data: 'sisa_stok', name: 'sisa_stok'}
 				],
-                drawCallback: function (settings, json) {
+                initComplete: function (settings, json) {
                     $('.sisa').html(json.stok_akhir)
                 }
 			})

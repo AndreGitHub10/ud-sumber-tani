@@ -226,7 +226,7 @@
 					}},
 					// {data: 'action', name: 'action'}
 				],
-				drawCallback: function (settings, json) {
+				initComplete: function (settings, json) {
 					$('#harga_beli').val(module.formatter.formatRupiah(json.persediaan[0].persediaan_beli, 'Rp. '))
 					$('#harga_jual').val(module.formatter.formatRupiah(json.persediaan[0].persediaan_jual, 'Rp. '))
 				}

@@ -226,7 +226,7 @@
 						return module.formatter.formatRupiah(data, 'Rp. ')
 					}}
 				],
-				drawCallback: function (settings, json) {
+				initComplete: function (settings, json) {
                     $('#laba').val(module.formatter.formatRupiah(json.laba, 'Rp. '))
                 }
 			})
