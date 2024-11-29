@@ -222,8 +222,10 @@
 					{data: 'nama_kategori', name: 'nama_kategori'},
 					{data: 'action', name: 'action'}
 				],
-				initComplete: function (settings, json) {
+				drawCallback: function (settings, json) {
 					initButton()
+					console.log('tes');
+					
 				}
 			})
 		}

@@ -166,7 +166,7 @@
 					{data: 'alamat', name: 'alamat'},
 					{data: 'action', name: 'action'}
 				],
-				initComplete: function (settings, json) {
+				drawCallback: function (settings, json) {
 					initButton()
 				}
 			})

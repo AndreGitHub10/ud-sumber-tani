@@ -160,7 +160,7 @@
 					{data: 'nilai_konversi', name: 'nilai_konversi'},
 					{data: 'action', name: 'action'}
 				],
-				// initComplete: function (settings, json) {
+				// drawCallback: function (settings, json) {
 				// 	initButton()
 				// }
 			})

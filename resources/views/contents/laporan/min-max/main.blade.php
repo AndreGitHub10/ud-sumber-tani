@@ -198,7 +198,7 @@
 					{data: 'min_stok', name: 'min_stok'},
 					{data: 'max_stok', name: 'max_stok'}
 				],
-				initComplete: function (settings, json) {
+				drawCallback: function (settings, json) {
 					initButton()
 				}
 			})
