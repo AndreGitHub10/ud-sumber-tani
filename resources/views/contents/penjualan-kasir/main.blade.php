@@ -88,30 +88,7 @@
 					</div>
 					<div class="card-body">
 						<form id="form-penjualan-final">
-							<div class="row mb-2">
-								<div class="col-6">
-									<label for="input-tanggal-penjualan" class="form-label">Tanggal Penjualan</label>
-									<input type="date" class="form-control form-control-sm validation" id="input-tanggal-penjualan" name="tanggal_penjualan" value="{{date("Y-m-d")}}" readonly>
-								</div>
-								<div class="col-6">
-									<label for="input-jenis-pembayaran" class="form-label">Jenis Pembayaran</label>
-									<select class="single-select validation reset" id="input-jenis-pembayaran" name="jenis_pembayaran" disabled>
-										<option selected value="">--PILIH OPSI--</option>
-										<option value="tunai">TUNAI</option>
-										<option value="non-tunai">NON - TUNAI</option>
-									</select>
-								</div>
-							</div>
-							<div class="row mb-5">
-								<div class="col-6">
-									<label for="input-jumlah-pembayaran" class="form-label">Jumlah Pembayaran</label>
-									<input type="text" class="form-control form-control-sm validation reset" id="input-jumlah-pembayaran" placeholder="Masukkkan Jumlah Pembayaran" name="pembayaran" readonly>
-								</div>
-								<div class="col-6">
-									<label for="input-kembalian" class="form-label">Kembalian</label>
-									<input type="text" class="form-control form-control-sm" id="input-kembalian" name="kembalian" value="Rp. 0" readonly>
-								</div>
-							</div>
+							
 							<div class="row mb-4">
 								<div class="col-12">
 									<table class="table mb-0 table-striped">
@@ -138,6 +115,32 @@
 											</tr>
 										</tfoot>
 									</table>
+								</div>
+							</div>
+							<div id="bayar-form">
+								<div class="row mb-2">
+									<div class="col-6">
+										<label for="input-tanggal-penjualan" class="form-label">Tanggal Penjualan</label>
+										<input type="date" class="form-control form-control-sm validation" id="input-tanggal-penjualan" name="tanggal_penjualan" value="{{date("Y-m-d")}}" readonly>
+									</div>
+									<div class="col-6">
+										<label for="input-jenis-pembayaran" class="form-label">Jenis Pembayaran</label>
+										<select class="single-select validation reset" id="input-jenis-pembayaran" name="jenis_pembayaran" disabled>
+											<option selected value="">--PILIH OPSI--</option>
+											<option value="tunai">TUNAI</option>
+											<option value="non-tunai">NON - TUNAI</option>
+										</select>
+									</div>
+								</div>
+								<div class="row mb-5">
+									<div class="col-6">
+										<label for="input-jumlah-pembayaran" class="form-label">Jumlah Pembayaran</label>
+										<input type="text" class="form-control form-control-sm validation reset" id="input-jumlah-pembayaran" placeholder="Masukkkan Jumlah Pembayaran" name="pembayaran" readonly>
+									</div>
+									<div class="col-6">
+										<label for="input-kembalian" class="form-label">Kembalian</label>
+										<input type="text" class="form-control form-control-sm" id="input-kembalian" name="kembalian" value="Rp. 0" readonly>
+									</div>
 								</div>
 							</div>
 						</form>
@@ -205,6 +208,7 @@
 			$('#preview-gambar').hide()
 			$('#is-scan').prop('checked',false)
 			$('#scanner-mode').html('off')
+			$('#bayar-form').hide()
 		})
 
 		$('#is-scan').click(async function(){
@@ -813,6 +817,7 @@
 			$("#container-btn-sesi-penjualan-awal").hide('slow', function() {
 				$("#container-btn-sesi-penjualan-akhir").show('slow')
 			})
+			$('#bayar-form').show('slow')
 		})
 		$("#btn-ubah-list-penjualan").click(function(e) {
 			e.preventDefault()
@@ -834,6 +839,7 @@
 			$("#container-btn-sesi-penjualan-akhir").hide('slow', function() {
 				$("#container-btn-sesi-penjualan-awal").show('slow')
 			})
+			$('#bayar-form').hide('slow')
 		})
 
 		$("#btn-save-list-penjualan").click(async function(e) {
@@ -897,6 +903,7 @@
 			$("#container-list-penjualan").empty()
 			$("#container-total-semua-harga").text("Rp. 0")
 			$("#input-kembalian").val("Rp. 0")
+			$('#bayar-form').hide('slow')
 			window.open("{{route('penjualanKasir.invoice')}}/"+response.data.response)
 		})
 		$('#input-produk').select2({
