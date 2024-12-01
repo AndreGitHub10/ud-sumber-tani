@@ -157,6 +157,7 @@ Route::middleware(Authenticate::class)->group(function () {
 			Route::post('datatables', [KartuStokController::class, 'datatables'])->name('datatables');
 			Route::post('detail', [KartuStokController::class, 'detail'])->name('detail');
 			Route::post('datatablesDetail', [KartuStokController::class, 'datatablesDetail'])->name('datatablesDetail');
+			Route::get('export-excel', [KartuStokController::class, 'exportExcel'])->name('exportExcel');
 		});
 
 		Route::prefix('laba')->as('laba.')

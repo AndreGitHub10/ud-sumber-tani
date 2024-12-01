@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Laporan;
 
 use App\DataTransferObjects\Response\ResponseAxiosDTO;
+use App\Exports\KartuStokExport;
 use App\Http\Controllers\Controller;
 use App\Models\DataProduk;
 use App\Models\VDetailKartuStok;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
 
 class KartuStokController extends Controller
@@ -105,5 +107,11 @@ class KartuStokController extends Controller
 			->rawColumns(["action"])
 			->with('stok_akhir',$stokMasuk-$stokKeluar)
 			->toJson();
+	}
+
+	public function exportExcel(Request $request) {
+		$timeStamps = date('d-m-Y H:i:s');
+		return Excel::download(new KartuStokExport, 'Kartu Stok '.$timeStamps.'.xlsx');
+		
 	}
 }
