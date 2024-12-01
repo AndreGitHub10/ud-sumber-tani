@@ -190,7 +190,7 @@ class KasirController extends Controller
 		})->with([
 		'data_produk:id,kode_produk,nama_produk,foto_directory,barcode',
 			'satuan:id,nama'
-		])->get();
+		])->where('stok_real','>',0)->get();
 		return response()->json($data);
 
 		// return response()->json(ResponseAxiosDTO::fromArray([
