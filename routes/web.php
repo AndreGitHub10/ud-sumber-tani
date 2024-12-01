@@ -137,6 +137,7 @@ Route::middleware(Authenticate::class)->group(function () {
 		Route::get('invoice/{id?}', 'invoice')->name('invoice');
 		Route::post('get-produk', 'getProduk')->name('getProduk');
 		Route::post('scan-barcode', 'scanBarcode')->name('scanBarcode');
+		Route::post('find-produk', 'findProduk')->name('findProduk');
 	});
 
 	Route::prefix('laporan')->as('laporan.')

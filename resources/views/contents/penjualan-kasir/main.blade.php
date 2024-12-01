@@ -53,20 +53,6 @@
 								<label for="input-produk" class="form-label">Temukan Produk</label>
 								<div class="col-12">
 									<select class="single-select validation reset" id="input-produk" name="level">
-										<option selected readonly value="">--PILIH OPSI--</option>
-										@foreach ($produk ?? [] as $item)
-											<option
-												value="{{$item->id}}"
-												data-nama-produk="{{strtoupper($item->data_produk->nama_produk)}}"
-												data-foto-directory="{{strtoupper($item->data_produk->foto_directory)}}"
-												data-kode-produk="{{$item->kode_produk}}"
-												data-jumlah="{{$item->stok_real}}"
-												data-harga-jual="{{$item->harga_jual}}"
-												class="fw-bolder"
-											>
-												{{ $item->barcode }}|{{ strtoupper($item->data_produk->nama_produk) }} ({{ strtoupper($item->satuan->nama) }})|{{ $item->stok_real }}
-											</option>
-										@endforeach
 									</select>
 								</div>
 							</div>
@@ -571,13 +557,19 @@
 			escapeMarkup: function(markup) { return markup }
 		})
 
-		$("#input-produk").change(async function(e) {
+		// $("#input-produk").change(async function(e) {
+		$("#input-produk").on('select2:select',async function(e) {
+			// return console.log(e.params.data);
+			var dataProduk = e.params.data;
+			
 			if ($(this).val()) {
-				let hargaJual = $(this).find(':selected').data('harga-jual')
+				// let hargaJual = $(this).find(':selected').data('harga-jual')
+				let hargaJual = dataProduk.harga_jual
 				await $("#display-harga-jual").text(module.formatter.formatRupiah(hargaJual, "Rp. "))
 				$("#input-jumlah").focus()
 				
-				let gambar = $(this).find(':selected').data('foto-directory')
+				// let gambar = $(this).find(':selected').data('foto-directory')
+				let gambar = dataProduk.foto_directory
 				if (gambar) {
 					$('#preview-gambar').attr('src','{{url("storage/public/")}}'+gambar)
 				} else {
@@ -906,6 +898,59 @@
 			$("#container-total-semua-harga").text("Rp. 0")
 			$("#input-kembalian").val("Rp. 0")
 			window.open("{{route('penjualanKasir.invoice')}}/"+response.data.response)
+		})
+		$('#input-produk').select2({
+			theme: 'bootstrap4',
+			width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+			placeholder: `Masukkan (<span style="color: #000;">Kode</span>/<span style="color: #00b8dd;">Nama</span>) Produk`,
+			allowClear: Boolean($(this).data('allow-clear')),
+			ajax: {
+				url: "{{ route('penjualanKasir.findProduk') }}",
+				dataType: 'json',
+				type: 'POST',
+				delay: 500,
+				data: function(params) {
+					return {query_string: params.term}
+				},
+				// render html in the dropdown
+				processResults: function(data) {
+					return {
+						results: $.map(data, function(item) {
+							return {
+								text: `
+									<span class="fw-bolder" style="color: #000;">${item.data_produk.barcode}</span>
+									|
+									<span class="fw-bolder" style="color: #00b8dd;">${item.data_produk.nama_produk.toUpperCase()}</span> (${item.satuan.nama.toUpperCase()})
+									|
+									<span class="fw-bolder" style="color: #00b30f;">${item.stok_real}</span>
+								`,
+								id: item.id,
+								nama_produk: item.data_produk.nama_produk,
+								foto_directory: item.data_produk.foto_directory,
+								invoice_id: item.invoice_id,
+								kode_produk: item.kode_produk,
+								barcode: item.data_produk.barcode,
+								satuan_name: item.satuan.nama,
+								harga_jual: item.harga_jual,
+								jumlah: item.stok_real,
+							}
+						})
+					}
+				},
+				cache: true,
+			},
+			// render html for the selected option
+			templateSelection: function (container) {
+				$(container.element).attr('data-kode-produk', container.kode_produk)
+				$(container.element).attr('data-nama-produk', container.nama_produk)
+				$(container.element).attr('data-foto-directory', container.foto_directory)
+				$(container.element).attr('data-harga-jual', container.harga_jual)
+				$(container.element).attr('data-jumlah', container.stok_real)
+
+				return `<span class="fw-bolder">${container.text}</span>`
+			},
+			// render html as-is without escaping it
+			escapeMarkup: function(markup) { return markup }
 		})
 	</script>
 @endpush
