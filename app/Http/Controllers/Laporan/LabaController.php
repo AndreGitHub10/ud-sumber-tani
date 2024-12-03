@@ -50,6 +50,9 @@ class LabaController extends Controller
             foreach ($value->pembelian_detail ?? [] as $k => $v) {
                 if ($v->satuan) {
                     foreach ($v->penjualan_detail ?? [] as $k2 => $v2) {
+                        if ($v2->is_konversi=='1') {
+                            continue;
+                        }
                         $laba += $v2->total_harga_jual_diskon - ($v->harga_beli*$v2->jumlah);
                     }
                 }
@@ -83,6 +86,9 @@ class LabaController extends Controller
                 foreach ($item->pembelian_detail ?? [] as $k => $v) {
                     if ($v->satuan) {
                         foreach ($v->penjualan_detail ?? [] as $k2 => $v2) {
+                            if ($v2->is_konversi=='1') {
+                                continue;
+                            }
                             $laba += $v2->total_harga_jual_diskon;
                         }
                     }
@@ -94,6 +100,9 @@ class LabaController extends Controller
                 foreach ($item->pembelian_detail ?? [] as $k => $v) {
                     if ($v->satuan) {
                         foreach ($v->penjualan_detail ?? [] as $k2 => $v2) {
+                            if ($v2->is_konversi=='1') {
+                                continue;
+                            }
                             $laba += $v2->total_harga_jual_diskon - ($v->harga_beli*$v2->jumlah);
                         }
                     }
