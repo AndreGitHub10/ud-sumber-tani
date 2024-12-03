@@ -56,6 +56,9 @@
 								<th>Kode</th>
 								<th>Nama</th>
 								<th>Kategori</th>
+								<th>Supplier</th>
+								<th>Harga Beli Terbaru</th>
+								<th>Harga Jual Terbaru</th>
 								<th>Action</th>
 							</tr>
 						</thead>
@@ -220,6 +223,9 @@
 					{data: 'kode_produk', name: 'kode_produk'},
 					{data: 'nama_produk', name: 'nama_produk'},
 					{data: 'nama_kategori', name: 'nama_kategori'},
+					{data: 'supplier', name: 'supplier'},
+					{data: 'harga_beli', name: 'harga_beli'},
+					{data: 'harga_jual', name: 'harga_jual'},
 					{data: 'action', name: 'action'}
 				],
 				drawCallback: function (settings, json) {

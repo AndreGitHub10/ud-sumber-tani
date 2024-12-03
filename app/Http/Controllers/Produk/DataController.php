@@ -35,7 +35,13 @@ class DataController extends Controller
 	public function datatables(Request $request)
 	{
 		$kategori = $request->kategori ? $request->kategori : '';
-		$data = DataProduk::with('kategori')->
+		$data = DataProduk::with(
+				'kategori',
+				'pembelian_detail',
+				'pembelian_detail.pembelian',
+				'pembelian_detail.pembelian.supplier',
+				'v_harga_barang',
+				'v_harga_barang.satuan')->
 			when($kategori!='',function($q) use ($kategori){
 				$q->whereHas('kategori',function($qq) use ($kategori){
 					$qq->where('id',$kategori);
@@ -46,6 +52,38 @@ class DataController extends Controller
 			->addIndexColumn()
 			->addColumn('nama_kategori', function($item) {
 				return $item->kategori ? $item->kategori->nama : '';
+			})
+			->addColumn('supplier', function($item) {
+				$html = '<ul>';
+				$sup = [];
+				foreach ($item->pembelian_detail as $k => $v) {
+					if ($v->pembelian && $v->pembelian->supplier && !in_array($v->pembelian->supplier->nama,$sup)) {
+						$sup[] = $v->pembelian->supplier->nama;
+						$html .= "<li>".$v->pembelian->supplier->nama."</li>";
+					}
+				}
+				$html .= '</ul>';
+				return $html;
+			})
+			->addColumn('harga_beli', function($item) {
+				$html = '<ul>';
+				foreach ($item->v_harga_barang as $k => $v) {
+					if ($v->satuan) {
+						$html .= "<li>".$v->satuan->nama."(<span class='badge rounded-pill bg-primary'>Rp. ".number_format($v->harga_beli_terbaru,0,',','.')."</span>)</li>";
+					}
+				}
+				$html .= '</ul>';
+				return $html;
+			})
+			->addColumn('harga_jual', function($item) {
+				$html = '<ul>';
+				foreach ($item->v_harga_barang as $k => $v) {
+					if ($v->satuan) {
+						$html .= "<li>".$v->satuan->nama."(<span class='badge rounded-pill bg-primary'>Rp. ".number_format($v->harga_beli_terbaru,0,',','.')."</span>)</li>";
+					}
+				}
+				$html .= '</ul>';
+				return $html;
 			})
 			->addColumn('action', function($item) {
 				return "
@@ -62,6 +100,7 @@ class DataController extends Controller
 					</div>
 				";
 			})
+			->rawColumns(['action','supplier','harga_beli','harga_jual'])
 			->toJson();
 	}
 

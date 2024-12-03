@@ -30,7 +30,7 @@ class MinMaxController extends Controller
         $stok_filter = isset($request->stok_filter) ? $request->stok_filter : '';
         $data = MinMaxProduk::select(
                 'minmax_produk.*',
-                DB::raw('coalesce(v_kartu_stok.stok,0) as stok')
+                DB::raw('coalesce(stok,0) as stok')
             )->
             with('data_produk','satuan_produk')->
             has('satuan_produk')->

@@ -33,4 +33,9 @@ class SatuanProduk extends Model
 	{
 		return $this->hasMany(KonversiSatuan::class, 'satuan_id_tujuan', 'id');
 	}
+
+	public function v_harga_barang(): HasMany
+	{
+		return $this->hasMany(VHargaBarang::class, 'satuan_id', 'id');
+	}
 }
