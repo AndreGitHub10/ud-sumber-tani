@@ -37,9 +37,13 @@ class LabaController extends Controller
                     $qq->whereBetween('tanggal', [$start,$end]);
                 });
             })->
-            whereHas('pembelian_detail.penjualan_detail',function ($q) {
-                $q->where('is_konversi','0');
-            })->
+            // has('pembelian_detail.penjualan_detail.penjualan')->
+            // where('pembelian_detail.penjualan_detail.is_konversi','=','0')->
+            // whereHas('pembelian_detail',function ($q) {
+            //     $q->whereHas('penjualan_detail',function ($qq) {
+            //         $qq->where('penjualan_detail.is_konversi','=','0');
+            //     });
+            // })->
             get();
         $laba = 0;
         foreach ($data as $key => $value) {
@@ -58,6 +62,9 @@ class LabaController extends Controller
                 foreach ($item->pembelian_detail ?? [] as $k => $v) {
                     if ($v->satuan) {
                         foreach ($v->penjualan_detail ?? [] as $k2 => $v2) {
+                            if ($v2->is_konversi=='1') {
+                                continue;
+                            }
                             if (!isset($satuan->{$v->satuan->nama})) {
                                 $satuan->{$v->satuan->nama} = 0;
                             }
