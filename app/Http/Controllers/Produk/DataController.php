@@ -79,7 +79,7 @@ class DataController extends Controller
 				$html = '<ul>';
 				foreach ($item->v_harga_barang as $k => $v) {
 					if ($v->satuan) {
-						$html .= "<li>".$v->satuan->nama."(<span class='badge rounded-pill bg-primary'>Rp. ".number_format($v->harga_beli_terbaru,0,',','.')."</span>)</li>";
+						$html .= "<li>".$v->satuan->nama."(<span class='badge rounded-pill bg-primary'>Rp. ".number_format($v->harga_jual_terbaru,0,',','.')."</span>)</li>";
 					}
 				}
 				$html .= '</ul>';
