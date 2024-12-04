@@ -952,7 +952,7 @@
 				$(container.element).attr('data-nama-produk', container.nama_produk)
 				$(container.element).attr('data-foto-directory', container.foto_directory)
 				$(container.element).attr('data-harga-jual', container.harga_jual)
-				$(container.element).attr('data-jumlah', container.stok_real)
+				$(container.element).attr('data-jumlah', container.jumlah)
 
 				return `<span class="fw-bolder">${container.text}</span>`
 			},
