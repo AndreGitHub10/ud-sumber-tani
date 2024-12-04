@@ -12,55 +12,59 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement('CREATE OR REPLACE VIEW v_uang_masuk_keluar AS
-            --     SELECT
-            --     total_harga as nominal,
-            --     0 as masuk,
-            --     total_harga as keluar,
-            --     0-total_harga as sum,
-            --     tanggal,
-            --     cast(created_at as time) as waktu,
-            --     2 as type_id
-            -- FROM
-            --     pembelian
-            -- UNION
+        DB::statement("CREATE OR REPLACE VIEW v_uang_masuk_keluar AS
             SELECT
-                total_penjualan_diskon as nominal,
-                total_penjualan_diskon as total,
-                total_penjualan_diskon as masuk,
-                0 as keluar,
-                tanggal,
-                cast(created_at as time) as waktu,
-                1 as type_id
+                cast(
+                `penjualan`.`total_penjualan_diskon` AS DECIMAL ( 10, 0 )) AS `nominal`,
+                cast(
+                `penjualan`.`total_penjualan_diskon` AS DECIMAL ( 10, 0 )) AS `total`,
+                cast(
+                `penjualan`.`total_penjualan_diskon` AS DECIMAL ( 10, 0 )) AS `masuk`,
+                cast(
+                0 AS DECIMAL ( 10, 0 )) AS `keluar`,
+                `penjualan`.`tanggal` AS `tanggal`,
+                cast( `penjualan`.`created_at` AS time ) AS `waktu`,
+                1 AS `type_id`,
+                concat( 'penjualan (', `penjualan`.`nomor_kwitansi`, ')' ) AS `keterangan`,
+                NULL AS `uang_masuk_id` 
             FROM
-                penjualan
-            UNION
+                `penjualan` UNION
             SELECT
-                jumlah,
-                (CASE
-                    WHEN type_id=2 THEN
-                        0-jumlah
-                    ELSE
-                        jumlah
-                END) as total,
-                (CASE
-                    WHEN type_id=1 THEN
-                        jumlah
-                    ELSE
-                        0
-                END) as masuk,
-                (CASE
-                    WHEN type_id=2 THEN
-                        jumlah
-                    ELSE
-                        0
-                END) as masuk,
-                cast(tanggal_waktu as date) as tanggal,
-                cast(tanggal_waktu as time) as waktu,
-                type_id
-            FROM
-                uang_masuk_keluar
-        ');
+                cast(
+                    `uang_masuk_keluar`.`jumlah` AS DECIMAL ( 10, 0 )) AS `jumlah`,(
+                CASE
+                        
+                        WHEN ( `uang_masuk_keluar`.`type_id` = 2 ) THEN
+                        cast((
+                                0 - `uang_masuk_keluar`.`jumlah` 
+                                ) AS DECIMAL ( 10, 0 )) ELSE cast(
+                        `uang_masuk_keluar`.`jumlah` AS DECIMAL ( 10, 0 )) 
+                    END 
+                        ) AS `total`,(
+                    CASE
+                            
+                            WHEN ( `uang_masuk_keluar`.`type_id` = 1 ) THEN
+                            cast(
+                                `uang_masuk_keluar`.`jumlah` AS DECIMAL ( 10, 0 )) ELSE cast(
+                            0 AS DECIMAL ( 10, 0 )) 
+                        END 
+                            ) AS `masuk`,(
+                        CASE
+                                
+                                WHEN ( `uang_masuk_keluar`.`type_id` = 2 ) THEN
+                                cast(
+                                    `uang_masuk_keluar`.`jumlah` AS DECIMAL ( 10, 0 )) ELSE cast(
+                                0 AS DECIMAL ( 10, 0 )) 
+                            END 
+                            ) AS `masuk`,
+                            cast( `uang_masuk_keluar`.`tanggal_waktu` AS date ) AS `tanggal`,
+                            cast( `uang_masuk_keluar`.`tanggal_waktu` AS time ) AS `waktu`,
+                            `uang_masuk_keluar`.`type_id` AS `type_id`,
+                            `uang_masuk_keluar`.`keterangan` AS `keterangan`,
+                            `uang_masuk_keluar`.`id` AS `uang_masuk_id` 
+                    FROM
+                `uang_masuk_keluar`
+        ");
     }
 
     /**
