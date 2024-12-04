@@ -24,8 +24,8 @@ class LabaController extends Controller
         }
         $start = $end = '';
         if (count($date_range)>1) {
-            $start = date($date_range[0]);
-            $end = date($date_range[1]);
+            $start = date('Y-m-d',strtotime($date_range[0]));
+            $end = date('Y-m-d',strtotime($date_range[1]));
         }
         $kategori = isset($request->kategori) ? $request->kategori : '';
         $data = DataProduk::with('pembelian_detail','pembelian_detail.satuan','pembelian_detail.penjualan_detail','pembelian_detail.penjualan_detail.penjualan')->
