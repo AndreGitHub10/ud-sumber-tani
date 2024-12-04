@@ -123,8 +123,8 @@ class PenjualanController extends Controller
 					}
 					PenjualanDetail::destroy($v->id);
 				}
+				$penjualan->delete();
 			}
-			$penjualan->delete();
 
 			DB::commit();
 

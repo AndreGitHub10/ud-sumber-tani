@@ -22,6 +22,11 @@ class LabaController extends Controller
         if (count($date_range)==1) {
             $date_range[]=$date_range[0];
         }
+        $start = $end = '';
+        if (count($date_range)>1) {
+            $start = date($date_range[0]);
+            $end = date($date_range[1]);
+        }
         $kategori = isset($request->kategori) ? $request->kategori : '';
         $data = DataProduk::with('pembelian_detail','pembelian_detail.satuan','pembelian_detail.penjualan_detail','pembelian_detail.penjualan_detail.penjualan')->
             when($kategori!='',function ($q) use($kategori) {
@@ -30,22 +35,27 @@ class LabaController extends Controller
             when(count($date_range)==0, function($q) {
                 $q->limit(0);
             })->
-            when(count($date_range)>1, function($q) use ($date_range) {
-                $q->whereHas('pembelian_detail.penjualan_detail.penjualan',function($qq) use ($date_range) {
-                    $start = date($date_range[0]);
-                    $end = date($date_range[1]);
+            when(count($date_range)>1, function($q) use ($start,$end) {
+                $q->whereHas('pembelian_detail.penjualan_detail.penjualan',function($qq) use ($start,$end) {
                     $qq->whereBetween('tanggal', [$start,$end]);
                 });
             })->
-            whereHas('pembelian_detail.penjualan_detail',function ($q) {
-                $q->where('is_konversi','0');
-            })->
+            // has('pembelian_detail.penjualan_detail.penjualan')->
+            // where('pembelian_detail.penjualan_detail.is_konversi','=','0')->
+            // whereHas('pembelian_detail',function ($q) {
+            //     $q->whereHas('penjualan_detail',function ($qq) {
+            //         $qq->where('penjualan_detail.is_konversi','=','0');
+            //     });
+            // })->
             get();
         $laba = 0;
         foreach ($data as $key => $value) {
             foreach ($value->pembelian_detail ?? [] as $k => $v) {
                 if ($v->satuan) {
                     foreach ($v->penjualan_detail ?? [] as $k2 => $v2) {
+                        if ($v2->is_konversi=='1') {
+                            continue;
+                        }
                         $laba += $v2->total_harga_jual_diskon - ($v->harga_beli*$v2->jumlah);
                     }
                 }
@@ -53,15 +63,23 @@ class LabaController extends Controller
         }
         return DataTables::of($data)
 			->addIndexColumn()
-			->addColumn('jumlah', function($item) {
+			->addColumn('jumlah', function($item) use ($start,$end) {
                 $satuan = (object)[];
                 foreach ($item->pembelian_detail ?? [] as $k => $v) {
                     if ($v->satuan) {
                         foreach ($v->penjualan_detail ?? [] as $k2 => $v2) {
-                            if (!isset($satuan->{$v->satuan->nama})) {
-                                $satuan->{$v->satuan->nama} = 0;
+                            if ($v2->is_konversi=='1') {
+                                continue;
                             }
-                            $satuan->{$v->satuan->nama} += $v2->jumlah;
+                            if ($v2->penjualan) {
+                                $tgl = date('Y-m-d',strtotime($v2->penjualan->tanggal));
+                                if (($tgl >= $start) || ($tgl <= $end)) {
+                                    if (!isset($satuan->{$v->satuan->nama})) {
+                                        $satuan->{$v->satuan->nama} = 0;
+                                    }
+                                    $satuan->{$v->satuan->nama} += $v2->jumlah;
+                                }
+                            }
                         }
                     }
                 }
@@ -71,23 +89,39 @@ class LabaController extends Controller
                 }
 				return $html;
 			})
-			->addColumn('laba_kotor', function($item) {
+			->addColumn('laba_kotor', function($item) use ($start,$end) {
                 $laba = 0;
                 foreach ($item->pembelian_detail ?? [] as $k => $v) {
                     if ($v->satuan) {
                         foreach ($v->penjualan_detail ?? [] as $k2 => $v2) {
-                            $laba += $v2->total_harga_jual_diskon;
+                            if ($v2->is_konversi=='1') {
+                                continue;
+                            }
+                            if ($v2->penjualan) {
+                                $tgl = date('Y-m-d',strtotime($v2->penjualan->tanggal));
+                                if (($tgl >= $start) || ($tgl <= $end)) {
+                                    $laba += $v2->total_harga_jual_diskon;
+                                }
+                            }
                         }
                     }
                 }
 				return $laba;
 			})
-			->addColumn('laba_bersih', function($item) {
+			->addColumn('laba_bersih', function($item) use ($start,$end) {
                 $laba = 0;
                 foreach ($item->pembelian_detail ?? [] as $k => $v) {
                     if ($v->satuan) {
                         foreach ($v->penjualan_detail ?? [] as $k2 => $v2) {
-                            $laba += $v2->total_harga_jual_diskon - ($v->harga_beli*$v2->jumlah);
+                            if ($v2->is_konversi=='1') {
+                                continue;
+                            }
+                            if ($v2->penjualan) {
+                                $tgl = date('Y-m-d',strtotime($v2->penjualan->tanggal));
+                                if (($tgl >= $start) || ($tgl <= $end)) {
+                                    $laba += $v2->total_harga_jual_diskon - ($v->harga_beli*$v2->jumlah);
+                                }
+                            }
                         }
                     }
                 }

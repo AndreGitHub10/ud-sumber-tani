@@ -41,7 +41,7 @@ final class PostUserDTO extends DataTransferObject implements ValidatedDataTrans
 			$request->name,
 			strtolower($request->level),
 			strtolower($request->username),
-			strtolower($request->email) ?? null,
+			$request->email ? strtolower($request->email) : null,
 			$request->password ? bcrypt($request->password) : null,
 			$request->id_user ?? null,
 		);

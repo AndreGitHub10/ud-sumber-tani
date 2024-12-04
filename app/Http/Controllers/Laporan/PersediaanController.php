@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Laporan;
 
 use App\DataTransferObjects\Response\ResponseAxiosDTO;
 use App\Http\Controllers\Controller;
+use App\Models\PembelianDetail;
 use App\Models\UangMasukKeluar;
 use App\Models\VUangMasukKeluar;
 use DateInterval;
@@ -20,6 +21,15 @@ class PersediaanController extends Controller
 	}
 
 	public function datatables(Request $request) {
+		$persediaan = DB::select("SELECT
+				sum(p.persediaan_beli) as persediaan_beli,
+				sum(p.persediaan_jual) as persediaan_jual
+			FROM
+				(SELECT
+					(stok_real * harga_beli) as persediaan_beli,
+					(stok_real * harga_jual) as persediaan_jual
+				FROM
+					pembelian_detail) p");
 		$date_range = $request->date_range != '' ? explode(' to ',$request->date_range) : [];
         if (count($date_range)==1) {
             $date_range[1]=date('Y-m-d',strtotime($date_range[0]));
@@ -86,6 +96,7 @@ class PersediaanController extends Controller
 				";
 			})
 			->rawColumns(["action"])
+			->with('persediaan',$persediaan)
 			->toJson();
 	}
 
@@ -127,6 +138,52 @@ class PersediaanController extends Controller
 			]), 201);
 		} catch (\Throwable $e) {
 
+			return response()->json(ResponseAxiosDTO::fromArray([
+				'code' => 500,
+				'message' => $e->getMessage(),
+			]), 500);
+		}
+	}
+
+	public function detail(Request $request) {
+		$tanggal = date('Y-m-d',strtotime($request->tanggal));
+		$data = VUangMasukKeluar::where('tanggal',$tanggal)->
+			get();
+		$uang_awal = $uang_akhir = VUangMasukKeluar::where('tanggal','<',$tanggal)->get()->sum('total');
+		foreach ($data as $k => $v) {
+			$v->uang_awal = $uang_akhir;
+			$v->uang_akhir = $v->uang_awal+$v->total;
+			$uang_akhir = $v->uang_akhir;
+		}
+
+		$array = [
+			'uang_awal' => $uang_awal,
+			'uang_akhir' => $uang_akhir,
+			'uang' => $data,
+			'tanggal' => $tanggal
+		];
+
+		$content = view('contents.laporan.persediaan.detail', $array)->render();
+
+		return response()->json(ResponseAxiosDTO::fromArray([
+			'code' => 200,
+			'message' => 'Berhasil mendapatkan data',
+			'response' => $content,
+		]), 200);
+    }
+
+	public function destroy(Request $request)
+	{
+		try {
+			$uang = UangMasukKeluar::find($request->id);
+			if ($uang->delete()) {
+				return response()->json(ResponseAxiosDTO::fromArray([
+					'code' => 200,
+					'message' => 'Data berhasil Dihapus',
+					'response' => $uang
+				]), 200);
+			}
+		} catch (\Throwable $e) {
 			return response()->json(ResponseAxiosDTO::fromArray([
 				'code' => 500,
 				'message' => $e->getMessage(),

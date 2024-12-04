@@ -137,6 +137,7 @@ Route::middleware(Authenticate::class)->group(function () {
 		Route::get('invoice/{id?}', 'invoice')->name('invoice');
 		Route::post('get-produk', 'getProduk')->name('getProduk');
 		Route::post('scan-barcode', 'scanBarcode')->name('scanBarcode');
+		Route::post('find-produk', 'findProduk')->name('findProduk');
 	});
 
 	Route::prefix('laporan')->as('laporan.')
@@ -156,6 +157,7 @@ Route::middleware(Authenticate::class)->group(function () {
 			Route::post('datatables', [KartuStokController::class, 'datatables'])->name('datatables');
 			Route::post('detail', [KartuStokController::class, 'detail'])->name('detail');
 			Route::post('datatablesDetail', [KartuStokController::class, 'datatablesDetail'])->name('datatablesDetail');
+			Route::get('export-excel', [KartuStokController::class, 'exportExcel'])->name('exportExcel');
 		});
 
 		Route::prefix('laba')->as('laba.')
@@ -178,6 +180,8 @@ Route::middleware(Authenticate::class)->group(function () {
 			Route::post('datatables', [PersediaanController::class, 'datatables'])->name('datatables');
 			Route::post('form', [PersediaanController::class, 'form'])->name('form');
 			Route::post('store', [PersediaanController::class, 'store'])->name('store');
+			Route::post('detail', [PersediaanController::class, 'detail'])->name('detail');
+			Route::post('destroy', [PersediaanController::class, 'destroy'])->name('destroy');
 		});
 	});
 

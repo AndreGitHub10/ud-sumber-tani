@@ -228,7 +228,7 @@
 					{data: 'ts', name: 'ts'},
 					{data: 'action', name: 'action'}
 				],
-				initComplete: function (settings, json) {
+				drawCallback: function (settings, json) {
 					initButton()
 				}
 			})

@@ -47,6 +47,18 @@
 							<input type="text" class="form-control date-range" id="date_range" onchange="filter()"/>
 						</div>
 					</div>
+					<div class="col-md-3">
+						<div class="mb-3">
+							<label class="form-label fw-bold">Persediaan (hrg beli)</label>
+							<input type="text" class="form-control" id="harga_beli" readonly/>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="mb-3">
+							<label class="form-label fw-bold">Persediaan (hrg jual)</label>
+							<input type="text" class="form-control" id="harga_jual" readonly/>
+						</div>
+					</div>
 				</div>
 				<div class="table-responsive">
 					<table id="datatable-min-max" class="table table-striped table-bordered" style="width:100%">
@@ -58,7 +70,7 @@
 								<th>Masuk</th>
 								<th>Keluar</th>
 								<th>Nilai Akhir</th>
-								{{-- <th>Aksi</th> --}}
+								<th>Aksi</th>
 							</tr>
 						</thead>
 						<tbody></tbody>
@@ -178,6 +190,27 @@
 			})
 		})
 
+		$("#datatable-min-max").on('click', '.btn-detail', async function(e) {
+			e.preventDefault()
+			let $this = $(e.currentTarget)
+			$this.attr('disabled', true)
+			let response = await postRequest("{{route('laporan.persediaan.detail')}}", {tanggal: $this.data('tanggal')})
+				
+				if (response.status !== 200) {
+					await module.swal.warning({
+						text: response.data.message,
+						hideClass: module.var_animasi.fadeOutUp,
+					})
+
+					return $this.attr('disabled', false)
+				}
+
+				$("#main-page").hide('slow', function () {
+					$this.attr('disabled', false)
+					$("#other-page").html($(response.data.response)).hide().fadeIn(400)
+				})
+		})
+
 		async function datatableMinMax(date_range=$('#date_range').val()){
 			await $('#datatable-min-max').dataTable({
 				scrollX: true,
@@ -212,11 +245,12 @@
 					{data: 'uang_akhir', name: 'uang_akhir', render: function(data, type, row) {
 						return module.formatter.formatRupiah(data, 'Rp. ')
 					}},
-					// {data: 'action', name: 'action'}
+					{data: 'action', name: 'action'}
 				],
-				// initComplete: function (settings, json) {
-				// 	initButton()
-				// }
+				initComplete: function (settings, json) {
+					$('#harga_beli').val(module.formatter.formatRupiah(json.persediaan[0].persediaan_beli, 'Rp. '))
+					$('#harga_jual').val(module.formatter.formatRupiah(json.persediaan[0].persediaan_jual, 'Rp. '))
+				}
 			})
 		}
 	</script>

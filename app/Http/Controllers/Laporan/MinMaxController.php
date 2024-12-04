@@ -19,28 +19,35 @@ class MinMaxController extends Controller
 	}
 
     public function datatables(Request $request) {
-        // $data = VKartuStok::with('data_produk','satuan_produk')->
-        //     // has('data_produk','satuan_produk')->
-        //     join('minmax_produk', function ($join) {
-        //         $join->
-        //             on('v_kartu_stok.kode_produk','=','minmax_produk.kode_produk')->
-        //             on('v_kartu_stok.satuan_id','=','minmax_produk.satuan_id');
-        //     })->
-        //     get();
         $stok_filter = isset($request->stok_filter) ? $request->stok_filter : '';
-        $data = MinMaxProduk::select(
-                'minmax_produk.*',
-                DB::raw('coalesce(v_kartu_stok.stok,0) as stok')
-            )->
+        $data = VKartuStok::select([
+                'v_kartu_stok.*',
+                DB::raw('coalesce(stok,0) as stok'),
+                'minmax_produk.min_stok',
+                'minmax_produk.max_stok',
+            ])->
             with('data_produk','satuan_produk')->
-            has('satuan_produk')->
             has('data_produk')->
-            leftJoin('v_kartu_stok', function ($join) use ($stok_filter) {
+            has('satuan_produk')->
+            leftJoin('minmax_produk', function ($join) {
                 $join->
-                    on('minmax_produk.kode_produk','=','v_kartu_stok.kode_produk')->
-                    on('minmax_produk.satuan_id','=','v_kartu_stok.satuan_id');
+                    on('v_kartu_stok.kode_produk','=','minmax_produk.kode_produk')->
+                    on('v_kartu_stok.satuan_id','=','minmax_produk.satuan_id');
             })->
             get();
+        // $data = MinMaxProduk::select(
+        //         'minmax_produk.*',
+        //         DB::raw('coalesce(stok,0) as stok')
+        //     )->
+        //     with('data_produk','satuan_produk')->
+        //     has('satuan_produk')->
+        //     has('data_produk')->
+        //     leftJoin('v_kartu_stok', function ($join) use ($stok_filter) {
+        //         $join->
+        //             on('minmax_produk.kode_produk','=','v_kartu_stok.kode_produk')->
+        //             on('minmax_produk.satuan_id','=','v_kartu_stok.satuan_id');
+        //     })->
+        //     get();
         $data = $data->filter(function ($v,$k) use ($stok_filter) {
             if ($stok_filter=='stok_habis') {
                 return $v->stok==0;

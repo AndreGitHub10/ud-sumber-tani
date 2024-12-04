@@ -31,13 +31,16 @@
 		<!--end breadcrumb-->
 
 		<div class="card">
-			{{-- <div class="card-header">
-				<div class="col-12">
-					<button type="button" class="btn btn-primary px-3" id="set-min-max">
-						<i class="fadeIn animated bx bx-plus"></i>Set Min-Max Produk
-					</button>
+			<div class="card-header">
+				<div class="row">
+					<div class="col-10"></div>
+					<div class="col-2">
+						<button type="button" class="btn btn-success px-3" id="exportExcel">
+							<i class="fadeIn animated bx bx-excel"></i>Export Excel
+						</button>
+					</div>
 				</div>
-			</div> --}}
+			</div>
 			<div class="card-body">
 				<div class="table-responsive">
 					<table id="datatable-kartu-stok" class="table table-striped table-bordered" style="width:100%">
@@ -73,6 +76,11 @@
 
 			datatablePembelian()
 		})
+
+		$('#exportExcel').click(function (e) { 
+			e.preventDefault();
+			window.open("{{route('laporan.kartuStok.exportExcel')}}")
+		});
 
 		function initButton(){
 			$(".btn-detail").click(async (e) => {
@@ -172,7 +180,7 @@
 					}},
 					{data: 'action', name: 'action'}
 				],
-				initComplete: function (settings, json) {
+				drawCallback: function (settings, json) {
 					initButton()
 				}
 			})

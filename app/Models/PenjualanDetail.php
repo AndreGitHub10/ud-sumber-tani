@@ -9,6 +9,36 @@ class PenjualanDetail extends Model
 {
 	protected $table = "penjualan_detail";
 
+	// protected function casts() 
+	// {
+	// 	return [
+	// 		'diskon' => 'decimal',
+	// 		'harga_jual' => 'decimal',
+	// 		'total_harga_jual_murni' => 'decimal',
+	// 		'total_harga_jual_diskon' => 'decimal'
+	// 	];
+	// }
+
+	public function getDiskonAttribute($value)
+	{
+		return (float)$value;
+	}
+
+	public function getHargaJualAttribute($value)
+	{
+		return (float)$value;
+	}
+
+	public function getTotalHargaJualMurniAttribute($value)
+	{
+		return (float)$value;
+	}
+
+	public function getTotalHargaJualDiskonAttribute($value)
+	{
+		return (float)$value;
+	}
+
 	public function penjualan(): BelongsTo
 	{
 		return $this->belongsTo(Penjualan::class, 'penjualan_id', 'id');

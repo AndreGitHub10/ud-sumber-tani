@@ -37,6 +37,17 @@
 				</div>
 			</div>
 			<div class="card-body">
+				<div class="row">
+					<div class="col-md-3 mb-3">
+						<label for="kategori" class="form-label fw-bold">Ketegori</label>
+						<select class="single-select validation" id="kategori" onchange="filter()">
+							<option value="" selected>Semua</option>
+							@foreach ($kategori ?? [] as $item)
+								<option value="{{$item->id}}">{{$item->nama}}</option>
+							@endforeach
+						</select>
+					</div>
+				</div>
 				<div class="table-responsive">
 					<table id="datatable-data" class="table table-striped table-bordered" style="width:100%">
 						<thead>
@@ -45,6 +56,9 @@
 								<th>Kode</th>
 								<th>Nama</th>
 								<th>Kategori</th>
+								<th>Supplier</th>
+								<th>Harga Beli Terbaru</th>
+								<th>Harga Jual Terbaru</th>
 								<th>Action</th>
 							</tr>
 						</thead>
@@ -69,8 +83,15 @@
 			module = await initModul()
 			console.log(module)
 
-			datatableDataProduk()
+			filter()
 
+		})
+
+		$('.single-select').select2({
+			theme: 'bootstrap4',
+			width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+			placeholder: $(this).data('placeholder'),
+			allowClear: Boolean($(this).data('allow-clear')),
 		})
 
 		function initButton(){
@@ -119,7 +140,7 @@
 							hideClass: module.var_swal.fadeOutUp,
 						})
 
-						datatableDataProduk()
+						filter()
 					}
 					$this.attr('disabled', false)
 				})
@@ -174,7 +195,11 @@
 			})
 		})
 
-		async function datatableDataProduk(){
+		function filter() {
+			datatableDataProduk($('#kategori').val())
+		}
+
+		async function datatableDataProduk(kategori=$('#kategori').val()){
 			await $('#datatable-data').dataTable({
 				scrollX: true,
 				bPaginate: true,
@@ -189,16 +214,24 @@
 				ajax: {
 					url:"{{route('dataMaster.produk.data.datatables')}}",
 					type: 'post',
+					data: {
+						kategori: kategori
+					}
 				},
 				columns: [
 					{data: 'DT_RowIndex', name: 'DT_RowIndex'},
 					{data: 'kode_produk', name: 'kode_produk'},
 					{data: 'nama_produk', name: 'nama_produk'},
 					{data: 'nama_kategori', name: 'nama_kategori'},
+					{data: 'supplier', name: 'supplier'},
+					{data: 'harga_beli', name: 'harga_beli'},
+					{data: 'harga_jual', name: 'harga_jual'},
 					{data: 'action', name: 'action'}
 				],
-				initComplete: function (settings, json) {
+				drawCallback: function (settings, json) {
 					initButton()
+					console.log('tes');
+					
 				}
 			})
 		}

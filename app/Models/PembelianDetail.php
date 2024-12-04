@@ -10,6 +10,21 @@ class PembelianDetail extends Model
 {
 	protected $table = 'pembelian_detail';
 
+	public function getHargaBeliAttribute($value)
+	{
+		return (float)$value;
+	}
+
+	public function getHargaJualAttribute($value)
+	{
+		return (float)$value;
+	}
+
+	public function getTotalHargaBeliAttribute($value)
+	{
+		return (float)$value;
+	}
+
 	public function data_produk(): BelongsTo
 	{
 		return $this->belongsTo(DataProduk::class, 'kode_produk', 'kode_produk');

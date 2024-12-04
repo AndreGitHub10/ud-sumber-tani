@@ -34,4 +34,9 @@ class DataProduk extends Model
 	{
 		return $this->hasMany(VKartuStok::class, 'kode_produk', 'kode_produk');
 	}
+
+	public function v_harga_barang() : HasMany
+	{
+		return $this->hasMany(VHargaBarang::class, 'kode_produk', 'kode_produk');
+	}
 }
