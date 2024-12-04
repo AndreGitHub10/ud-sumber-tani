@@ -56,7 +56,12 @@ class LabaController extends Controller
                         if ($v2->is_konversi=='1') {
                             continue;
                         }
-                        $laba += $v2->total_harga_jual_diskon - ($v->harga_beli*$v2->jumlah);
+                        if ($v2->penjualan) {
+                            $tgl = date('Y-m-d',strtotime($v2->penjualan->tanggal));
+                            if (($tgl >= $start) && ($tgl <= $end)) {
+                                $laba += $v2->total_harga_jual_diskon - ($v->harga_beli*$v2->jumlah);
+                            }
+                        }
                     }
                 }
             }
