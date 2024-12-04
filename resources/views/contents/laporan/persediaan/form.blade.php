@@ -26,8 +26,8 @@
 						<div class="row g-3 mb-4" id="container-input-produk">
 							<div class="col-md-12">
 								<label for="input-nominal" class="form-label">Nominal <span class="text-danger">*)</span></label>
-								<input type="text" class="form-control validation" id="input-nominal" name="nominal" placeholder="">
-								<input type="hidden" class="form-control" id="id" name="id" placeholder="">
+								<input type="text" class="form-control validation" id="input-nominal" name="nominal" placeholder="" value="{{$uang?$uang->jumlah:''}}">
+								<input type="hidden" class="form-control" id="id" name="id" placeholder="" value="{{$uang?$uang->id:''}}">
 							</div>
 							<div class="col-md-12">
 								<label for="input-satuan" class="form-label">Masuk / Keluar <span class="text-danger">*)</span></label>

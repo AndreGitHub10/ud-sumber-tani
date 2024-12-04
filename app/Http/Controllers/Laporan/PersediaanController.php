@@ -144,4 +144,50 @@ class PersediaanController extends Controller
 			]), 500);
 		}
 	}
+
+	public function detail(Request $request) {
+		$tanggal = date('Y-m-d',strtotime($request->tanggal));
+		$data = VUangMasukKeluar::where('tanggal',$tanggal)->
+			get();
+		$uang_awal = $uang_akhir = VUangMasukKeluar::where('tanggal','<',$tanggal)->get()->sum('total');
+		foreach ($data as $k => $v) {
+			$v->uang_awal = $uang_akhir;
+			$v->uang_akhir = $v->uang_awal+$v->total;
+			$uang_akhir = $v->uang_akhir;
+		}
+
+		$array = [
+			'uang_awal' => $uang_awal,
+			'uang_akhir' => $uang_akhir,
+			'uang' => $data,
+			'tanggal' => $tanggal
+		];
+
+		$content = view('contents.laporan.persediaan.detail', $array)->render();
+
+		return response()->json(ResponseAxiosDTO::fromArray([
+			'code' => 200,
+			'message' => 'Berhasil mendapatkan data',
+			'response' => $content,
+		]), 200);
+    }
+
+	public function destroy(Request $request)
+	{
+		try {
+			$uang = UangMasukKeluar::find($request->id);
+			if ($uang->delete()) {
+				return response()->json(ResponseAxiosDTO::fromArray([
+					'code' => 200,
+					'message' => 'Data berhasil Dihapus',
+					'response' => $uang
+				]), 200);
+			}
+		} catch (\Throwable $e) {
+			return response()->json(ResponseAxiosDTO::fromArray([
+				'code' => 500,
+				'message' => $e->getMessage(),
+			]), 500);
+		}
+	}
 }

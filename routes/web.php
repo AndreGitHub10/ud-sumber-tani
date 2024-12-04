@@ -180,6 +180,8 @@ Route::middleware(Authenticate::class)->group(function () {
 			Route::post('datatables', [PersediaanController::class, 'datatables'])->name('datatables');
 			Route::post('form', [PersediaanController::class, 'form'])->name('form');
 			Route::post('store', [PersediaanController::class, 'store'])->name('store');
+			Route::post('detail', [PersediaanController::class, 'detail'])->name('detail');
+			Route::post('destroy', [PersediaanController::class, 'destroy'])->name('destroy');
 		});
 	});
 
