@@ -275,6 +275,7 @@
 				})
 
 				if (resSatuanAwal.status !== 200) {
+					$("#satuan-asal").val('').trigger('change').attr('disabled', true)
 					return module.swal.warning({text: 'Master Konversi Satuan belum dibuat!'})
 				}
 
