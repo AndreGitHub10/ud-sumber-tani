@@ -155,8 +155,8 @@
 				},
 				columns: [
 					{data: 'DT_RowIndex', name: 'DT_RowIndex'},
-					{data: 'satuan_asal_nama', name: 'satuan_asal.nama'},
-					{data: 'satuan_tujuan_nama', name: 'satuan_tujuan.nama'},
+					{data: 'satuan_asal_nama', name: 'satuan_asal_nama'},
+					{data: 'satuan_tujuan_nama', name: 'satuan_tujuan_nama'},
 					{data: 'nilai_konversi', name: 'nilai_konversi'},
 					{data: 'action', name: 'action'}
 				],
