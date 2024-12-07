@@ -63,7 +63,7 @@ class MasterKonversiController extends Controller
 
 	public function getMaster(Request $request)
 	{
-		$data = KonversiSatuan::where('satuan_id_asal', $request->satuan_id)->with(['satuan_asal:id,nama', 'satuan_tujuan:id,nama'])->get();
+		$data = KonversiSatuan::where('satuan_id_asal', $request->satuan_id)->has('satuan_asal')->has('satuan_tujuan')->with(['satuan_asal:id,nama', 'satuan_tujuan:id,nama'])->get();
 		$code = count($data) ? 200 : 204;
 
 		return response()->json(ResponseAxiosDTO::fromArray([

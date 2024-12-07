@@ -22,7 +22,7 @@ class SatuanController extends Controller
 
 	public function getKonversi(Request $request)
 	{
-		$data = KonversiSatuan::has('satuan_asal')->has('satuan_tujuan')->get();
+		$data = KonversiSatuan::get();
 		$code = count($data) ? 200 : 204;
 		return response()->json(ResponseAxiosDTO::fromArray([
 			'code' => $code,
