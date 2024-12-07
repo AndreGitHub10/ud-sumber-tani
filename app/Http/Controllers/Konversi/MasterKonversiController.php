@@ -34,7 +34,6 @@ class MasterKonversiController extends Controller
 				return $item->satuan_asal != null ? strtoupper($item->satuan_asal->nama) : '(satuan tidak ditemukan)';
 			})
 			->addColumn('satuan_tujuan_nama', function($item) {
-				return strtoupper($item->satuan_tujuan->nama);
 				return $item->satuan_tujuan != null ? strtoupper($item->satuan_tujuan->nama) : '(satuan tidak ditemukan)';
 			})
 			->addColumn('action', function($item) {
