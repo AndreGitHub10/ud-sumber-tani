@@ -31,11 +31,11 @@ class MasterKonversiController extends Controller
 		return DataTables::of(KonversiSatuan::with(['satuan_asal:id,nama', 'satuan_tujuan:id,nama']))
 			->addIndexColumn()
 			->addColumn('satuan_asal_nama', function($item) {
-				return $item->satuan_asal ? strtoupper($item->satuan_asal->nama) : '(satuan tidak ditemukan)';
+				return $item->satuan_asal != null ? strtoupper($item->satuan_asal->nama) : '(satuan tidak ditemukan)';
 			})
 			->addColumn('satuan_tujuan_nama', function($item) {
 				return strtoupper($item->satuan_tujuan->nama);
-				return $item->satuan_tujuan ? strtoupper($item->satuan_tujuan->nama) : '(satuan tidak ditemukan)';
+				return $item->satuan_tujuan != null ? strtoupper($item->satuan_tujuan->nama) : '(satuan tidak ditemukan)';
 			})
 			->addColumn('action', function($item) {
 				return "
