@@ -2,7 +2,7 @@
 
 @push('styles')
 	<link href="{{asset('assets/plugins/datatable/css/dataTables.bootstrap5.min.css')}}" rel="stylesheet" />
-	
+
 	<link href="{{asset('assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet" />
 	<link href="{{asset('assets/plugins/select2/css/select2-bootstrap4.css')}}" rel="stylesheet" />
 	<style>
@@ -88,7 +88,7 @@
 					</div>
 					<div class="card-body">
 						<form id="form-penjualan-final">
-							
+
 							<div class="row mb-4">
 								<div class="col-12">
 									<table class="table mb-0 table-striped">
@@ -109,7 +109,7 @@
 												<th colspan="5">
 													<input type="hidden" name="total_semua_harga_murni" id="total-semua-harga-murni" value="">
 													<input type="hidden" name="total_semua_harga_diskon" id="total-semua-harga-diskon" value="">
-													Total Semua Harga : 
+													Total Semua Harga :
 												</th>
 												<th colspan="2" id="container-total-semua-harga">Rp. 0</th>
 											</tr>
@@ -215,7 +215,7 @@
 			await scanToggleHandler()
 		})
 
-		async function scanToggleHandler() { 
+		async function scanToggleHandler() {
 			await module.reset.form($("#form-penjualan .reset"))
 			$('#preview-gambar').hide("slow")
 			$('#preview-gambar').attr('src',"")
@@ -257,14 +257,13 @@
         });
 
 		async function handleBarcode(sc_code) {
-
 			if (sc_code.length > 0) {
 				var data = {
 					barcode: sc_code
 				};
 				$('#loader-full').removeClass('d-none')
 				$('#loader-full').addClass('d-block')
-				
+
 				const response = await postRequest("{{route('penjualanKasir.scanBarcode')}}", data)
 				// return console.log(response)
 				$('#loader-full').addClass('d-none')
@@ -371,9 +370,9 @@
 					totalSemuaHarga()
 				}
 				if (JSON.parse(response.data.response).length > 1) {
-					
+
 					let htmlList = '';
-					$.each(JSON.parse(response.data.response), function (i, v) { 
+					$.each(JSON.parse(response.data.response), function (i, v) {
 						htmlList += `<tr>
 								<td>
 									${v.data_produk.nama_produk}
@@ -403,8 +402,7 @@
 			}
 		}
 
-		function initPilihBtn() { 
-
+		function initPilihBtn() {
 			$(".btn-pilih-barcode").click(async (e) => {
 				let $this = $(e.currentTarget)
 				// return module.swal.warning({text: 'Masih tahap pengembangan!'})
@@ -413,7 +411,7 @@
 				let idPembelian = $('#list_'+$this.data('ind')).val()
 				let jumlahReal = $('#stok_real_'+$this.data('ind')).val()
 				let jumlahRequest = 1
-	
+
 				let duplikat = false
 				await $(".array-pembelian").each(function(idx) {
 					if (idPembelian === this.value) {
@@ -421,22 +419,22 @@
 						return false
 					}
 				})
-	
+
 				if (duplikat) {
 					return module.swal.warning({text: "Produk sudah ada di list penjualan"})
 				}
-	
+
 				if (jumlahRequest > jumlahReal) {
 					return module.swal.warning({text: "Jumlah penjualan tidak bisa melebihi stok!"})
 				}
-	
+
 				let hargaJual = $('#harga_jual_'+$this.data('ind')).val()
 				let totalHargaPerProduk = hargaJual * jumlahRequest
-	
+
 				let nomor = $("#container-list-penjualan tr").length + 1
-	
+
 				const randomId = module.generate.randomId(10)
-	
+
 				let html = `
 					<tr class="rows-list-penjualan" id="rows-${randomId}">
 						<input type="hidden" name="array_pembelian[]" class="array-pembelian" value="${idPembelian}">
@@ -444,7 +442,7 @@
 						<input type="hidden" name="array_harga_jual[]" class="array-harga-jual" value="${hargaJual}">
 						<input type="hidden" name="array_total_harga_per_produk_murni[]" class="array-total-harga-per-produk-murni" value="${totalHargaPerProduk}">
 						<input type="hidden" name="array_total_harga_per_produk_diskon[]" class="array-total-harga-per-produk-diskon" value="${totalHargaPerProduk}">
-	
+
 						<td id="container-nomor">${nomor}</td>
 						<td id="container-produk">${produkText}</td>
 						<td id="container-harga-jual" class="nowrap">${module.formatter.formatRupiah(hargaJual, 'Rp. ')}</td>
@@ -487,7 +485,7 @@
 						</td>
 					</tr>
 				`
-	
+
 				await $("#container-list-penjualan").append(html)
 				totalSemuaHarga()
 				$('#tbl-list-produk-scanner tbody').html('')
@@ -495,8 +493,9 @@
 			})
 		}
 
-
 		function totalSemuaHarga() {
+			$("#input-jumlah-pembayaran").val("").change()
+
 			let sumTotalHargaMurni = 0
 			let sumTotalHargaDiskon = 0
 			$(".array-total-harga-per-produk-murni").each(function(idx) {
@@ -565,13 +564,13 @@
 		$("#input-produk").on('select2:select',async function(e) {
 			// return console.log(e.params.data);
 			var dataProduk = e.params.data;
-			
+
 			if ($(this).val()) {
 				// let hargaJual = $(this).find(':selected').data('harga-jual')
 				let hargaJual = dataProduk.harga_jual
 				await $("#display-harga-jual").text(module.formatter.formatRupiah(hargaJual, "Rp. "))
 				$("#input-jumlah").focus()
-				
+
 				// let gambar = $(this).find(':selected').data('foto-directory')
 				let gambar = dataProduk.foto_directory
 				if (gambar) {
@@ -687,7 +686,7 @@
 			$("#input-produk").select2('open')
 		})
 
-		$("#input-jumlah-pembayaran").setRules('0-9').on('keyup', function(e) {
+		$("#input-jumlah-pembayaran").setRules('0-9').on('keyup change', function(e) {
 			$(this).val(module.formatter.formatRupiah($(this).val(), "Rp. "))
 
 			const pembayaran = module.parse.onlyNumber($(this).val())
@@ -715,10 +714,14 @@
 
 			$(`#rows-${uniqueId} .array-total-harga-per-produk-murni`).val(totalHargaJual)
 
-			if (diskon > totalHargaJual) {
-				$(this).val(module.formatter.formatRupiah(totalHargaJual, "Rp. "))
+			// if (diskon > totalHargaJual) {
+			if (diskon > hargaJual) {
+				// $(this).val(module.formatter.formatRupiah(totalHargaJual, "Rp. "))
+				$(this).val(module.formatter.formatRupiah(hargaJual, "Rp. "))
 				diskon = parseInt(module.parse.onlyNumber($(this).val()))
 			}
+
+			diskon = diskon * jumlah
 
 			totalHargaJual = totalHargaJual - diskon
 
@@ -759,12 +762,14 @@
 			let diskon = module.parse.onlyNumber($(`#rows-${uniqueId} .array-diskon`).val())
 
 			if (diskon) {
-				if (totalHargaJualPerProduk < diskon) {
-					diskon = totalHargaJualPerProduk
+				// if (totalHargaJualPerProduk < diskon) {
+				if (hargaJual < diskon) {
+					// diskon = totalHargaJualPerProduk
+					diskon = hargaJual
 					$(`#rows-${uniqueId} .array-diskon`).val(module.formatter.formatRupiah(diskon, "Rp. "))
 				}
 
-				totalHargaJualPerProduk -= diskon
+				totalHargaJualPerProduk -= diskon * jumlah
 			}
 
 			$(`#rows-${uniqueId} .array-total-harga-per-produk-diskon`).val(totalHargaJualPerProduk)
@@ -876,10 +881,10 @@
 				showClass: module.var_swal.fadeInDown,
 				hideClass: module.var_swal.fadeOutUp,
 			})
-			
+
 			$(this).attr('disabled', false)
 
-			
+
 
 			$("#container-btn-sesi-penjualan-akhir").hide('slow', function() {
 				$("#container-btn-sesi-penjualan-awal").show('slow')
