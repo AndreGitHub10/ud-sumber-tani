@@ -23,7 +23,7 @@ class PembelianDetailSeeder extends Seeder
 			'stok_real' => 10,
 			'harga_beli' => 12000,
 			'total_harga_beli' => 120000,
-			'harga_jual' => 1000,
+			'harga_jual' => 14400,
 		]);
 		PembelianDetail::create([
 			'invoice_id' => 1,
@@ -34,7 +34,7 @@ class PembelianDetailSeeder extends Seeder
 			'tanggal_kedaluwarsa' => date("Y-m-d", strtotime("now +1months")),
 			'harga_beli' => 13000,
 			'total_harga_beli' => 39000,
-			'harga_jual' => 15000,
+			'harga_jual' => 15600,
 		]);
 	}
 }
