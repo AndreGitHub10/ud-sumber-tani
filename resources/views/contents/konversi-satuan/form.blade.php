@@ -215,7 +215,7 @@
 			placeholder: `Masukkan (<span style="color: #000;">Kode</span>/<span style="color: #00b8dd;">Nama</span>) Produk`,
 			allowClear: Boolean($(this).data('allow-clear')),
 			ajax: {
-				url: "{{ route('pembelian.findProduk') }}",
+				url: "{{ route('penjualanKasir.findProduk') }}",
 				dataType: 'json',
 				type: 'POST',
 				delay: 500,

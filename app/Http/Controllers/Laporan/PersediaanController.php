@@ -48,7 +48,7 @@ class PersediaanController extends Controller
 				whereBetween('tanggal',$date_range)->
 				groupBy('tanggal')->
 				get();
-			$uang_awal = VUangMasukKeluar::where('tanggal','<',$date_range[0])->get()->sum('total');
+			$uang_awal = VUangMasukKeluar::where('tanggal','<=',$date_range[0])->get()->sum('total');
 			$loopBegin = new DateTime($date_range[0]);
 			$loopEnd = new DateTime($date_range[1]);
 			$interval = DateInterval::createFromDateString('1 day');

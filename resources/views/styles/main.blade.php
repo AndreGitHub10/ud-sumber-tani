@@ -23,6 +23,10 @@
 		text-align: center;
 		vertical-align: middle;
 	}
+	body .select2-container--bootstrap4 .select2-results__option--highlighted[aria-selected] {
+		background-color: #F0F1F2;
+		color: #393A3B; 
+	}
 </style>
 
 @stack('styles')
