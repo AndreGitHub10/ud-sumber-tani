@@ -42,7 +42,20 @@ const var_swal = {
 		allowEscapeKey: false,
 		// hideClass: var_animasi.fadeOutUp,
 		// showClass: var_animasi.fadeInDown,
-	}
+	},
+	confirmEdit: {
+		title: 'Apa anda yakin?',
+		text: 'Data akan diubah!',
+		icon: 'warning',
+		showCancelButton: true,
+		confirmButtonColor: '#F64E60',
+		confirmButtonText: 'Ya, ubah',
+		cancelButtonText: 'Batal',
+		allowOutsideClick: false,
+		allowEscapeKey: false,
+		// hideClass: var_animasi.fadeOutUp,
+		// showClass: var_animasi.fadeInDown,
+	},
 }
 
 export default var_swal

@@ -145,6 +145,10 @@ class MenuComposer
 						'text' => 'Penjualan',
 					],
 					[
+						'link' => route('laporan.hutang.main'),
+						'text' => 'Hutang',
+					],
+					[
 						'link' => route('laporan.persediaan.main'),
 						'text' => 'Persediaan',
 					],

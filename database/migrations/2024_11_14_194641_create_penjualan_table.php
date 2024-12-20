@@ -21,6 +21,9 @@ return new class extends Migration
 			$table->decimal('total_penjualan_murni', total: 10, places: 0);
 			$table->decimal('total_penjualan_diskon', total: 10, places: 0);
 			$table->date("tanggal");
+			$table->boolean('is_hutang')->default(false);
+			$table->boolean('is_lunas')->default(true);
+			$table->date("tanggal_pelunasan")->nullable();
 			$table->timestamps();
 		});
 	}

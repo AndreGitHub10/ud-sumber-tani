@@ -25,6 +25,9 @@ class PenjualanService
 		$penjualan->kembalian = $penjualanDTO->kembalian;
 		$penjualan->total_penjualan_murni = $penjualanDTO->total_semua_harga_murni;
 		$penjualan->total_penjualan_diskon = $penjualanDTO->total_semua_harga_diskon;
+		$penjualan->is_hutang = $penjualanDTO->is_hutang;
+		$penjualan->is_lunas = $penjualanDTO->is_lunas;
+		$penjualan->tanggal_pelunasan = $penjualanDTO->tanggal_pelunasan;
 		$penjualan->tanggal = date("Y-m-d");
 		$penjualan->save();
 

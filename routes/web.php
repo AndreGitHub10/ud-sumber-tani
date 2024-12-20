@@ -11,6 +11,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DBController;
 use App\Http\Controllers\Konversi\MasterKonversiController;
 use App\Http\Controllers\Konversi\SatuanController as KonversiSatuanController;
+use App\Http\Controllers\Laporan\HutangController;
 use App\Http\Controllers\Laporan\KartuStokController;
 use App\Http\Controllers\Laporan\LabaController;
 use App\Http\Controllers\Laporan\MinMaxController;
@@ -172,6 +173,16 @@ Route::middleware(Authenticate::class)->group(function () {
 			Route::post('datatables', [PenjualanController::class, 'datatables'])->name('datatables');
 			Route::post('detail', [PenjualanController::class, 'detail'])->name('detail');
 			Route::post('destroy', [PenjualanController::class, 'destroy'])->name('destroy');
+		});
+
+		Route::prefix('hutang')->as('hutang.')
+		->group(function () {
+			Route::get('/', [HutangController::class, 'main'])->name('main');
+			Route::post('datatables', [HutangController::class, 'datatables'])->name('datatables');
+			Route::post('detail', [HutangController::class, 'detail'])->name('detail');
+			Route::post('destroy', [HutangController::class, 'destroy'])->name('destroy');
+			Route::post('cancel', [HutangController::class, 'cancel'])->name('cancel');
+			Route::post('accept', [HutangController::class, 'accept'])->name('accept');
 		});
 
 		Route::prefix('persediaan')->as('persediaan.')

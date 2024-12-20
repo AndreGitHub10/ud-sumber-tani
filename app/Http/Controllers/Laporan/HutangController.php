@@ -11,10 +11,10 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use DB;
 
-class PenjualanController extends Controller
+class HutangController extends Controller
 {
 	public function main() {
-		return view('contents.laporan.penjualan.main');
+		return view('contents.laporan.hutang.main');
 	}
 
     public function datatables(Request $request) {
@@ -26,15 +26,15 @@ class PenjualanController extends Controller
 			when(count($date_range)==0, function($q) {
 				$q->limit(0);
 			})->
-			when($request->pembayaran!='', function($q) use ($request) {
-				$q->where('jenis_pembayaran',$request->pembayaran);
+			when($request->lunas!='', function($q) use ($request) {
+				$q->where('is_lunas',$request->lunas);
 			})->
 			when(count($date_range)>1, function($q) use ($date_range) {
 				$start = date($date_range[0]);
 				$end = date($date_range[1]);
 				$q->whereBetween('tanggal', [$start,$end]);
 			})->
-			where('is_lunas',true)->
+			where('is_hutang',true)->
 			get();
         return DataTables::of($data)
 			->addIndexColumn()
@@ -58,11 +58,19 @@ class PenjualanController extends Controller
             //     return $laba;
 			// })
 			->addColumn('action', function($item) {
+				$addt = '';
+				if ($item->is_lunas) {
+					$addt =  "<button type='button' class='btn btn-sm btn-primary px-2 btn-cancel' data-id='$item->id'>
+							<i class='fadeIn animated bx bx-x'></i>
+						</button>";
+				} else {
+					$addt =  "<button type='button' class='btn btn-sm btn-primary px-2 btn-detail' data-id='$item->id'>
+							<i class='fadeIn animated bx bx-check'></i>
+						</button>";
+				}
 				return "
 					<div class='text-center'>
-						<button type='button' class='btn btn-sm btn-primary px-2 btn-detail' data-id='$item->id'>
-							<i class='fadeIn animated bx bx-detail'></i>
-						</button>
+						$addt
 						<button type='button' class='btn btn-sm btn-secondary px-2 btn-invoice' data-id='$item->id'>
 							<i class='fadeIn animated bx bx-receipt'></i>
 						</button>
@@ -100,7 +108,7 @@ class PenjualanController extends Controller
 			'laba' => $laba
 		];
 
-		$content = view('contents.laporan.penjualan.detail', $array)->render();
+		$content = view('contents.laporan.hutang.detail', $array)->render();
 
 		return response()->json(ResponseAxiosDTO::fromArray([
 			'code' => $data->res_code,
@@ -132,6 +140,60 @@ class PenjualanController extends Controller
 			return response()->json(ResponseAxiosDTO::fromArray([
 				'code' => 200,
 				'message' => 'Data berhasil Dihapus',
+				'response' => $penjualan->id
+			]), 200);
+		} catch (\Throwable $e) {
+			DB::rollback();
+			return response()->json(ResponseAxiosDTO::fromArray([
+				'code' => 500,
+				'message' => $e->getMessage(),
+			]), 500);
+		}
+	}
+
+	public function cancel(Request $request)
+	{
+		DB::beginTransaction();
+		try {
+			$penjualan = Penjualan::find($request->id);
+			if ($penjualan) {
+				$penjualan->is_lunas = false;
+				$penjualan->tanggal_pelunasan = null;
+				$penjualan->save();
+			}
+
+			DB::commit();
+
+			return response()->json(ResponseAxiosDTO::fromArray([
+				'code' => 200,
+				'message' => 'Data berhasil dibatalkan',
+				'response' => $penjualan->id
+			]), 200);
+		} catch (\Throwable $e) {
+			DB::rollback();
+			return response()->json(ResponseAxiosDTO::fromArray([
+				'code' => 500,
+				'message' => $e->getMessage(),
+			]), 500);
+		}
+	}
+
+	public function accept(Request $request)
+	{
+		DB::beginTransaction();
+		try {
+			$penjualan = Penjualan::find($request->id);
+			if ($penjualan) {
+				$penjualan->is_lunas = true;
+				$penjualan->tanggal_pelunasan = $request->tanggal_pelunasan;
+				$penjualan->save();
+			}
+
+			DB::commit();
+
+			return response()->json(ResponseAxiosDTO::fromArray([
+				'code' => 200,
+				'message' => 'Data berhasil dilunaskan',
 				'response' => $penjualan->id
 			]), 200);
 		} catch (\Throwable $e) {

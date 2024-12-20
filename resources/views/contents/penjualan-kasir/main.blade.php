@@ -132,7 +132,7 @@
 										</select>
 									</div>
 								</div>
-								<div class="row mb-5">
+								<div class="row">
 									<div class="col-6">
 										<label for="input-jumlah-pembayaran" class="form-label">Jumlah Pembayaran</label>
 										<input type="text" class="form-control form-control-sm validation reset" id="input-jumlah-pembayaran" placeholder="Masukkkan Jumlah Pembayaran" name="pembayaran" readonly>
@@ -140,6 +140,15 @@
 									<div class="col-6">
 										<label for="input-kembalian" class="form-label">Kembalian</label>
 										<input type="text" class="form-control form-control-sm" id="input-kembalian" name="kembalian" value="Rp. 0" readonly>
+									</div>
+								</div>
+								<div class="row mb-5">
+									<div class="col-6">
+										<label for="is_hutang" class="form-label">Hutang</label>
+										<select class="single-select validation reset" id="is_hutang" name="hutang" disabled>
+											<option value="lunas">Tidak</option>
+											<option value="hutang">Ya</option>
+										</select>
 									</div>
 								</div>
 							</div>
@@ -818,6 +827,7 @@
 			$("#input-jumlah-pembayaran").attr('readonly', false)
 			$(".rows-list-penjualan .readonly").attr('readonly', true)
 			$("#input-jenis-pembayaran").attr('disabled', false)
+			$("#is_hutang").attr('disabled', false)
 
 			$("#container-btn-sesi-penjualan-awal").hide('slow', function() {
 				$("#container-btn-sesi-penjualan-akhir").show('slow')
@@ -840,6 +850,7 @@
 			$("#input-jumlah-pembayaran").attr('readonly', true)
 			$(".rows-list-penjualan .readonly").attr('readonly', false)
 			$("#input-jenis-pembayaran").attr('disabled', true)
+			$("#is_hutang").attr('disabled', true)
 
 			$("#container-btn-sesi-penjualan-akhir").hide('slow', function() {
 				$("#container-btn-sesi-penjualan-awal").show('slow')
@@ -903,6 +914,7 @@
 			$("#input-tanggal-penjualan").attr('readonly', true)
 			$("#input-jumlah-pembayaran").attr('readonly', true)
 			$("#input-jenis-pembayaran").attr('disabled', true)
+			$("#is_hutang").attr('disabled', true)
 
 			$("#input-tanggal-penjualan").val("{{date('Y-m-d')}}")
 			$("#container-list-penjualan").empty()

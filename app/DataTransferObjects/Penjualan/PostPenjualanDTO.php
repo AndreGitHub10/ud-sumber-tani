@@ -31,6 +31,14 @@ final class PostPenjualanDTO extends DataTransferObject
 		public array $array_total_harga_per_produk_murni,
 		#[WithDefaultValue('tunai')]
 		public string|null $jenis_pembayaran = 'tunai',
+		#[WithDefaultValue('lunas')]
+		public string|null $hutang = 'lunas',
+		#[WithDefaultValue(true)]
+		public bool $is_lunas = true,
+		#[WithDefaultValue(false)]
+		public bool $is_hutang = false,
+		#[WithDefaultValue(null)]
+		public string|null $tanggal_pelunasan = null,
 		#[WithDefaultValue(null)]
 		public int|string|null $kembalian = null,
 		#[WithDefaultValue(null)]
@@ -46,6 +54,14 @@ final class PostPenjualanDTO extends DataTransferObject
 	) {
 		if (!$this->id_penjualan) {
 			$this->nomor_kwitansi = Generate::nomorKwitansi();
+		}
+
+		if ($this->hutang=='hutang') {
+			$this->is_lunas = false;
+			$this->is_hutang = true;
+		} else {
+			$this->is_lunas = true;
+			$this->is_hutang = false;
 		}
 
 		if (count($this->array_diskon)) {

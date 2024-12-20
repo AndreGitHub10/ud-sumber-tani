@@ -20,7 +20,12 @@ const func_swal = {
 		object = $.extend({}, var_swal.warning, object)
 	
 		return Swal.fire(object)
-	}
+	},
+	confirmEdit(object = {}){
+		object = $.extend({}, var_swal.confirmEdit, object)
+	
+		return Swal.fire(object)
+	},
 }
 
 export default func_swal
