@@ -33,7 +33,16 @@
 		<div class="card">
 			<div class="card-header">
 				<div class="row">
-					<div class="col-10"></div>
+					<div class="col-md-3 mb-3">
+						<label for="kategori" class="form-label fw-bold">Ketegori</label>
+						<select class="single-select validation" id="kategori" onchange="filter()">
+							<option value="" selected>Semua</option>
+							@foreach ($kategori ?? [] as $item)
+								<option value="{{$item->id}}">{{$item->nama}}</option>
+							@endforeach
+						</select>
+					</div>
+					<div class="col-7"></div>
 					<div class="col-2">
 						<button type="button" class="btn btn-success px-3" id="exportExcel">
 							<i class="fadeIn animated bx bx-excel"></i>Export Excel
@@ -49,6 +58,7 @@
 								<th>No</th>
 								<th>Kode Barang</th>
 								<th>Nama Barang</th>
+								<th>Kategori</th>
 								<th>Stok</th>
 								<th>Aksi</th>
 							</tr>
@@ -74,7 +84,14 @@
 			module = await initModul()
 			console.log(module)
 
-			datatablePembelian()
+			filter()
+		})
+
+		$('.single-select').select2({
+			theme: 'bootstrap4',
+			width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+			placeholder: $(this).data('placeholder'),
+			allowClear: Boolean($(this).data('allow-clear')),
 		})
 
 		$('#exportExcel').click(function (e) { 
@@ -128,7 +145,7 @@
 							hideClass: module.var_swal.fadeOutUp,
 						})
 
-						datatablePembelian()
+						datatablePembelian$(('#kategori').val())
 					}
 					$this.attr('disabled', false)
 				})
@@ -155,7 +172,11 @@
 			})
 		})
 
-		async function datatablePembelian(){
+		function filter() {
+			datatablePembelian($('#kategori').val())
+		}
+
+		async function datatablePembelian(kategori=$('#kategori').val()){
 			await $('#datatable-kartu-stok').dataTable({
 				scrollX: true,
 				bPaginate: true,
@@ -170,11 +191,15 @@
 				ajax: {
 					url:"{{route('laporan.kartuStok.datatables')}}",
 					type: 'post',
+					data: {
+						kategori: kategori
+					}
 				},
 				columns: [
 					{data: 'DT_RowIndex', name: 'DT_RowIndex'},
 					{data: 'kode_produk', name: 'kode_produk'},
 					{data: 'nama_produk', name: 'nama_produk'},
+					{data: 'nama_kategori', name: 'nama_kategori'},
 					{data: 'stok', name: 'stok', render: function(data, type, row) {
 						return "<ul>"+data+"</ul>"
 					}},

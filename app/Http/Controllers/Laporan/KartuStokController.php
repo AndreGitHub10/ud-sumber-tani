@@ -6,6 +6,7 @@ use App\DataTransferObjects\Response\ResponseAxiosDTO;
 use App\Exports\KartuStokExport;
 use App\Http\Controllers\Controller;
 use App\Models\DataProduk;
+use App\Models\KategoriProduk;
 use App\Models\VDetailKartuStok;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -14,11 +15,20 @@ use Yajra\DataTables\DataTables;
 class KartuStokController extends Controller
 {
 	public function main() {
-		return view('contents.laporan.kartu-stok.main');
+		$kategori = KategoriProduk::get();
+		$array = [
+			'kategori' => $kategori
+		];
+		return view('contents.laporan.kartu-stok.main',$array);
 	}
 
-	public function datatables() {
-		return DataTables::of(DataProduk::with('v_kartu_stok','v_kartu_stok.satuan_produk')->get())
+	public function datatables(Request $request) {
+		$kategori = $request->kategori ? $request->kategori : '';
+		return DataTables::of(DataProduk::with('v_kartu_stok','v_kartu_stok.satuan_produk','kategori')->when($kategori!='',function($q) use ($kategori){
+			$q->whereHas('kategori',function($qq) use ($kategori){
+				$qq->where('id',$kategori);
+			});
+		})->get())
 			->addIndexColumn()
 			->addColumn('stok', function($item) {
 				$return = "";
@@ -26,6 +36,13 @@ class KartuStokController extends Controller
 					if ($v->satuan_produk) {
 						$return .= "<li>" . $v->satuan_produk->nama . " ($v->stok)</li>";
 					}
+				}
+				return $return;
+			})
+			->addColumn('nama_kategori', function($item) {
+				$return = "-";
+				if ($item->kategori) {
+					$return = $item->kategori->nama;
 				}
 				return $return;
 			})
