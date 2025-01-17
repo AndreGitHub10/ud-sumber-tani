@@ -302,15 +302,24 @@
 					let jumlahRequest = 1
 
 					let duplikat = false
+					let jumlahAda = 0
 					await $(".array-pembelian").each(function(idx) {
-						if (idPembelian === this.value) {
+						if (idPembelian == this.value) {
+							console.log('aa');
 							duplikat = true
+							jumlahAda = parseInt($("#array_jumlah_"+idPembelian).val())
 							return false
 						}
 					})
 
 					if (duplikat) {
-						return module.swal.warning({text: "Produk sudah ada di list penjualan"})
+						
+						if ((jumlahRequest + jumlahAda) > jumlahReal) {
+							return module.swal.warning({text: "Jumlah penjualan tidak bisa melebihi stok!"})
+						}
+						$("#array_jumlah_"+idPembelian).val(jumlahRequest + jumlahAda)
+						return module.swal.success({text: "Berhasil menambahkan sejumlah 1 pada "+produkText})
+						// return module.swal.warning({text: "Produk sudah ada di list penjualan"})
 					}
 
 					if (jumlahRequest > jumlahReal) {
@@ -351,6 +360,7 @@
 										type="number"
 										class="form-control w-25 text-center array-jumlah"
 										name="array_jumlah[]"
+										id="array_jumlah_${idPembelian}"
 										value="${jumlahRequest}"
 										aria-describedby="basic-addon1"
 										autocomplete="off"
@@ -422,16 +432,23 @@
 				let jumlahRequest = 1
 
 				let duplikat = false
+				let jumlahAda = 0
 				await $(".array-pembelian").each(function(idx) {
-					if (idPembelian === this.value) {
+					if (idPembelian == this.value) {
 						duplikat = true
+						jumlahAda = parseInt($("#array_jumlah_"+idPembelian).val())
 						return false
 					}
 				})
 
 				if (duplikat) {
-					return module.swal.warning({text: "Produk sudah ada di list penjualan"})
-				}
+						if ((jumlahRequest + jumlahAda) > jumlahReal) {
+							return module.swal.warning({text: "Jumlah penjualan tidak bisa melebihi stok!"})
+						}
+						$("#array_jumlah_"+idPembelian).val(jumlahRequest + jumlahAda)
+						return module.swal.success({text: "Berhasil menambahkan sejumlah 1 pada "+produkText})
+						// return module.swal.warning({text: "Produk sudah ada di list penjualan"})
+					}
 
 				if (jumlahRequest > jumlahReal) {
 					return module.swal.warning({text: "Jumlah penjualan tidak bisa melebihi stok!"})
@@ -471,6 +488,7 @@
 									type="number"
 									class="form-control w-25 text-center array-jumlah"
 									name="array_jumlah[]"
+									id="array_jumlah_${idPembelian}"
 									value="${jumlahRequest}"
 									aria-describedby="basic-addon1"
 									autocomplete="off"
