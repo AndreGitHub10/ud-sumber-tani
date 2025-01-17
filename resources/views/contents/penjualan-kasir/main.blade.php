@@ -317,7 +317,8 @@
 						if ((jumlahRequest + jumlahAda) > jumlahReal) {
 							return module.swal.warning({text: "Jumlah penjualan tidak bisa melebihi stok!"})
 						}
-						$("#array_jumlah_"+idPembelian).val(jumlahRequest + jumlahAda)
+						$("#btn_inc_"+idPembelian).click()
+						// $("#array_jumlah_"+idPembelian).val(jumlahRequest + jumlahAda)
 						return module.swal.success({text: "Berhasil menambahkan sejumlah 1 pada "+produkText})
 						// return module.swal.warning({text: "Produk sudah ada di list penjualan"})
 					}
@@ -363,6 +364,7 @@
 										id="array_jumlah_${idPembelian}"
 										value="${jumlahRequest}"
 										aria-describedby="basic-addon1"
+										data-unique-id="${randomId}"
 										autocomplete="off"
 										readonly
 										style="cursor: pointer; box-shadow: none; border: 1px solid #ced4da; z-index: 0;"
@@ -371,6 +373,7 @@
 										<button
 											class="btn btn-outline-secondary btn-increase-jumlah btn-update-jumlah"
 											data-unique-id="${randomId}"
+											id="btn_inc_${idPembelian}"
 											data-is-increase="true"
 										>+</button>
 									</div>
@@ -445,7 +448,8 @@
 						if ((jumlahRequest + jumlahAda) > jumlahReal) {
 							return module.swal.warning({text: "Jumlah penjualan tidak bisa melebihi stok!"})
 						}
-						$("#array_jumlah_"+idPembelian).val(jumlahRequest + jumlahAda)
+						$("#btn_inc_"+idPembelian).click()
+						// $("#array_jumlah_"+idPembelian).val(jumlahRequest + jumlahAda)
 						return module.swal.success({text: "Berhasil menambahkan sejumlah 1 pada "+produkText})
 						// return module.swal.warning({text: "Produk sudah ada di list penjualan"})
 					}
@@ -491,6 +495,7 @@
 									id="array_jumlah_${idPembelian}"
 									value="${jumlahRequest}"
 									aria-describedby="basic-addon1"
+									data-unique-id="${randomId}"
 									autocomplete="off"
 									readonly
 									style="cursor: pointer; box-shadow: none; border: 1px solid #ced4da; z-index: 0;"
@@ -499,6 +504,7 @@
 									<button
 										class="btn btn-outline-secondary btn-increase-jumlah btn-update-jumlah"
 										data-unique-id="${randomId}"
+										id="btn_inc_${idPembelian}"
 										data-is-increase="true"
 									>+</button>
 								</div>
@@ -679,6 +685,7 @@
 								name="array_jumlah[]"
 								value="${jumlahRequest}"
 								aria-describedby="basic-addon1"
+								data-unique-id="${randomId}"
 								autocomplete="off"
 								readonly
 								style="cursor: pointer; box-shadow: none; border: 1px solid #ced4da; z-index: 0;"
@@ -687,6 +694,7 @@
 								<button
 									class="btn btn-outline-secondary btn-increase-jumlah btn-update-jumlah"
 									data-unique-id="${randomId}"
+									id="btn_inc_${idPembelian}"
 									data-is-increase="true"
 								>+</button>
 							</div>
@@ -828,6 +836,7 @@
 
 		$("#btn-bayar-list-penjualan").click(function(e) {
 			e.preventDefault()
+			$('#is-scan').prop('checked',false)
 			if ($("#container-list-penjualan tr").length <= 0) {
 				return module.swal.warning({text: "Tidak ada data untuk dibayar"})
 			}
@@ -837,6 +846,7 @@
 				'#input-jumlah',
 				'#btn-append-penjualan',
 				'.rows-list-penjualan .btn',
+				'#is-scan'
 			], function(index, item) {
 				$(item).attr('disabled', true)
 			})
@@ -860,6 +870,7 @@
 				'#input-jumlah',
 				'#btn-append-penjualan',
 				'.rows-list-penjualan .btn',
+				'#is-scan'
 			], function(index, item) {
 				$(item).attr('disabled', false)
 			})
@@ -925,6 +936,7 @@
 				'#input-produk',
 				'#input-jumlah',
 				'#btn-append-penjualan',
+				'#is-scan'
 			], function(index, item) {
 				$(item).attr('disabled', false)
 			})

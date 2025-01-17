@@ -22,7 +22,7 @@ class KartuStokExport implements FromView
 					'no' => $k+1,
 					'kode_produk' => $v->kode_produk,
 					'nama_produk' => $v->nama_produk,
-					'satuan' => $v2->satuan_produk->nama,
+					'satuan' => $v2->satuan_produk? $v2->satuan_produk->nama : null,
 					'stok' => $v2->stok
 				];
 			}
