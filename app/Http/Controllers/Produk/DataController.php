@@ -16,6 +16,7 @@ use App\Helpers\Generate;
 use App\Imports\DataProdukImport;
 # Models
 use App\Models\DataProduk;
+use App\Models\PembelianDetail;
 use App\Models\KategoriProduk;
 # Services
 use App\Services\Produk\DataService;
@@ -186,13 +187,47 @@ class DataController extends Controller
 		]), $data->res_code);
 	}
 
-	public function barcode($barcode='') {
+	public function barcode($barcode='',$harga='') {
 		$produk = DataProduk::where('barcode',$barcode)->first();
 		$array = [
 			'barcode' => $barcode,
-			'produk' => $produk
+			'produk' => $produk,
+			'harga' => $harga
 		];
 		return view('contents.data-master.produk.data.barcode',$array);
+	}
+
+	public function getHargaList(Request $request) {
+		$data = PembelianDetail::select('id', 'kode_produk', 'satuan_id', 'stok_real', 'harga_jual')->
+			with([
+				'data_produk:id,kode_produk,nama_produk,foto_directory',
+				'satuan:id,nama'
+			])->
+			where('stok_real','>',0)->
+			whereHas('data_produk',function ($q) use ($request) {
+				$q->where('barcode',$request->barcode);
+			})->
+			get();
+		$return = (object)[];
+		if (count($data)) {
+			$return->res_code=200;
+			$return->res_message="Data Ditemukan";
+			// $fileExists = public_path()."/storage/public/".$data->foto_directory;
+			// if (!$data->foto_directory || !file_exists($fileExists)) {
+			// 	$data->foto = asset('/assets/images/errors-images/no-image.jpg');
+			// } else {
+			// 	$data->foto = url("storage/public/".$data->foto_directory);
+			// }
+		} else {
+			$return->res_code=400;
+			$return->res_message="Data Tidak Ditemukan";
+		}
+
+		return response()->json(ResponseAxiosDTO::fromArray([
+			'code' => $return->res_code,
+			'message' => $return->res_message,
+			'response' => $data,
+		]), $return->res_code);
 	}
 
 	public function importForm(Request $request)

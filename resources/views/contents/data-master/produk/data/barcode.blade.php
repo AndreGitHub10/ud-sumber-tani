@@ -7,25 +7,51 @@
     <title>Barcode</title>
     <style>
         .nama-produk {
-            font-size: 8pt;
+            font-size: 12pt;
             margin: 0;
-            width: calc(3*44px);
+            /* width: calc(3*44px); */
             height:23px;
             /* line-height:20px; Height / no. of lines to display */
             overflow:hidden;
             text-align: center;
         }
         .barcode {
-            width: calc(3*44px);
-            height: 80px;
+            /* width: calc(3*44px);
+            height: 80px; */
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: fit-content;
+        }
+        .paging {
+            width: 50%;
+        }
+        .gapp {
+            /* width: 10%; */
+        }
+        body {
+            margin: 5px;
+            display: flex;
         }
     </style>
 </head>
 <body>
-    @if ($produk)
-        <p class="nama-produk">{{$produk->nama_produk}}</p>
+    @isset($harga)
+    @else
+    <?php $harga=0 ?>
+    @endisset
+    @foreach([0,1] as $da)
+    <div class='paging'>
+        @if ($produk)
+            <p class="nama-produk">{{$produk->nama_produk}}</p>
+            <img class="barcode" src="data:image/png;base64,{{DNS1D::getBarcodePNG($barcode, 'C39', 1, 33, array(0,0,0), false)}}" alt="barcode" />
+            <p class="nama-produk">Rp {{number_format($harga,2,',','.')}}</p>
+        @endif
+    </div>
+    @if($da==0)
+    <div class="gapp"></div>
     @endif
-    <img class="barcode" src="data:image/png;base64,{{DNS1D::getBarcodePNG($barcode, 'C39', 3, 80, array(0,0,0), true)}}" alt="barcode" />
+    @endforeach
     <script>
         window.print()
     </script>

@@ -59,7 +59,8 @@ Route::middleware(Authenticate::class)->group(function () {
 				Route::post('datatables', 'datatables')->name('datatables');
 				Route::post('destroy', 'destroy')->name('destroy');
 				Route::post('store', 'store')->name('store');
-				Route::get('barcode/{barcode?}', 'barcode')->name('barcode');
+				Route::get('barcode/{barcode?}/{harga?}', 'barcode')->name('barcode');
+				Route::post('getHargaList', 'getHargaList')->name('getHargaList');
 				Route::post('importForm', 'importForm')->name('importForm');
 				Route::get('download-template', 'downloadTemplate')->name('downloadTemplate');
 				Route::post('import', 'import')->name('import');

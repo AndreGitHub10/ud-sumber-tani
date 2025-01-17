@@ -68,6 +68,31 @@
 			</div>
 		</div>
 	</div>
+	<div class="modal fade" id="hargaModel" tabindex="-1" aria-labelledby="hargaModelLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="hargaModelLabel">Pilih Produk</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<table class="table table-striped" id="tbl-list-produk-scanner">
+					<thead>
+						<th>
+							<td>Satuan</td>
+							<td>Harga Jual</td>
+							<td>Pilih</td>
+						</th>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			</div>
+			</div>
+		</div>
+	</div>
 	<div id="other-page" style="display:none;"></div>
 @endsection
 
@@ -78,6 +103,7 @@
 	<script src="{{asset('assets/plugins/select2/js/select2.min.js')}}"></script>
 
 	<script>
+		var hargaModel = new bootstrap.Modal(document.getElementById('hargaModel'), {keyboard : false})
 		$(async () => {
 			// initModul() in "scripts.main.blade.php"
 			module = await initModul()
@@ -86,6 +112,17 @@
 			filter()
 
 		})
+
+		function initPilihBtn() {
+			$(".btn-pilih-barcode").click(async (e) => {
+				let $this = $(e.currentTarget)
+				// return module.swal.warning({text: 'Masih tahap pengembangan!'})
+				let barcode = $this.data('barcode')
+				let harga = $this.data('harga')
+				window.open("{{route('dataMaster.produk.data.barcode')}}/"+barcode+'/'+harga)
+				
+			})
+		}
 
 		$('.single-select').select2({
 			theme: 'bootstrap4',
@@ -149,7 +186,50 @@
 				let $this = $(e.currentTarget)
 				const id = $this.data('id')
 				$this.attr('disabled', true)
-				window.open("{{route('dataMaster.produk.data.barcode')}}/"+id)
+				// window.open("{{route('dataMaster.produk.data.barcode')}}/"+id)
+				const responses = await postRequest("{{route('dataMaster.produk.data.getHargaList')}}", {barcode:id})
+				if (jQuery.inArray(responses.status, [200, 201]) === -1) {
+					await module.swal.warning({
+						text: responses.data.message,
+						hideClass: module.var_swal.fadeOutUp,
+					})
+
+					return $(this).attr('disabled', false)
+				}
+				await module.swal.success({
+					title: responses.data.message,
+					text: '',
+					showClass: module.var_swal.fadeInDown,
+					hideClass: module.var_swal.fadeOutUp,
+				})
+				console.log(responses);
+				
+				if (JSON.parse(responses.data.response).length > 0) {
+
+					let htmlList = '';
+					console.log(JSON.parse(responses.data.response));
+					$.each(JSON.parse(responses.data.response), function (i, v) {
+						
+						htmlList += `<tr>
+								<td>
+									${v.data_produk.nama_produk}
+									<input type="hidden" value="${v.harga_jual}" id="harga_jual_${i}" />
+								</td>
+								<td>
+									${v.satuan.nama}
+								</td>
+								<td>
+									${v.harga_jual}
+								</td>
+								<td>
+									<button class="btn btn-sm btn-info px-5 text-light btn-pilih-barcode" data-harga="${v.harga_jual}" data-barcode="${id}">Pilih</button>
+								</td>
+							</tr>`
+					});
+					$('#tbl-list-produk-scanner tbody').html(htmlList)
+					hargaModel.show()
+					initPilihBtn()
+				}
 
 				$this.attr('disabled', false)
 			})
