@@ -449,6 +449,7 @@
 							return module.swal.warning({text: "Jumlah penjualan tidak bisa melebihi stok!"})
 						}
 						$("#btn_inc_"+idPembelian).click()
+						$this.attr('disabled', false)
 						// $("#array_jumlah_"+idPembelian).val(jumlahRequest + jumlahAda)
 						return module.swal.success({text: "Berhasil menambahkan sejumlah 1 pada "+produkText})
 						// return module.swal.warning({text: "Produk sudah ada di list penjualan"})
@@ -520,6 +521,7 @@
 				`
 
 				await $("#container-list-penjualan").append(html)
+				$this.attr('disabled', false)
 				totalSemuaHarga()
 				$('#tbl-list-produk-scanner tbody').html('')
 				scannerModal.hide()
