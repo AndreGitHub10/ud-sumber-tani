@@ -198,15 +198,18 @@ class DataController extends Controller
 	}
 
 	public function getHargaList(Request $request) {
-		$data = PembelianDetail::select('id', 'kode_produk', 'satuan_id', 'stok_real', 'harga_jual')->
+		$data = PembelianDetail::select('pembelian_detail.id', 'kode_produk', 'satuan_id', 'stok_real', 'harga_jual','invoice_id','pembelian.tanggal')->
 			with([
 				'data_produk:id,kode_produk,nama_produk,foto_directory',
 				'satuan:id,nama'
 			])->
+			leftJoin('pembelian','pembelian_detail.invoice_id','=','pembelian.id')->
 			where('stok_real','>',0)->
 			whereHas('data_produk',function ($q) use ($request) {
 				$q->where('barcode',$request->barcode);
 			})->
+			orderBy('tanggal','desc')->
+			orderBy('id','desc')->
 			get();
 		$return = (object)[];
 		if (count($data)) {
