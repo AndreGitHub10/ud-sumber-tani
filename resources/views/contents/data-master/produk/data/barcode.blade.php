@@ -9,6 +9,7 @@
         .nama-produk {
             font-size: 12pt;
             margin: 0;
+            font-weight: bold;
             /* width: calc(3*44px); */
             height:23px;
             /* line-height:20px; Height / no. of lines to display */
@@ -44,8 +45,8 @@
     <div class='paging'>
         @if ($produk)
             <p class="nama-produk">{{$produk->nama_produk}}</p>
-            <img class="barcode" src="data:image/png;base64,{{DNS1D::getBarcodePNG($barcode, 'C39', 1, 33, array(0,0,0), false)}}" alt="barcode" />
-            <p class="nama-produk">Rp {{number_format($harga,2,',','.')}}</p>
+            <img class="barcode" src="data:image/png;base64,{{DNS1D::getBarcodePNG($barcode, 'C39', 1, 22, array(0,0,0), false)}}" alt="barcode" />
+            <p class="nama-produk" style="font-size: 16pt;">Rp {{number_format($harga,0,',','.')}}</p>
         @endif
     </div>
     @if($da==0)

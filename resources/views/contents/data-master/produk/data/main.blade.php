@@ -79,6 +79,7 @@
 				<table class="table table-striped" id="tbl-list-produk-scanner">
 					<thead>
 						<th>
+							<td>Tanggal</td>
 							<td>Satuan</td>
 							<td>Harga Jual</td>
 							<td>Pilih</td>
@@ -216,13 +217,16 @@
 									<input type="hidden" value="${v.harga_jual}" id="harga_jual_${i}" />
 								</td>
 								<td>
+									`+v.tanggal.split('-')[2]+`/`+v.tanggal.split('-')[1]+`/`+v.tanggal.split('-')[0]+`
+								</td>
+								<td>
 									${v.satuan.nama}
 								</td>
 								<td>
 									${v.harga_jual}
 								</td>
 								<td>
-									<button class="btn btn-sm btn-info px-5 text-light btn-pilih-barcode" data-harga="${v.harga_jual}" data-barcode="${id}">Pilih</button>
+									<button class="btn btn-sm btn-info text-light btn-pilih-barcode" data-harga="${v.harga_jual}" data-barcode="${id}">Pilih</button>
 								</td>
 							</tr>`
 					});
