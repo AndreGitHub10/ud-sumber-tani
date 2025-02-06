@@ -149,15 +149,18 @@ class KasirController extends Controller
 	}
 
 	public function scanBarcode(Request $request) {
-		$data = PembelianDetail::select('id', 'kode_produk', 'satuan_id', 'stok_real', 'harga_jual')->
+		$data = PembelianDetail::select('pembelian_detail.id', 'kode_produk', 'satuan_id', 'stok_real', 'harga_jual','invoice_id','pembelian.tanggal')->
 			with([
 				'data_produk:id,kode_produk,nama_produk,foto_directory',
 				'satuan:id,nama'
 			])->
+			leftJoin('pembelian','pembelian_detail.invoice_id','=','pembelian.id')->
 			where('stok_real','>',0)->
 			whereHas('data_produk',function ($q) use ($request) {
 				$q->where('barcode',$request->barcode);
 			})->
+			orderBy('tanggal','desc')->
+			orderBy('id','desc')->
 			get();
 		$return = (object)[];
 		if (count($data)) {
@@ -185,12 +188,14 @@ class KasirController extends Controller
 	{
 		$string = $request->query_string ?? "###";
 
-		$data = PembelianDetail::whereHas('data_produk', function($q) use($string) {
+		$data = PembelianDetail::select('pembelian_detail.*','invoice_id','pembelian.tanggal')->
+		whereHas('data_produk', function($q) use($string) {
 			return $q->where('kode_produk', 'like', "%$string%")->orWhere('nama_produk', 'like', "%$string%");
 		})->with([
 		'data_produk:id,kode_produk,nama_produk,foto_directory,barcode',
 			'satuan:id,nama'
-		])->where('stok_real','>',0)->get();
+		])->leftJoin('pembelian','pembelian_detail.invoice_id','=','pembelian.id')->where('stok_real','>',0)->orderBy('tanggal','desc')->
+		orderBy('id','desc')->get();
 		return response()->json($data);
 
 		// return response()->json(ResponseAxiosDTO::fromArray([
