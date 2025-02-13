@@ -23,16 +23,30 @@
             margin-left: auto;
             margin-right: auto;
             width: fit-content;
+            /* padding: 5px !important; */
         }
         .paging {
-            width: 50%;
+            width: auto;
+            padding: 3px !important;
+            /* margin: auto; */
+            /* margin: auto 0px auto 5px !important; */
+            margin: 0px 1px;
+            /* width: 53%; */
+        }
+        .ml-3{
+            margin-left: 1rem !important;
         }
         .gapp {
             /* width: 10%; */
         }
+        html{
+            width: 100%;
+        }
         body {
-            margin: 5px;
+            /* margin: auto -1px auto 5px !important; */
+            /* padding: 0 0px !important; */
             display: flex;
+            justify-content: space-between !important;
         }
     </style>
 </head>
@@ -42,7 +56,7 @@
     <?php $harga=0 ?>
     @endisset
     @foreach([0,1] as $da)
-    <div class='paging'>
+    <div class="paging {{$da == 1 ? 'ml-3' : ''}}">
         @if ($produk)
             <p class="nama-produk">{{$produk->nama_produk}}</p>
             <img class="barcode" src="data:image/png;base64,{{DNS1D::getBarcodePNG($barcode, 'C39', 1, 22, array(0,0,0), false)}}" alt="barcode" />
@@ -50,7 +64,7 @@
         @endif
     </div>
     @if($da==0)
-    <div class="gapp"></div>
+    <!-- <div class="gapp"></div> -->
     @endif
     @endforeach
     <script>
