@@ -3,7 +3,7 @@
 @push('styles')
 	{{-- <link href="{{asset('assets/plugins/highcharts/css/highcharts.css')}}" rel="stylesheet" /> --}}
 	<link href="{{asset('assets/plugins/datatable/css/dataTables.bootstrap5.min.css')}}" rel="stylesheet" />
-	
+
 	<link href="{{asset('assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet" />
 	<link href="{{asset('assets/plugins/select2/css/select2-bootstrap4.css')}}" rel="stylesheet" />
 	<link href="{{asset('assets/plugins/flatpickr/dist/flatpickr.min.css')}}" rel="stylesheet" />
@@ -64,6 +64,7 @@
 								<th>Tanggal</th>
 								<th>Nomer Kwitansi</th>
 								<th>Nama Kasir</th>
+								<th>Nama Pembeli</th>
 								<th>Total Harga</th>
 								<th>Jenis Pembayaran</th>
 								<th>TS</th>
@@ -121,7 +122,7 @@
 				$this.attr('disabled', true)
 
 				let response = await postRequest("{{route('laporan.hutang.detail')}}", {id: $this.data('id')})
-				
+
 				if (response.status !== 200) {
 					await module.swal.warning({
 						text: response.data.message,
@@ -232,10 +233,10 @@
 				bDestroy: true,
 				processing: true,
 				serverSide: true,
-				columnDefs: [{
-					orderable: false,
-					targets: 0
-				}],
+				columnDefs: [
+					{orderable: false, targets: [0,8]},
+					{sClass: 'text-center', targets: [0,1,2,6,7,8]},
+				],
 				ajax: {
 					url:"{{route('laporan.hutang.datatables')}}",
 					type: 'post',
@@ -249,6 +250,7 @@
 					{data: 'tanggal', name: 'tanggal'},
 					{data: 'nomor_kwitansi', name: 'nomor_kwitansi'},
 					{data: 'nama_kasir', name: 'nama_kasir'},
+					{data: 'nama_pembeli', name: 'nama_pembeli'},
 					{data: 'total_penjualan_diskon', name: 'total_penjualan_diskon', render: function(data, type, row) {
 						return module.formatter.formatRupiah(data, 'Rp. ')
 					}},

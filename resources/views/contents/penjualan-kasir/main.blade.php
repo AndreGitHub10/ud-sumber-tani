@@ -13,6 +13,9 @@
 		.nowrap {
 			white-space: nowrap;
 		}
+		.hide {
+			display: none;
+		}
 	</style>
 @endpush
 
@@ -121,34 +124,42 @@
 								<div class="row mb-2">
 									<div class="col-6">
 										<label for="input-tanggal-penjualan" class="form-label">Tanggal Penjualan</label>
-										<input type="date" class="form-control form-control-sm validation" id="input-tanggal-penjualan" name="tanggal_penjualan" value="{{date("Y-m-d")}}" readonly>
+										<input type="date" class="form-control validation" id="input-tanggal-penjualan" name="tanggal_penjualan" value="{{date("Y-m-d")}}" readonly>
 									</div>
 									<div class="col-6">
-										<label for="input-jenis-pembayaran" class="form-label">Jenis Pembayaran</label>
-										<select class="single-select validation reset" id="input-jenis-pembayaran" name="jenis_pembayaran" disabled>
-											<option selected value="">--PILIH OPSI--</option>
-											<option value="tunai">TUNAI</option>
-											<option value="non-tunai">NON - TUNAI</option>
-										</select>
+										<div class="select2-sm">
+											<label for="input-jenis-pembayaran" class="form-label">Jenis Pembayaran</label>
+											<select class="single-select validation reset" id="input-jenis-pembayaran" name="jenis_pembayaran" disabled>
+												<option selected value="">--PILIH OPSI--</option>
+												<option value="tunai">TUNAI</option>
+												<option value="non-tunai">NON - TUNAI</option>
+											</select>
+										</div>
 									</div>
 								</div>
-								<div class="row">
+								<div class="row mb-2">
 									<div class="col-6">
 										<label for="input-jumlah-pembayaran" class="form-label">Jumlah Pembayaran</label>
-										<input type="text" class="form-control form-control-sm validation reset" id="input-jumlah-pembayaran" placeholder="Masukkkan Jumlah Pembayaran" name="pembayaran" readonly>
+										<input type="text" class="form-control validation reset" id="input-jumlah-pembayaran" placeholder="Masukkkan Jumlah Pembayaran" name="pembayaran" readonly>
 									</div>
 									<div class="col-6">
 										<label for="input-kembalian" class="form-label">Kembalian</label>
-										<input type="text" class="form-control form-control-sm" id="input-kembalian" name="kembalian" value="Rp. 0" readonly>
+										<input type="text" class="form-control" id="input-kembalian" name="kembalian" value="Rp. 0" readonly>
 									</div>
 								</div>
 								<div class="row mb-5">
 									<div class="col-6">
-										<label for="is_hutang" class="form-label">Hutang</label>
-										<select class="single-select validation reset" id="is_hutang" name="hutang" disabled>
-											<option value="lunas">Tidak</option>
-											<option value="hutang">Ya</option>
-										</select>
+										<div class="select2-sm">
+											<label for="is_hutang" class="form-label">Hutang</label>
+											<select class="single-select validation reset" id="is_hutang" name="hutang" disabled>
+												<option value="lunas">Tidak</option>
+												<option value="hutang">Ya</option>
+											</select>
+										</div>
+									</div>
+									<div class="col-6 hide" id="container-nama-pembeli">
+										<label for="input-nama-pembeli" class="form-label">Nama Pembeli</label>
+										<input type="text" class="form-control" id="input-nama-pembeli" name="nama_pembeli">
 									</div>
 								</div>
 							</div>
@@ -230,40 +241,40 @@
 			$('#preview-gambar').attr('src',"")
 			$("#display-harga-jual").text("")
 			var isChecked = $('#is-scan').prop('checked');
-            if (isChecked) {
-                $('#form-penjualan .reset').prop("disabled", true);
+			if (isChecked) {
+				$('#form-penjualan .reset').prop("disabled", true);
 				$('#btn-append-penjualan').prop("disabled", true);
 				$('#scanner-mode').html("On");
-            } else {
+			} else {
 				$('#form-penjualan .reset').prop("disabled", false);
 				$('#btn-append-penjualan').prop("disabled", false);
 				$('#scanner-mode').html("Off");
-            }
+			}
 		}
 
 		var interval;
-        var scan_barcode = '';
-        document.addEventListener('keydown', function(evt) {
-            var isChecked = $('#is-scan').prop('checked');
-            if (isChecked) {
-                if (interval)
-                    clearInterval(interval);
-                if (evt.code == 'Enter') {
-                    if (scan_barcode)
-                        handleBarcode(scan_barcode);
-                    scan_barcode = '';
-                    return;
-                }
-                if (evt.key != 'Shift')
-                    scan_barcode += evt.key;
-                interval = setInterval(() => {
-                    handleBarcode(scan_barcode);
-                    scan_barcode = ''
-                }, 200);
-            } else {
-                clearInterval(interval); // Clear the interval if isChecked is false
-            }
-        });
+		var scan_barcode = '';
+		document.addEventListener('keydown', function(evt) {
+			var isChecked = $('#is-scan').prop('checked');
+			if (isChecked) {
+				if (interval) clearInterval(interval);
+
+				if (evt.code == 'Enter') {
+					if (scan_barcode) handleBarcode(scan_barcode);
+					scan_barcode = '';
+					return;
+				}
+
+				if (evt.key != 'Shift') scan_barcode += evt.key;
+
+				interval = setInterval(() => {
+					handleBarcode(scan_barcode);
+					scan_barcode = ''
+				}, 200);
+			} else {
+				clearInterval(interval); // Clear the interval if isChecked is false
+			}
+		});
 
 		async function handleBarcode(sc_code) {
 			if (sc_code.length > 0) {
@@ -274,7 +285,7 @@
 				$('#loader-full').addClass('d-block')
 
 				const response = await postRequest("{{route('penjualanKasir.scanBarcode')}}", data)
-				// return console.log(response)
+
 				$('#loader-full').addClass('d-none')
 				$('#loader-full').removeClass('d-block')
 
@@ -313,10 +324,8 @@
 					})
 
 					if (duplikat) {
-						
-						if ((jumlahRequest + jumlahAda) > jumlahReal) {
-							return module.swal.warning({text: "Jumlah penjualan tidak bisa melebihi stok!"})
-						}
+						if ((jumlahRequest + jumlahAda) > jumlahReal) return module.swal.warning({text: "Jumlah penjualan tidak bisa melebihi stok!"});
+
 						$("#btn_inc_"+idPembelian).click()
 						// $("#array_jumlah_"+idPembelian).val(jumlahRequest + jumlahAda)
 						return module.swal.success({text: "Berhasil menambahkan sejumlah 1 pada "+produkText})
@@ -836,6 +845,18 @@
 			})
 		})
 
+		$("#is_hutang").change((e) => {
+			let isHutang = $(e.currentTarget).val(),
+				$input = $("#input-nama-pembeli");
+			if (isHutang == 'hutang') {
+				$("#container-nama-pembeli").removeClass('hide')
+				$input.addClass('validation')
+			} else {
+				$("#container-nama-pembeli").addClass('hide')
+				$input.removeClass('validation').val('')
+			}
+		})
+
 		$("#btn-bayar-list-penjualan").click(function(e) {
 			e.preventDefault()
 			$('#is-scan').prop('checked',false)
@@ -897,7 +918,7 @@
 				return module.swal.warning({text: validation})
 			}
 
-			$(this).attr('disabled', true)
+			// $(this).attr('disabled', true)
 			if ($("#container-list-penjualan tr").length <= 0) {
 				await module.swal.warning({text: "Tidak ada data untuk disimpan"})
 				return $(this).attr('disabled', false)

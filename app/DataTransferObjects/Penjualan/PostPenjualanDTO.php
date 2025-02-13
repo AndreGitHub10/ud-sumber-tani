@@ -51,6 +51,8 @@ final class PostPenjualanDTO extends DataTransferObject
 		public int|null $id_penjualan = null,
 		#[WithDefaultValue("")]
 		public string $nomor_kwitansi = "",
+		#[WithDefaultValue(null)]
+		public string|null $nama_pembeli = null,
 	) {
 		if (!$this->id_penjualan) {
 			$this->nomor_kwitansi = Generate::nomorKwitansi();
