@@ -63,9 +63,9 @@
             <p class="nama-produk" style="font-size: 16pt;">Rp {{number_format($harga,0,',','.')}}</p>
         @endif
     </div>
-    @if($da==0)
-    <!-- <div class="gapp"></div> -->
-    @endif
+    {{-- @if($da==0)
+    <div class="gapp"></div>
+    @endif --}}
     @endforeach
     <script>
         window.print()
