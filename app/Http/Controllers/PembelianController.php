@@ -158,6 +158,7 @@ class PembelianController extends Controller
 			$totalHarga = $postPembelian->array_total_harga;
 			$hargaJual = $postPembelian->array_harga_jual;
 			$idPembelianDetail = $postPembelian->array_id_pembelian_detail;
+			$iskonversi = $postPembelian->array_is_konversi;
 
 			if (!$postPembelian->id_pembelian) {
 				$pembelian = $this->pembelianService->create($postPembelian);
@@ -170,7 +171,8 @@ class PembelianController extends Controller
 						'tanggal_kedaluwarsa' => $tanggalKedaluwarsa[$key] ?? null,
 						'harga_beli' => $hargaBeli[$key],
 						'total_harga_beli' => $totalHarga[$key],
-						'harga_jual' => $hargaJual[$key]
+						'harga_jual' => $hargaJual[$key],
+						'is_konversi' => $iskonversi[$key],
 					]);
 					$this->pembelianDetailService->create($postPembelianDetail);
 				}
@@ -196,6 +198,7 @@ class PembelianController extends Controller
 						'harga_jual' => $hargaJual[$key],
 						'id_pembelian_detail' => $idPembelianDetail[$key] ?? null,
 						'model_pembelian_detail' => $idPembelianDetail[$key] ?? null,
+						'is_konversi' => $iskonversi[$key],
 					]);
 
 					// \Log::debug(json_encode($postPembelianDetail, JSON_PRETTY_PRINT));

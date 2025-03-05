@@ -3,7 +3,7 @@
 @push('styles')
 	{{-- <link href="{{asset('assets/plugins/highcharts/css/highcharts.css')}}" rel="stylesheet" /> --}}
 	<link href="{{asset('assets/plugins/datatable/css/dataTables.bootstrap5.min.css')}}" rel="stylesheet" />
-	
+
 	<link href="{{asset('assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet" />
 	<link href="{{asset('assets/plugins/select2/css/select2-bootstrap4.css')}}" rel="stylesheet" />
 	<style>
@@ -16,6 +16,9 @@
 		}
 		.tool-tip [disabled] {
 			pointer-events: none;
+		}
+		.is-konversi {
+			background-color: #62c3f96b;
 		}
 	</style>
 @endpush
@@ -87,7 +90,7 @@
 			$this.attr('disabled', true)
 
 			let response = await postRequest("{{route('pembelian.form')}}", {id_pembelian: $this.data('id'), model_pembelian: $this.data('id')})
-			
+
 			if (response.status !== 200) {
 				await module.swal.warning({
 					text: response.data.message,
@@ -102,7 +105,7 @@
 				$("#other-page").html($(response.data.response)).hide().fadeIn(400)
 			})
 		})
-		
+
 		// $("#datatable-pembelian").on('click', '.btn-delete-pembelian', async function(e) {
 		// 	e.preventDefault()
 		// 	return module.swal.warning({text: 'Masih tahap pengembangan!'})
@@ -151,8 +154,8 @@
 				$("#other-page").html($(response.data.response)).hide().fadeIn(400)
 			})
 		})
-		
-		function initButton() { 
+
+		function initButton() {
 			$(".btn-delete-pembelian").click(async (e) => {
 				let $this = $(e.currentTarget)
 				// return module.swal.warning({text: 'Masih tahap pengembangan!'})

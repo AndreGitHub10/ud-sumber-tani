@@ -56,6 +56,9 @@ final class PostPembelianDetailDTO extends DataTransferObject
 
 		#[WithDefaultValue(null)]
 		public int|null $stok_real = null,
+
+		#[WithDefaultValue(null)]
+		public int|null $is_konversi = null,
 	) {
 		if ($id_pembelian) {
 			$this->res_code = 200;

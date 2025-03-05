@@ -281,7 +281,7 @@
 							<input type="text" class="form-control validation reset" id="input-harga-jual" placeholder="Masukkan Harga Jual" name="harga_jual">
 						</div>
 					</div>
-					
+
 					<div class="row">
 						<div class="col-8"></div>
 						<div class="col-4">
@@ -326,8 +326,9 @@
 									@endphp
 									@if (isset($pembelian->pembelian_detail))
 									@foreach ($pembelian->pembelian_detail ?? [] as $key => $item)
-									<tr id="rows-{{$item->id}}" data-is-count="{{$item->stok_awal===$item->stok_real ? 'true' : 'false'}}">
+									<tr id="rows-{{$item->id}}" data-is-count="{{$item->stok_awal===$item->stok_real ? 'true' : 'false'}}" class="{{$item->is_konversi ? 'is-konversi' : ''}}">
 										<input type="hidden" name="array_produk[]" class="array-produk" value="{{$item->kode_produk}}">
+										<input type="hidden" name="array_is_konversi[]" class="array-is-konversi" value="{{$item->is_konversi}}">
 										<input type="hidden" name="array_satuan[]" class="array-satuan" value="{{$item->satuan_id}}">
 										<input type="hidden" name="array_jumlah[]" class="array-jumlah" value="{{$item->stok_real}}">
 										<input type="hidden" name="array_tanggal_kedaluwarsa[]" class="array-tanggal-kedaluwarsa" value="{{$item->tanggal_kedaluwarsa ?? ''}}">
@@ -338,6 +339,7 @@
 											class="array-total-harga"
 											value="{{$item->total_harga_beli}}"
 											data-is-count="{{$item->stok_awal===$item->stok_real ? 'true' : 'false'}}"
+											data-is-konversi="{{$item->is_konversi}}"
 										>
 										<input type="hidden" name="array_harga_jual[]" class="array-harga-jual" value="{{$item->harga_jual}}">
 										<input type="hidden" name="array_id_pembelian_detail[]" class="array-id-pembelian-detail" value="{{$item->id}}">
@@ -345,7 +347,8 @@
 										<td id="container-produk">{{$item->data_produk->kode_produk}} - {{strtoupper($item->data_produk->nama_produk)}} ({{strtoupper($item->satuan->nama)}})</td>
 										<td id="container-harga-beli">{{formatRupiah($item->harga_beli)}}</td>
 										<td id="container-jumlah" class='text-center'>{{$item->stok_awal === $item->stok_real ? $item->stok_real : "$item->stok_real/$item->stok_awal"}}</td>
-										<td id="container-total-harga">{{formatRupiah($item->total_harga_beli)}}</td>
+										{{-- <td id="container-total-harga">{{formatRupiah($item->total_harga_beli)}}</td> --}}
+										<td id="container-total-harga">{{formatRupiah($item->stok_real * $item->harga_beli)}}</td>
 										<td>
 											<div class="text-center">
 												<span class="tool-tip" data-toggle="tooltip" data-placement="top" title="{{$item->stok_awal===$item->stok_real ? 'Hapus' : 'Produk sudah ada penjualan, tidak bisa dihapus'}}">
@@ -373,7 +376,9 @@
 										</td>
 									</tr>
 									@php
-										$totalSemuaHarga +=  $item->total_harga_beli;
+										// $totalSemuaHarga +=  $item->total_harga_beli;
+										// $totalSemuaHarga +=  !$item->is_konversi ? $item->stok_real * $item->harga_beli : 0;
+										$totalSemuaHarga +=  !$item->is_konversi ? $item->total_harga_beli : 0;
 									@endphp
 									@endforeach
 									@endif
@@ -382,7 +387,7 @@
 									<tr>
 										<th colspan="3">
 											<input type="hidden" name="total_semua_harga" id="total-semua-harga" value="{{$totalSemuaHarga}}">
-											Total Semua Harga : 
+											Total Semua Harga :
 										</th>
 										<th colspan="2" id="container-total-semua-harga">{{$pembelian ? formatRupiah($totalSemuaHarga) : 'Rp.'}}</th>
 										{{-- <th colspan="2" id="container-total-semua-harga">Rp. 172.000</th> --}}
@@ -473,10 +478,18 @@
 	})
 
 	function totalSemuaHarga() {
-		let sumTotalHarga = 0
+		let sumTotalHarga = sumTotalHargaTemp = 0
+
 		$(".array-total-harga").each(function(idx) {
-			sumTotalHarga += parseFloat(this.value)
+			if ($(this).data('is-konversi') == 0) {
+				sumTotalHarga += parseFloat(this.value)
+			}
 		})
+		// $(".array-total-harga-temp").each(function(idx) {
+		// 	if ($(this).data('is-konversi') == 0) {
+		// 		sumTotalHargaTemp += parseFloat(this.value)
+		// 	}
+		// })
 
 		$("#total-semua-harga").val(sumTotalHarga)
 		$("#container-total-semua-harga").text(module.formatter.formatRupiah(sumTotalHarga, "Rp. "))
@@ -540,11 +553,12 @@
 				<tr id="rows-${randomId}" data-is-count="true">
 
 					<input type="hidden" name="array_produk[]" class="array-produk" value="${produkValue}">
+					<input type="hidden" name="array_is_konversi[]" class="array-is-konversi" value="0">
 					<input type="hidden" name="array_satuan[]" class="array-satuan" value="${satuanValue}">
 					<input type="hidden" name="array_jumlah[]" class="array-jumlah" value="${jumlah}">
 					<input type="hidden" name="array_tanggal_kedaluwarsa[]" class="array-tanggal-kedaluwarsa" value="${tanggalKedaluwarsa}">
 					<input type="hidden" name="array_harga_beli[]" class="array-harga-beli" value="${fixHargaBeli}">
-					<input type="hidden" name="array_total_harga[]" class="array-total-harga" value="${totalHarga}" data-is-count="true">
+					<input type="hidden" name="array_total_harga[]" class="array-total-harga" value="${totalHarga}" data-is-count="true" data-is-konversi="false">
 					<input type="hidden" name="array_harga_jual[]" class="array-harga-jual" value="${fixHargaJual}">
 					<input type="hidden" name="array_id_pembelian_detail[]" class="array-id-pembelian-detail" value="">
 
